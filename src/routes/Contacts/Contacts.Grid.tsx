@@ -42,7 +42,7 @@ export default function ContactsGrid(props: ContactsGridProps) {
   const cellRenderer = (params: GridValueFormatterParams) => {
     if (typeof params.value === 'string' && props.searchQuery.length) {
       let rv = <span style={{color:theme.palette.primary.main}} key="0">{props.searchQuery}</span>;
-      let parts = params.value.split(props.searchQuery);
+      let parts = params.value.split(new RegExp(props.searchQuery, 'i'));
       let result: ReactChild[] = [];
 
       parts.forEach((v) => {
