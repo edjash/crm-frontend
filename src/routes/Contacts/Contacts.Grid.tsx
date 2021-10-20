@@ -35,30 +35,38 @@ export default function ContactsGrid(props: ContactsGridProps) {
 
   const theme = useTheme();
 
-  const formatValue = (value: string | GridCellValue) => {
-    return value;
-  };
-
   const cellRenderer = (params: GridValueFormatterParams) => {
+
+    //Add a span wrap to highlight any search query
     if (typeof params.value === 'string' && props.searchQuery.length) {
-      let rv = <span style={{color:theme.palette.primary.main}} key="0">{props.searchQuery}</span>;
-      let parts = params.value.split(new RegExp(props.searchQuery, 'i'));
-      let result: ReactChild[] = [];
+      let queryWrapped = (
+        <span style={{ color: theme.palette.primary.main }} key="0">
+          {props.searchQuery}
+        </span>
+      );
 
-      parts.forEach((v) => {
-        result.push(v);
-        result.push(rv);
+      const result: ReactChild[] = [];
+      const parts = params.value.split(new RegExp(props.searchQuery, 'i'));
+      const space = <span>&nbsp;</span>;
+
+      parts.forEach((part, index) => {
+        //JSX needs special handling of spaces
+        let spaces = part.split(' ');
+        spaces.forEach((str, index2) => {
+          result.push(str);
+          if (index2 < spaces.length - 1) {
+            result.push(space);
+          }
+        });
+
+        if (index < parts.length - 1) {
+          result.push(queryWrapped);
+        }
       });
-
-      result.pop();
 
       return result;
     }
     return params.value;
-  };
-
-  const valueFormatter = (params: GridValueFormatterParams) => {
-    return formatValue(params.value);
   };
 
   const columns: GridColDef[] = [
@@ -88,7 +96,7 @@ export default function ContactsGrid(props: ContactsGridProps) {
               .filter((e) => e)
               .join(', ');
 
-        return formatValue(v);
+        return v;
       },
     },
     {
