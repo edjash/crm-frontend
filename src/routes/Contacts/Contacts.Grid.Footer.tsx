@@ -8,6 +8,8 @@ interface FooterProps {
   onPageChange?: (event: object, page: number) => void;
   pageCount: number;
   page: number;
+  loading: boolean;
+  searchChanged: boolean;
 }
 
 export default function ContactsGridFooter(props: FooterProps) {
@@ -40,10 +42,10 @@ export default function ContactsGridFooter(props: FooterProps) {
       </div>
     );
   }
-  
-  return (
-    <div className="cl-footer">
-      {selectedRowCountElement}
+
+  let PaginationElement = <></>;
+  if (!props.loading || !props.searchChanged) {
+    PaginationElement = (
       <Pagination
         count={props.pageCount}
         page={props.page}
@@ -51,6 +53,13 @@ export default function ContactsGridFooter(props: FooterProps) {
         variant="outlined"
         shape="rounded"
       />
+    );
+  }
+
+  return (
+    <div className="cl-footer">
+      {selectedRowCountElement}
+      {PaginationElement}
     </div>
   );
 }

@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../common/apiClient';
 import ContactsGrid, { ContactsGridProps } from './Contacts.Grid';
-import { GridRowId } from '@material-ui/data-grid';
+import { GridRowId, GridRowData } from '@material-ui/data-grid';
 import TopBar from '../../common/TopBar';
 import Paper from '@material-ui/core/Paper';
+import Configm from '../../common/Confirm';
 
 export default function Contacts() {
   const [gridState, setGridState] = useState<ContactsGridProps>({
     searchQuery: '',
+    searchChanged: false,
     rows: [],
     loading: true,
     init: true,
@@ -18,18 +20,27 @@ export default function Contacts() {
   });
 
   const onDelete = (rowIds: GridRowId[]) => {
-    const rowData = [];
+    const rowData: GridRowData = [];
+
     for (const row of gridState.rows) {
       if (rowIds.indexOf(row.id) > -1) {
         rowData.push(row);
       }
     }
 
-    //console.log('ROW IDS', rowIds);
+    if (rowData.length === 1) {
+      alert(rowData[0].fullName);
+    }
   };
 
-  const handleSearch = (query: string) => {
-    setGridState({ ...gridState, searchQuery: query, loading: true });
+  const onSearch = (query: string) => {
+    setGridState({
+      ...gridState,
+      searchQuery: query,
+      searchChanged: true,
+      page: 1,
+      loading: true,
+    });
   };
 
   const handleDelete = (rowIds: GridRowId[]) => {
@@ -63,7 +74,7 @@ export default function Contacts() {
           pageCount: Math.ceil(res.data.total / gridState.pageSize),
           loading: false,
           init: false,
-          searchQuery:''
+          searchChanged: false,
         });
       })
       .catch((error) => {
@@ -97,6 +108,7 @@ export default function Contacts() {
       <TopBar />
       <ContactsGrid
         {...gridState}
+        onSearch={onSearch}
         onPageChange={onPageChange}
         onDelete={onDelete}
       />
