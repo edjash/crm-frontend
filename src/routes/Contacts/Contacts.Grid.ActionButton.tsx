@@ -1,5 +1,5 @@
 import IconButton from '@material-ui/core/IconButton';
-import {GridRowModel, GridRowId} from '@mui/x-data-grid';
+import {GridRowModel, GridRowId} from '@material-ui/data-grid';
 
 export interface IGridActionButton {
   onClick?: (rowIds: GridRowId[]) => void;
@@ -18,6 +18,7 @@ export default function GridActionButton(cfg: IGridActionButton) {
       color="inherit"
       aria-label="delete"
       onClick={onClick}
+      focusRipple={false}
     >
       {cfg.children}
     </IconButton>

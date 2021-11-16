@@ -1,9 +1,9 @@
-import React, { createContext, useContext } from 'react';
-import { IToastConfig } from './Toast';
+import { createContext, useContext } from 'react';
+import { ToastConfig } from './Toast';
 
 interface AppContext {
   loggedIn: boolean;
-  showToast: (cfg: IToastConfig) => void;
+  showToast: (cfg: ToastConfig) => void;
   hideToast: () => void;
   setLoginStatus: (loggedIn: boolean, accessToken: string) => void;
 }

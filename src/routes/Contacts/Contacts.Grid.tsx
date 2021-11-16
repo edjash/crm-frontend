@@ -4,15 +4,14 @@ import {
   GridRowData,
   GridRowId,
   GridValueFormatterParams,
-  GridCellValue,
 } from '@material-ui/data-grid';
 import { ReactChild } from 'react';
-import { Delete, TextsmsTwoTone } from '@material-ui/icons/';
+import { Delete } from '@material-ui/icons/';
 import GridFooter from './Contacts.Grid.Footer';
 import GridActionButton from './Contacts.Grid.ActionButton';
 import ContactsToolbar from './Contacts.Toolbar';
-import { result } from 'lodash';
 import { useTheme } from '@material-ui/core/styles';
+import LoadingOverlay from './Contacts.Grid.LoadingOverlay';
 
 export interface ContactsGridProps {
   rows: GridRowData[];
@@ -93,8 +92,8 @@ export default function ContactsGrid(props: ContactsGridProps) {
         const v = !a
           ? ''
           : [a.line1, a.line2, a.town, a.postcode, a.country]
-              .filter((e) => e)
-              .join(', ');
+            .filter((e) => e)
+            .join(', ');
 
         return v;
       },
@@ -165,9 +164,11 @@ export default function ContactsGrid(props: ContactsGridProps) {
         rowHeight={44}
         disableColumnSelector={true}
         components={{
+          LoadingOverlay: LoadingOverlay,
           Footer: () => (
             <GridFooter
               onPageChange={props.onPageChange}
+              onDelete={props.onDelete}
               pageCount={props.pageCount}
               page={props.page}
               loading={props.loading}

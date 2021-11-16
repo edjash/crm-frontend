@@ -45,6 +45,7 @@ html {
     input[type="search"] {
         padding: 0px 0px 3px 30px !important;
         height: 18px;
+        width: 300px;
     }
 
     .searchIcon {
@@ -102,6 +103,7 @@ html {
         align-items: center;
         justify-content: space-between;
         padding: 10px 0px 10px 10px;
+        min-height: 52px;
 
         .pagination {
             float: right;

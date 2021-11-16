@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../common/apiClient';
 import ContactsGrid, { ContactsGridProps } from './Contacts.Grid';
-import { GridRowId, GridRowData } from '@material-ui/data-grid';
+import { GridRowId } from '@material-ui/data-grid';
 import TopBar from '../../common/TopBar';
 import Paper from '@material-ui/core/Paper';
-import Configm from '../../common/Confirm';
+import ConfirmDialog from '../../common/ConfirmDialog';
+import { useModal } from 'mui-modal-provider';
+import { red } from '@material-ui/core/colors';
 
 export default function Contacts() {
+
+  const { showModal } = useModal();
+
   const [gridState, setGridState] = useState<ContactsGridProps>({
     searchQuery: '',
     searchChanged: false,
@@ -20,26 +25,30 @@ export default function Contacts() {
   });
 
   const onDelete = (rowIds: GridRowId[]) => {
-    const rowData: GridRowData = [];
+
+    const dialogContent: JSX.Element[] = [];
+    const dialogData: GridRowId[] = [];
 
     for (const row of gridState.rows) {
       if (rowIds.indexOf(row.id) > -1) {
-        rowData.push(row);
+        dialogData.push(row.id);
+        dialogContent.push(<span key={row.id}>
+          <br />
+          {row.fullname}
+        </span>);
       }
     }
 
-    if (rowData.length === 1) {
-      alert(rowData[0].fullName);
-    }
-  };
-
-  const onSearch = (query: string) => {
-    setGridState({
-      ...gridState,
-      searchQuery: query,
-      searchChanged: true,
-      page: 1,
-      loading: true,
+    const confirm = showModal(ConfirmDialog, {
+      title: 'Confirm Delete',
+      content: dialogContent,
+      onCancel: () => {
+        confirm.hide();
+      },
+      onConfirm: () => {
+        confirm.hide();
+        handleDelete(dialogData);
+      },
     });
   };
 
@@ -49,10 +58,8 @@ export default function Contacts() {
     apiClient
       .delete('/contacts/' + rowIds.join(','))
       .then((res) => {
-        setGridState({ ...gridState, loading: true });
         loadContacts(gridState.page);
-      })
-      .catch((error) => {
+      }).catch((error) => {
         console.log('Delete error!', error);
       });
   };
@@ -67,8 +74,13 @@ export default function Contacts() {
         page: page,
       })
       .then((res) => {
+        if (res.data.last_page < res.data.current_page) {
+          return loadContacts(res.data.last_page);
+        }
+
         setGridState({
           ...gridState,
+          page: res.data.current_page,
           rowCount: res.data.total,
           rows: res.data.data,
           pageCount: Math.ceil(res.data.total / gridState.pageSize),
@@ -85,12 +97,24 @@ export default function Contacts() {
       });
   };
 
-  const onPageChange = (event: object, newPage: number) => {
+  const onSearch = (query: string) => {
     setGridState({
       ...gridState,
-      page: newPage,
+      searchQuery: query,
+      searchChanged: true,
+      page: 1,
       loading: true,
     });
+  };
+
+  const onPageChange = (event: object, newPage: number) => {
+    if (newPage != gridState.page) {
+      setGridState({
+        ...gridState,
+        page: newPage,
+        loading: true,
+      });
+    }
   };
 
   useEffect(() => {
@@ -101,7 +125,7 @@ export default function Contacts() {
       }, delay);
       return () => clearTimeout(timer);
     }
-  }, [gridState.page, gridState.loading]);
+  }, [gridState.page]);
 
   return (
     <Paper>

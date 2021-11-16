@@ -4,7 +4,7 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 import { useState } from 'react';
 
 interface FooterProps {
-  onActionChange?: (str: String) => GridRowId[];
+  onDelete?: (rowIds: GridRowId[]) => void;
   onPageChange?: (event: object, page: number) => void;
   pageCount: number;
   page: number;
@@ -21,7 +21,9 @@ export default function ContactsGridFooter(props: FooterProps) {
       return;
     }
     if (event.target.value === 'delete') {
-      // props.onActionChange(state.selection);
+      if (props.onDelete) {
+        props.onDelete(state.selection);
+      }
       setActionValue('-');
     }
   };
