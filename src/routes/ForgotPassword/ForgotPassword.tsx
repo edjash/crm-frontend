@@ -6,10 +6,10 @@ import {
   useEffect,
 } from 'react';
 import { useHistory } from 'react-router-dom';
-import apiClient from '../../common/apiClient';
+import apiClient from '../../components/apiClient';
 import { useAppContext } from '../../app/AppContext';
-import { errorResponse, showError } from '../../common/FormError';
-import AuthPage from '../../common/AuthPage';
+import { errorResponse, showError } from '../../components/FormError';
+import AuthPage from '../../components/AuthPage';
 import ForgotPasswordStep1, {
   title as step1Title,
 } from './ForgotPassword.Step1';

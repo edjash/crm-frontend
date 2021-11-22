@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import apiClient from '../../common/apiClient';
+import apiClient from '../apiClient';
 import ContactsGrid, { ContactsGridProps } from './Contacts.Grid';
 import { GridRowId } from '@material-ui/data-grid';
-import TopBar from '../../common/TopBar';
+import TopBar from '../TopBar';
 import Paper from '@material-ui/core/Paper';
-import ConfirmDialog from '../../common/ConfirmDialog';
+import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
-import { red } from '@material-ui/core/colors';
+import PubSub from 'pubsub-js';
+import ContactCreateEditDialog from './Contacts.CreateEditDialog';
 
 export default function Contacts() {
 
@@ -26,16 +27,23 @@ export default function Contacts() {
 
   const onDelete = (rowIds: GridRowId[]) => {
 
-    const dialogContent: JSX.Element[] = [];
+    const dialogContent: JSX.Element[] = [
+      <span key="0">
+        The following contacts will be deleted:
+        <br />
+      </span>
+    ];
     const dialogData: GridRowId[] = [];
 
     for (const row of gridState.rows) {
       if (rowIds.indexOf(row.id) > -1) {
         dialogData.push(row.id);
-        dialogContent.push(<span key={row.id}>
-          <br />
-          {row.fullname}
-        </span>);
+        dialogContent.push(
+          <span key={row.id}>
+            <br />
+            {row.fullname}
+          </span>
+        );
       }
     }
 
@@ -116,6 +124,25 @@ export default function Contacts() {
       });
     }
   };
+
+  const onShowEdit = () => {
+    console.log("SHOW");
+    const dlg = showModal(ContactCreateEditDialog, {
+      title: 'Create Contact',
+      content: 'test',
+      onCancel: () => {
+        dlg.hide();
+      },
+      onConfirm: () => {
+        dlg.hide();
+      }
+    });
+  }
+
+  useEffect(() => {
+    PubSub.subscribe('SHOW_EDIT_CONTACT', onShowEdit);
+    return () => { PubSub.clearAllSubscriptions(); };
+  }, []);
 
   useEffect(() => {
     if (gridState.loading) {

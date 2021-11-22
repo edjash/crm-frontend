@@ -1,8 +1,8 @@
 import { useState, SyntheticEvent, ChangeEvent } from 'react';
 import { useHistory } from 'react-router-dom';
-import apiClient from '../../common/apiClient';
-import { errorResponse } from '../../common/FormError';
-import AuthPage from '../../common/AuthPage';
+import apiClient from '../../components/apiClient';
+import { errorResponse } from '../../components/FormError';
+import AuthPage from '../../components/AuthPage';
 import LoginForm from './Login.Form';
 import { useAppContext } from '../../app/AppContext';
 

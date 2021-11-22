@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Contacts } from '../routes/Contacts';
+import { Home } from '../routes/Home';
 import { ForgotPassword } from '../routes/ForgotPassword';
 import { Login } from '../routes/Login';
 import { Register } from '../routes/Register';
-import PrivateRoute from '../common/PrivateRoute';
+import PrivateRoute from '../components/PrivateRoute';
 import Toast, { ToastConfig } from './Toast';
 import { AppContextProvider } from './AppContext';
 import Container from '@material-ui/core/Container';
@@ -15,11 +15,12 @@ import ModalProvider from 'mui-modal-provider';
 
 export default function App() {
 
+
   const [state, setState] = useState({
     loggedIn: localStorage.getItem('token') ? true : false,
     setLoginStatus: setLoginStatus,
     showToast: showToast,
-    hideToast: hideToast
+    hideToast: hideToast,
   });
 
   const [toastState, setToastState] = useState<ToastConfig>({
@@ -58,6 +59,10 @@ export default function App() {
     setToastState({ ...toastState, ...cfg });
   }
 
+  useEffect(() => {
+
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -71,7 +76,7 @@ export default function App() {
                 <Route path="/forgot-password" component={ForgotPassword} />
                 <PrivateRoute
                   path="/"
-                  component={Contacts}
+                  component={Home}
                   loggedIn={state.loggedIn}
                 />
               </Switch>

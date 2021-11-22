@@ -14,6 +14,7 @@ import {
   bindTrigger,
   bindMenu,
 } from 'material-ui-popup-state/hooks';
+import PubSub from 'pubsub-js'
 
 export default function TopBar() {
   const appContext = useAppContext();
@@ -23,10 +24,14 @@ export default function TopBar() {
     popupId: 'accountMenu',
   });
 
-  const handleMenuClose = () => {};
+  const handleMenuClose = () => { };
   const handleLogout = () => {
     popupState.close();
     appContext.setLoginStatus(false, '');
+  };
+
+  const handleCreateContact = () => {
+    PubSub.publish('SHOW_EDIT_CONTACT');
   };
 
   return (
@@ -36,9 +41,9 @@ export default function TopBar() {
           <Typography variant="h1" component="div">
             Ed CRM
           </Typography>
-          <span />
+          <span className="spacer" />
           <div>
-            <Button>Create Contact</Button>
+            <Button onClick={handleCreateContact}>Create Contact</Button>
 
             <div className="accountMenu">
               <IconButton {...bindTrigger(popupState)}>
