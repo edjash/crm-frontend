@@ -5,7 +5,7 @@ import {
   GridRowId,
   GridValueFormatterParams,
 } from '@material-ui/data-grid';
-import { ReactChild } from 'react';
+import { ReactChild, RefObject } from 'react';
 import { Delete } from '@material-ui/icons/';
 import GridFooter from './Contacts.Grid.Footer';
 import GridActionButton from './Contacts.Grid.ActionButton';
@@ -84,7 +84,7 @@ export default function ContactsGrid(props: ContactsGridProps) {
     {
       field: 'address',
       headerName: 'Address',
-      width: 510,
+      width: 410,
       headerClassName: 'no-header',
       renderCell: cellRenderer,
       valueGetter: (params) => {
@@ -160,6 +160,8 @@ export default function ContactsGrid(props: ContactsGridProps) {
         className="contactList"
         checkboxSelection
         disableSelectionOnClick
+        disableColumnFilter
+        disableColumnMenu
         autoHeight={true}
         rowHeight={44}
         disableColumnSelector={true}

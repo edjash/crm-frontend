@@ -1,32 +1,39 @@
-import { useContext } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Box from '@material-ui/core/Box';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import Popover from '@material-ui/core/Popover';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
+import PersonIcon from '@material-ui/icons/Person';
 import { useAppContext } from '../app/AppContext';
 import {
   usePopupState,
   bindTrigger,
-  bindMenu,
+  bindPopover,
 } from 'material-ui-popup-state/hooks';
 import PubSub from 'pubsub-js'
 
 export default function TopBar() {
   const appContext = useAppContext();
 
-  const popupState = usePopupState({
+  const accountMenuState = usePopupState({
     variant: 'popover',
     popupId: 'accountMenu',
   });
 
-  const handleMenuClose = () => { };
+  const addMenuState = usePopupState({
+    variant: 'popover',
+    popupId: 'addMenu',
+  });
+
   const handleLogout = () => {
-    popupState.close();
+    accountMenuState.close();
     appContext.setLoginStatus(false, '');
   };
 
@@ -43,17 +50,25 @@ export default function TopBar() {
           </Typography>
           <span className="spacer" />
           <div>
-            <Button onClick={handleCreateContact}>Create Contact</Button>
-
-            <div className="accountMenu">
-              <IconButton {...bindTrigger(popupState)}>
-                <AccountCircle />
-              </IconButton>
-              <Menu {...bindMenu(popupState)} className="accountMenu">
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                <MenuItem onClick={popupState.close}>My account</MenuItem>
-              </Menu>
-            </div>
+            <IconButton {...bindTrigger(accountMenuState)}>
+              <AccountCircle />
+            </IconButton>
+            <Popover
+              {...bindPopover(accountMenuState)}
+              anchorOrigin={{ vertical: 'center', horizontal: 'right', }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right', }}
+            >
+              <List dense={true} className="menuList">
+                <ListItem button onClick={handleLogout}>
+                  <ListItemIcon><PowerSettingsNewIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="Logout" />
+                </ListItem>
+                <ListItem button onClick={accountMenuState.close}>
+                  <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="My Account" />
+                </ListItem>
+              </List>
+            </Popover>
           </div>
         </Toolbar>
       </AppBar>

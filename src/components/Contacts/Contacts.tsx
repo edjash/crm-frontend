@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import apiClient from '../apiClient';
 import ContactsGrid, { ContactsGridProps } from './Contacts.Grid';
 import { GridRowId } from '@material-ui/data-grid';
-import TopBar from '../TopBar';
-import Paper from '@material-ui/core/Paper';
 import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
-import PubSub from 'pubsub-js';
-import ContactCreateEditDialog from './Contacts.CreateEditDialog';
+import ContactCreateEdit from './Contacts.CreateEdit';
+import { Paper } from '@material-ui/core';
+
 
 export default function Contacts() {
 
@@ -22,7 +21,7 @@ export default function Contacts() {
     page: 1,
     rowCount: 10,
     pageSize: 10,
-    pageCount: 10,
+    pageCount: 10
   });
 
   const onDelete = (rowIds: GridRowId[]) => {
@@ -125,23 +124,23 @@ export default function Contacts() {
     }
   };
 
-  const onShowEdit = () => {
-    console.log("SHOW");
-    const dlg = showModal(ContactCreateEditDialog, {
-      title: 'Create Contact',
-      content: 'test',
+  const onCreateEdit = () => {
+    const dlg = showModal(ContactCreateEdit, {
+      type: 'new',
       onCancel: () => {
         dlg.hide();
       },
       onConfirm: () => {
-        dlg.hide();
-      }
+        PubSub.publish('SHOW_EDIT_CONTACT');
+      },
     });
   }
 
   useEffect(() => {
-    PubSub.subscribe('SHOW_EDIT_CONTACT', onShowEdit);
-    return () => { PubSub.clearAllSubscriptions(); };
+    PubSub.subscribe('SHOW_EDIT_CONTACT', onCreateEdit);
+
+
+    return () => { PubSub.unsubscribe('SHOW_EDIT_CONTACT'); };
   }, []);
 
   useEffect(() => {
@@ -156,7 +155,6 @@ export default function Contacts() {
 
   return (
     <Paper>
-      <TopBar />
       <ContactsGrid
         {...gridState}
         onSearch={onSearch}

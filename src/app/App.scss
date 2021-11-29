@@ -9,6 +9,32 @@ html {
     //Header bar
 }
 
+.home {
+    .nav {
+        width: 60px;
+        background: #181818;
+
+        .MuiListItemText-root {
+            display: none;
+        }
+    }
+
+    .main {
+        display: flex;
+    }
+
+    .content {
+        flex-grow: 1;
+    }
+}
+
+.menuList {
+    .MuiListItemIcon-root {
+        display: none;
+        min-width: 32px;
+    }
+}
+
 .topBar {
     .MuiToolbar-root {
         width: 100%;
@@ -37,21 +63,31 @@ html {
     }
 }
 
-.search {
-    flex-grow: 1;
+.contactsBox {
     position: relative;
-    justify-content: center;
+}
 
-    input[type="search"] {
-        padding: 0px 0px 3px 30px !important;
-        height: 18px;
-        width: 300px;
+.gridToolbar {
+    display: flex;
+    justify-content: space-between;
+
+    .label {
     }
 
-    .searchIcon {
-        position: absolute;
-        top: -5px;
-        left: 0px;
+    .search {
+        position: relative;
+
+        input[type="search"] {
+            padding: 0px 0px 3px 30px !important;
+            height: 18px;
+            width: 100%;
+        }
+
+        .searchIcon {
+            position: absolute;
+            top: -5px;
+            left: 0px;
+        }
     }
 }
 
@@ -127,6 +163,23 @@ html {
         margin: 10px 0px 0px 20px;
         padding: 0px;
     }
+}
+
+.home .content {
+    position: relative;
+}
+
+.createEditPaper {
+    position:absolute;
+    top:0;
+    left:0;
+    background: white;
+    width: 100%;
+    height: 100%;
+}
+
+.createEditPaper.hidden {
+    display:none;
 }
 
 .authPage {
