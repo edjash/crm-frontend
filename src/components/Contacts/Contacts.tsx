@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../apiClient';
-import ContactsGrid, { ContactsGridProps } from './Contacts.Grid';
-import { GridRowId } from '@material-ui/data-grid';
+import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
+import { GridRowId, GridColDef } from '@material-ui/data-grid';
 import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
-import ContactCreateEdit from './Contacts.CreateEdit';
+import CreateEditDlg from './Contacts.CreateEdit';
 import { Paper } from '@material-ui/core';
 
 
@@ -12,10 +12,12 @@ export default function Contacts() {
 
   const { showModal } = useModal();
 
-  const [gridState, setGridState] = useState<ContactsGridProps>({
+  const [gridState, setGridState] = useState<GridProps>({
+    title:'Contacts',
     searchQuery: '',
     searchChanged: false,
     rows: [],
+    columns: [],
     loading: true,
     init: true,
     page: 1,
@@ -125,7 +127,7 @@ export default function Contacts() {
   };
 
   const onCreateEdit = () => {
-    const dlg = showModal(ContactCreateEdit, {
+    const dlg = showModal(CreateEditDlg, {
       type: 'new',
       onCancel: () => {
         dlg.hide();
@@ -153,10 +155,49 @@ export default function Contacts() {
     }
   }, [gridState.page]);
 
+  const columns: GridColDef[] = [
+    {
+      field: 'firstname',
+      headerName: 'First name',
+      width: 250,
+    },
+    {
+      field: 'lastname',
+      headerName: 'Last name',
+      width: 250,
+    },
+    {
+      field: 'address',
+      headerName: 'Address',
+      width: 410,
+      headerClassName: 'no-header',
+      valueGetter: (params) => {
+        const a = params.row.address[0];
+        const v = !a
+          ? ''
+          : [a.line1, a.line2, a.town, a.postcode, a.country]
+            .filter((e) => e)
+            .join(', ');
+
+        return v;
+      },
+    },
+    {
+      field: 'spacer',
+      flex: 1,
+      headerName: '',
+      headerClassName: 'no-header',
+      renderHeader: () => <></>,
+      hideSortIcons: true,
+      disableColumnMenu: true,
+      filterable: false,
+    }];
+
   return (
     <Paper>
-      <ContactsGrid
+      <MainGrid
         {...gridState}
+        columns={columns}
         onSearch={onSearch}
         onPageChange={onPageChange}
         onDelete={onDelete}
