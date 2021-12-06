@@ -17,7 +17,6 @@ import {
   bindTrigger,
   bindPopover,
 } from 'material-ui-popup-state/hooks';
-import PubSub from 'pubsub-js'
 
 export default function TopBar() {
   const appContext = useAppContext();
@@ -35,10 +34,6 @@ export default function TopBar() {
   const handleLogout = () => {
     accountMenuState.close();
     appContext.setLoginStatus(false, '');
-  };
-
-  const handleCreateContact = () => {
-    PubSub.publish('SHOW_EDIT_CONTACT');
   };
 
   return (

@@ -13,7 +13,7 @@ type CreateEditProps = DialogProps & {
 
 export default function CompaniesCreateEdit(props: CreateEditProps) {
 
-    const title = "New Contact";
+    const title = "New Company";
 
     return (
         <Dialog

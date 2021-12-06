@@ -8,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ContactsIcon from '@material-ui/icons/AccountBox';
 import CompaniesIcon from '@material-ui/icons/Business';
 import { useState } from 'react';
+import clsx from 'clsx';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -19,16 +20,13 @@ function TabPanel(props: TabPanelProps) {
     const { children, value, ident, ...other } = props;
 
     return (
-        <div className="contentPanel"
+        <div className={clsx("contentPanel", { "hidden": value !== ident })}
             role="tabpanel"
-            hidden={value !== ident}
             id={`nav-tabpanel-${ident}`}
             aria-labelledby={`nav-tab-${ident}`}
             {...other}
         >
-            {value === ident && (
-                children
-            )}
+            {children}
         </div>
     );
 }

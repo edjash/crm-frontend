@@ -14,21 +14,41 @@ html {
 }
 
 .home {
-    .nav {
-        width: 60px;
-        background: #181818;
-
-        .MuiListItemText-root {
-            display: none;
-        }
-    }
+    display:flex;
+    flex-direction: column;
+    height: 100%;
 
     .main {
         display: flex;
-    }
+        width: 100%;
+      
 
-    .content {
-        flex-grow: 1;
+        .nav {
+            width: 60px;
+            background: #181818;
+       
+            .MuiListItemText-root {
+                display: none;
+            }
+        }
+
+        .content {
+            display:flex;
+            position:relative;
+            width:100%;
+            overflow:hidden;
+
+            .contentPanel {
+                z-index: 2;
+                width: 100%;
+
+                &.hidden {
+                    position:absolute;
+                    z-index: 1;
+                    left:-9000px;
+                }
+            }
+        }
     }
 }
 
@@ -74,9 +94,6 @@ html {
 .gridToolbar {
     display: flex;
     justify-content: space-between;
-
-    .label {
-    }
 
     .search {
         position: relative;
@@ -166,14 +183,6 @@ html {
     ul {
         margin: 10px 0px 0px 20px;
         padding: 0px;
-    }
-}
-
-.home {
-    height: 100%;
-    
-    .content {
-        position: relative;
     }
 }
 

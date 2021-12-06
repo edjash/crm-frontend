@@ -9,6 +9,7 @@ import AddIcon from '@material-ui/icons/Add';
 
 interface ToolbarProps {
     onSearch?: (value: string) => void;
+    onCreateClick?:() => void;
     title: string
 }
 
@@ -36,10 +37,6 @@ export default function MainGridToolbar(props: ToolbarProps) {
         }
     };
 
-    const handleAddClick = () => {
-        PubSub.publish('SHOW_EDIT_CONTACT');
-    }
-
     return (
         <Toolbar className="gridToolbar">
             <Typography className="label">
@@ -51,7 +48,7 @@ export default function MainGridToolbar(props: ToolbarProps) {
                 </div>
                 <TextField type="search" placeholder="Search" onChange={onSearch} />
             </div>
-            <IconButton onClick={handleAddClick}>
+            <IconButton onClick={props.onCreateClick}>
                 <AddIcon />
             </IconButton>
         </Toolbar>

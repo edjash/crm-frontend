@@ -6,14 +6,14 @@ import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
 import CreateEditDlg from './Companies.CreateEdit';
 import { Paper } from '@material-ui/core';
-
+import PubSub from 'pubsub-js'
 
 export default function Companies() {
 
     const { showModal } = useModal();
 
     const [gridState, setGridState] = useState<GridProps>({
-        title:'Companies',
+        title: 'Companies',
         searchQuery: '',
         searchChanged: false,
         rows: [],
@@ -42,7 +42,7 @@ export default function Companies() {
                 dialogContent.push(
                     <span key={row.id}>
                         <br />
-                        {row.fullname}
+                        {row.name}
                     </span>
                 );
             }
@@ -126,23 +126,23 @@ export default function Companies() {
         }
     };
 
-    const onCreateEdit = () => {
+    const onCreateClick = () => {
         const dlg = showModal(CreateEditDlg, {
             type: 'new',
             onCancel: () => {
                 dlg.hide();
             },
             onConfirm: () => {
-                PubSub.publish('SHOW_EDIT_CONTACT');
+                PubSub.publish('EDIT_CONTACT');
             },
         });
     }
 
     useEffect(() => {
-        PubSub.subscribe('SHOW_EDIT_CONTACT', onCreateEdit);
+        PubSub.subscribe('EDIT_COMPANY', onCreateClick);
 
 
-        return () => { PubSub.unsubscribe('SHOW_EDIT_CONTACT'); };
+        return () => { PubSub.unsubscribe('EDIT_COMPANY'); };
     }, []);
 
     useEffect(() => {
@@ -195,6 +195,7 @@ export default function Companies() {
                 {...gridState}
                 columns={columns}
                 onSearch={onSearch}
+                onCreateClick={onCreateClick}
                 onPageChange={onPageChange}
                 onDelete={onDelete}
             />

@@ -6,7 +6,7 @@ import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
 import CreateEditDlg from './Contacts.CreateEdit';
 import { Paper } from '@material-ui/core';
-
+import PubSub from 'pubsub-js'
 
 export default function Contacts() {
 
@@ -30,7 +30,7 @@ export default function Contacts() {
 
     const dialogContent: JSX.Element[] = [
       <span key="0">
-        The following contacts will be deleted:
+        The following Contacts will be deleted:
         <br />
       </span>
     ];
@@ -126,24 +126,17 @@ export default function Contacts() {
     }
   };
 
-  const onCreateEdit = () => {
+  const onCreateClick = () => {
     const dlg = showModal(CreateEditDlg, {
       type: 'new',
       onCancel: () => {
         dlg.hide();
       },
       onConfirm: () => {
-        PubSub.publish('SHOW_EDIT_CONTACT');
+        PubSub.publish('EDIT_COMPANY');
       },
     });
   }
-
-  useEffect(() => {
-    PubSub.subscribe('SHOW_EDIT_CONTACT', onCreateEdit);
-
-
-    return () => { PubSub.unsubscribe('SHOW_EDIT_CONTACT'); };
-  }, []);
 
   useEffect(() => {
     if (gridState.loading) {
@@ -199,6 +192,7 @@ export default function Contacts() {
         {...gridState}
         columns={columns}
         onSearch={onSearch}
+        onCreateClick={onCreateClick}
         onPageChange={onPageChange}
         onDelete={onDelete}
       />
