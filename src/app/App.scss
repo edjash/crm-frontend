@@ -14,41 +14,93 @@ html {
 }
 
 .home {
-    display:flex;
+    display: flex;
     flex-direction: column;
     height: 100%;
 
     .main {
         display: flex;
         width: 100%;
-      
 
         .nav {
             width: 60px;
             background: #181818;
-       
+
             .MuiListItemText-root {
                 display: none;
             }
         }
 
         .content {
-            display:flex;
-            position:relative;
-            width:100%;
-            overflow:hidden;
+            display: flex;
+            position: relative;
+            width: 100%;
+            overflow: hidden;
 
             .contentPanel {
                 z-index: 2;
                 width: 100%;
 
                 &.hidden {
-                    position:absolute;
+                    position: absolute;
                     z-index: 1;
-                    left:-9000px;
+                    left: -9000px;
                 }
             }
         }
+    }
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center ;
+    align-items: center;
+
+    .indicator {
+        width: 100%;
+        position: absolute;
+        z-index: 10002;
+        top: 0px;
+    }
+
+    .mask {
+        opacity: 0.5;
+        background: #111920;
+        width: 100%;
+        height: 100%;
+        flex-grow:  1;
+        z-index: 1001;
+    }
+
+    .message {
+        position: absolute;
+        z-index: 10002;
+    }
+}
+
+.closeButton {
+    position: absolute !important;
+    right: 10px;
+    top: 10px;
+}
+.fieldSetEx {
+    border-radius: 5px !important;
+}
+
+.countrySelect {
+    margin-top: 10px;
+}
+.textFieldEx {
+    display: block !important;
+    margin-top: 10px !important;
+
+    input {
+        width: 400px !important;
     }
 }
 
