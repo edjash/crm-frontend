@@ -12,10 +12,10 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from '../theme';
 import ModalProvider from 'mui-modal-provider';
+import Overlay from '../components/Overlay';
 
 
 export default function App() {
-
 
   const [state, setState] = useState({
     loggedIn: localStorage.getItem('token') ? true : false,
@@ -51,6 +51,7 @@ export default function App() {
   }
 
   function showToast(cfg: ToastConfig) {
+    console.log("SHOW TOAST");
     cfg.show = true;
     setToastState({ ...toastState, ...cfg });
   }
@@ -61,7 +62,9 @@ export default function App() {
   }
 
   useEffect(() => {
-
+    PubSub.subscribe('SHOW_TOAST', (message: string, data: ToastConfig) => {
+      showToast(data);
+    });
   }, []);
 
   return (
