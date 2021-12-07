@@ -132,8 +132,8 @@ export default function Contacts() {
       onCancel: () => {
         dlg.hide();
       },
-      onConfirm: () => {
-        PubSub.publish('EDIT_COMPANY');
+      onSave: () => {
+        dlg.destroy();
       },
     });
   }
