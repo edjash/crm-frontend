@@ -63,11 +63,10 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             .then((response) => {
                 setState({ ...state, loading: false });
 
-                console.log(response);
-
                 if (response.statusText === 'OK') {
                     props.onSave();
-
+                    
+                    PubSub.publish('CONTACTS.REFRESH');
                     PubSub.publish('SHOW_TOAST', {
                         show: true,
                         message: 'Contact Added',

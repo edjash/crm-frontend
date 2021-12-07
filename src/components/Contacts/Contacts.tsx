@@ -136,7 +136,15 @@ export default function Contacts() {
         dlg.destroy();
       },
     });
-  }
+  };
+
+  const onRefreshClick = () => {
+    setGridState({
+      ...gridState,
+      loading: true,
+    });
+    loadContacts(gridState.page);
+  };
 
   useEffect(() => {
     if (gridState.loading) {
@@ -147,6 +155,14 @@ export default function Contacts() {
       return () => clearTimeout(timer);
     }
   }, [gridState.page]);
+
+  useEffect(() => {
+    PubSub.subscribe('CONTACTS.REFRESH', onRefreshClick);
+
+    return () => {
+      PubSub.unsubscribe('CONTACTS');
+    }
+  }, []);
 
   const columns: GridColDef[] = [
     {
@@ -193,6 +209,7 @@ export default function Contacts() {
         columns={columns}
         onSearch={onSearch}
         onCreateClick={onCreateClick}
+        onRefreshClick={onRefreshClick}
         onPageChange={onPageChange}
         onDelete={onDelete}
       />

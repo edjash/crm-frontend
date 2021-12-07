@@ -6,10 +6,12 @@ import debounce from 'lodash/debounce';
 import Typography from '@material-ui/core/Typography';
 import { IconButton } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 interface ToolbarProps {
     onSearch?: (value: string) => void;
-    onCreateClick?:() => void;
+    onCreateClick?: () => void;
+    onRefreshClick?: () => void;
     title: string
 }
 
@@ -48,9 +50,14 @@ export default function MainGridToolbar(props: ToolbarProps) {
                 </div>
                 <TextField type="search" placeholder="Search" onChange={onSearch} />
             </div>
-            <IconButton onClick={props.onCreateClick}>
-                <AddIcon />
-            </IconButton>
+            <div>
+                <IconButton onClick={props.onRefreshClick}>
+                    <RefreshIcon />
+                </IconButton>
+                <IconButton onClick={props.onCreateClick}>
+                    <AddIcon />
+                </IconButton>
+            </div>
         </Toolbar>
     );
 }

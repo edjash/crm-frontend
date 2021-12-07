@@ -27,6 +27,7 @@ export interface GridProps {
     searchChanged: boolean;
     onSearch?: (value: string) => void;
     onCreateClick?: () => void;
+    onRefreshClick?: () => void;
     onPageChange?: (event: object, page: number) => void;
     onEdit?: () => void;
     onDelete?: (rowIds: GridRowId[]) => void;
@@ -117,6 +118,7 @@ export default function MainGrid(props: GridProps) {
             <GridToolbar
                 onSearch={props.onSearch}
                 onCreateClick={props.onCreateClick}
+                onRefreshClick={props.onRefreshClick}
                 title={props.title}
             />
             <DataGrid
