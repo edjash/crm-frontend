@@ -42,7 +42,7 @@ export default function Contacts() {
         dialogContent.push(
           <span key={row.id}>
             <br />
-            {row.fullname}
+            {row.firstname + ' ' + row.lastname}
           </span>
         );
       }
