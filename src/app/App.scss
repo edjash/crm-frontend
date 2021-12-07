@@ -58,7 +58,7 @@ html {
     height: 100%;
     z-index: 1000;
     display: flex;
-    justify-content: center ;
+    justify-content: center;
     align-items: center;
 
     .indicator {
@@ -73,7 +73,7 @@ html {
         background: #111920;
         width: 100%;
         height: 100%;
-        flex-grow:  1;
+        flex-grow: 1;
         z-index: 1001;
     }
 
@@ -93,11 +93,14 @@ html {
 }
 
 .countrySelect {
-    margin-top: 10px;
+    .MuiTextField-root {
+        margin-top: 0px !important;
+    }
 }
+
 .textFieldEx {
     display: block !important;
-    margin-top: 10px !important;
+    margin-top: 0px !important;
 
     input {
         width: 400px !important;

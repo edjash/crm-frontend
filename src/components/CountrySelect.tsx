@@ -59,7 +59,7 @@ export default function CountrySelect(props: CountrySelectProps) {
                     name={props.name}
                     label="Country"
                     variant="filled"
-
+                    margin="dense"
                     InputLabelProps={{
                         shrink: true,
                     }}
