@@ -1,4 +1,4 @@
-import TextField from '@material-ui/core/TextField';
+import TextFieldEx from './TextFieldEx';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, { ChangeEvent, SyntheticEvent } from 'react';
@@ -54,15 +54,10 @@ export default function CountrySelect(props: CountrySelectProps) {
             options={options}
             loading={loading}
             renderInput={(params) => (
-                <TextField
+                <TextFieldEx
                     {...params}
                     name={props.name}
                     label="Country"
-                    variant="filled"
-                    margin="dense"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (

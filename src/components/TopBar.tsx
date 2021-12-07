@@ -38,7 +38,7 @@ export default function TopBar() {
 
   return (
     <Box className="topBar">
-      <AppBar position="static">
+      <AppBar position="static" color="default">
         <Toolbar>
           <Typography variant="h1" component="div">
             Ed CRM

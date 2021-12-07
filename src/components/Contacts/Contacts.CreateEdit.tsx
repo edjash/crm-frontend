@@ -106,10 +106,10 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus color="primary" onClick={props.onCancel}>
+                    <Button autoFocus size="small" variant="contained" color="secondary" onClick={props.onCancel}>
                         Cancel
                     </Button>
-                    <Button color="primary" autoFocus type="submit">
+                    <Button variant="contained" size="small" color="secondary" autoFocus type="submit">
                         Save
                     </Button>
                 </DialogActions>

@@ -46,7 +46,7 @@ export default function Home() {
         <div className="home">
             <TopBar />
             <div className="main">
-                <List className="nav">
+                <List className="nav MuiAppBar-colorDefault">
                     <ListItem button key="contacts"
                         onClick={() => { onNavClick('contacts'); }}
                         selected={state.selected === 'contacts'}

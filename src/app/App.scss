@@ -24,7 +24,7 @@ html {
 
         .nav {
             width: 60px;
-            background: #181818;
+ 
 
             .MuiListItemText-root {
                 display: none;
@@ -70,7 +70,7 @@ html {
 
     .mask {
         opacity: 0.5;
-        background: #111920;
+  
         width: 100%;
         height: 100%;
         flex-grow: 1;
@@ -96,6 +96,12 @@ html {
     .MuiTextField-root {
         margin-top: 0px !important;
     }
+
+    .textFieldEx {
+        input {
+            width: auto !important;
+        }
+    }
 }
 
 .textFieldEx {
@@ -119,7 +125,6 @@ html {
         width: 100%;
         display: flex;
         flex-direction: row;
-        background: #181818;
     }
 
     span.spacer {
@@ -137,7 +142,6 @@ html {
         font-weight: 500;
         line-height: 1.6;
         letter-spacing: 0.0075em;
-        color: #ffffff;
         margin-right: 20px;
     }
 }
@@ -178,7 +182,7 @@ html {
 
     //column header background
     .MuiDataGrid-columnHeaderWrapper {
-        background: #2d2d2d !important;
+ 
     }
 
     //Remove last column seperator lines
@@ -190,7 +194,7 @@ html {
 
     //aleternate row colour
     .Mui-odd.MuiDataGrid-row {
-        background: #4c4c4c;
+
     }
 
     .MuiDataGrid-cell:hover {
@@ -245,7 +249,6 @@ html {
     position: absolute;
     top: 0;
     left: 0;
-    background: white;
     width: 100%;
     height: 100%;
 }
@@ -286,7 +289,6 @@ html {
 
     .backdrop {
         z-index: 1000 !important;
-        color: "#fff" !important;
     }
 
     .MuiContainer-root {
