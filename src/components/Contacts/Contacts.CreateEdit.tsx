@@ -3,13 +3,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import { IconButton, TextField, TextFieldProps } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import CountrySelect, { CountryType } from '../../components/CountrySelect';
 import Overlay from '../../components/Overlay';
 import { ChangeEvent, SyntheticEvent, useState } from 'react';
 import apiClient from '../apiClient';
-import { useAppContext } from '../../app/AppContext';
+import Fieldset from '../Fieldset';
+import TextFieldEx from '../TextFieldEx';
 
 type CreateEditProps = DialogProps & {
     type: string,
@@ -17,31 +18,7 @@ type CreateEditProps = DialogProps & {
     onSave: () => void;
 };
 
-function TextFieldEx(props: TextFieldProps) {
-    return (
-        <TextField {...props} variant="filled" className="textFieldEx" InputLabelProps={{
-            shrink: true,
-        }} />
-    );
-}
-
-type FieldSetProps = {
-    children: React.ReactNode;
-    label: string
-};
-
-function FieldSet(props: FieldSetProps) {
-
-    return (
-        <fieldset className="MuiOutlinedInput-notchedOutline fieldSetEx">
-            <legend className=""><span>{props.label}</span></legend>
-            {props.children}
-        </fieldset>
-    );
-}
-
 export default function ContactCreateEdit(props: CreateEditProps) {
-    const appContext = useAppContext();
 
     const title = "New Contact";
     const [state, setState] = useState({
@@ -65,10 +42,9 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
                 if (response.statusText === 'OK') {
                     props.onSave();
-                    
+
                     PubSub.publish('CONTACTS.REFRESH');
-                    PubSub.publish('SHOW_TOAST', {
-                        show: true,
+                    PubSub.publish('TOAST.SHOW', {
                         message: 'Contact Added',
                         autoHide: true,
                     });
@@ -116,17 +92,17 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             </DialogTitle>
             <form onSubmit={onSubmit}>
                 <DialogContent dividers={true}>
-                    <FieldSet label="Name">
+                    <Fieldset label="Name">
                         <TextFieldEx name="firstname" label="First Name" onChange={onChange} />
                         <TextFieldEx name="lastname" label="Last Name" onChange={onChange} />
-                    </FieldSet>
-                    <FieldSet label="Address">
+                    </Fieldset>
+                    <Fieldset label="Address">
                         <TextFieldEx name="street" label="Street" onChange={onChange} />
                         <TextFieldEx name="town" label="Town / City" onChange={onChange} />
                         <TextFieldEx name="county" label="County / State" onChange={onChange} />
                         <TextFieldEx name="postcode" label="Zip / Postal Code" onChange={onChange} />
                         <CountrySelect name="country_code" onChange={onCountryChange} />
-                    </FieldSet>
+                    </Fieldset>
 
                 </DialogContent>
                 <DialogActions>

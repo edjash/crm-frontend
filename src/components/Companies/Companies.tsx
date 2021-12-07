@@ -126,23 +126,35 @@ export default function Companies() {
         }
     };
 
+    const onRefreshClick = () => {
+        setGridState({
+            ...gridState,
+            loading: true,
+        });
+        loadCompanies(gridState.page);
+
+        PubSub.publish('TOAST.SHOW', {
+            message: "Refreshed"
+        })
+    };
+
     const onCreateClick = () => {
         const dlg = showModal(CreateEditDlg, {
             type: 'new',
             onCancel: () => {
                 dlg.hide();
             },
-            onConfirm: () => {
-                PubSub.publish('EDIT_CONTACT');
+            onSave: () => {
+                dlg.destroy();
             },
         });
     }
 
     useEffect(() => {
-        PubSub.subscribe('EDIT_COMPANY', onCreateClick);
-
-
-        return () => { PubSub.unsubscribe('EDIT_COMPANY'); };
+        PubSub.subscribe('COMPANIES.REFRESH', onRefreshClick);
+        return () => {
+            PubSub.unsubscribe('COMPANIES');
+        }
     }, []);
 
     useEffect(() => {
@@ -196,6 +208,7 @@ export default function Companies() {
                 columns={columns}
                 onSearch={onSearch}
                 onCreateClick={onCreateClick}
+                onRefreshClick={onRefreshClick}
                 onPageChange={onPageChange}
                 onDelete={onDelete}
             />
