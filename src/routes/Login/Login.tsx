@@ -42,8 +42,8 @@ export default function Login() {
         setState({ ...state, isLoading: false });
         if (response.statusText === 'OK') {
           appContext.setLoginStatus(true, response.data.access_token);
-          appContext.showToast({
-            show: true,
+
+          PubSub.publish('TOAST.SHOW', {
             message: 'Successfully Logged In',
             autoHide: true,
           });
@@ -52,7 +52,7 @@ export default function Login() {
       })
       .catch((error) => {
         setState({ ...state, isLoading: false });
-        errorResponse(appContext, error);
+        errorResponse(error);
       });
   };
 

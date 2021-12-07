@@ -7,7 +7,6 @@ import {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
-import { useAppContext } from '../../app/AppContext';
 import { errorResponse, showError } from '../../components/FormError';
 import AuthPage from '../../components/AuthPage';
 import ForgotPasswordStep1, {
@@ -21,7 +20,6 @@ import ForgotPasswordStep3, {
 } from './ForgotPassword.Step3';
 
 export default function ForgotPassword() {
-  const appContext = useAppContext();
   const history = useHistory();
 
   interface FieldValues {
@@ -53,7 +51,7 @@ export default function ForgotPassword() {
       if (
         state.fieldValues['password'] !== state.fieldValues['confirmPassword']
       ) {
-        return showError(appContext, ["Passwords don't match."]);
+        return showError(["Passwords don't match."]);
       }
     }
 
@@ -74,8 +72,8 @@ export default function ForgotPassword() {
         if (response.statusText === 'OK') {
           if (state.currentStep === 3) {
             history.push('/');
-            appContext.showToast({
-              show: true,
+
+            PubSub.publish('TOAST.SHOW', {
               type: 'info',
               autoHide: true,
               message: 'Your password is now changed, please login.',
@@ -94,7 +92,7 @@ export default function ForgotPassword() {
       })
       .catch((error) => {
         setState({ ...state, isLoading: false });
-        errorResponse(appContext, error);
+        errorResponse(error);
 
         if (error?.data?.errorType == 'code_sent') {
           alert('OK');
@@ -104,8 +102,7 @@ export default function ForgotPassword() {
 
   useEffect(() => {
     if (state.currentStep === 3) {
-      appContext.showToast({
-        show: true,
+      PubSub.publish('TOAST.SHOW', {
         type: 'info',
         message: 'Code accepted, please enter a new password.',
         autoHide: true,

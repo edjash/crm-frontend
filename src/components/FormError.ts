@@ -1,8 +1,6 @@
-import AppContext from '../app/AppContext';
-
 import { AxiosResponse } from 'axios';
 
-export const showError = (appContext: AppContext, list: string[] = []) => {
+export const showError = (list: string[] = []) => {
   let message = '';
 
   if (list.length > 1 && !message) {
@@ -14,18 +12,15 @@ export const showError = (appContext: AppContext, list: string[] = []) => {
     list = [];
   }
 
-  appContext.showToast({
-    show: true,
+  PubSub.publish('TOAST.SHOW', {
+    autoHide: false,
     message: message,
     list: list,
     type: 'error',
   });
 };
 
-export const errorResponse = (
-  appContext: AppContext,
-  errorResponse: AxiosResponse
-) => {
+export const errorResponse = (errorResponse: AxiosResponse) => {
   const errors = errorResponse?.data?.errors ?? {};
   let list: string[] = [];
 
@@ -42,5 +37,5 @@ export const errorResponse = (
     list.push('A connection error occured, Please try again later.');
   }
 
-  showError(appContext, list);
+  showError(list);
 };

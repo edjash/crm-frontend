@@ -117,7 +117,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             <form onSubmit={onSubmit}>
                 <DialogContent dividers={true}>
                     <FieldSet label="Name">
-                        <TextFieldEx name="firstname" label="First Name" required onChange={onChange} />
+                        <TextFieldEx name="firstname" label="First Name" onChange={onChange} />
                         <TextFieldEx name="lastname" label="Last Name" onChange={onChange} />
                     </FieldSet>
                     <FieldSet label="Address">

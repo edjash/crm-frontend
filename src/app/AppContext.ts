@@ -3,8 +3,6 @@ import { ToastConfig } from './Toast';
 
 interface AppContext {
   loggedIn: boolean;
-  showToast: (cfg: ToastConfig) => void;
-  hideToast: () => void;
   setLoginStatus: (loggedIn: boolean, accessToken: string) => void;
 }
 

@@ -1,4 +1,4 @@
-import { useState, useContext, ChangeEvent, SyntheticEvent } from 'react';
+import { useState, ChangeEvent, SyntheticEvent } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
 import { errorResponse } from '../../components/FormError';
@@ -16,8 +16,8 @@ export default function Register() {
   const [isLoading, showLoading] = useState(false);
 
   const showError = (message: string, errorList: string[]) => {
-    appContext.showToast({
-      show: true,
+
+    PubSub.publish('TOAST.SHOW', {
       message: message,
       list: errorList,
       type: 'error',
@@ -68,7 +68,7 @@ export default function Register() {
       })
       .catch((error) => {
         showLoading(false);
-        errorResponse(appContext, error);
+        errorResponse(error);
       });
   };
 

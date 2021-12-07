@@ -1,32 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Home } from '../routes/Home';
 import { ForgotPassword } from '../routes/ForgotPassword';
 import { Login } from '../routes/Login';
 import { Register } from '../routes/Register';
 import PrivateRoute from '../components/PrivateRoute';
-import Toast, { ToastConfig } from './Toast';
+import Toast from './Toast';
 import { AppContextProvider } from './AppContext';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from '../theme';
 import ModalProvider from 'mui-modal-provider';
-import Overlay from '../components/Overlay';
-
 
 export default function App() {
 
   const [state, setState] = useState({
     loggedIn: localStorage.getItem('token') ? true : false,
     setLoginStatus: setLoginStatus,
-    showToast: showToast,
-    hideToast: hideToast,
-  });
-
-  const [toastState, setToastState] = useState<ToastConfig>({
-    show: false,
-    onClose: hideToast,
   });
 
   function setLoginStatus(loggedIn: boolean, accessToken: string) {
@@ -36,9 +27,7 @@ export default function App() {
         ...state,
         loggedIn: true,
       });
-
-      showToast({
-        ...toastState,
+      PubSub.publish('TOAST.SHOW', {
         show: true,
         message: 'Logged In',
         type: 'info',
@@ -49,23 +38,6 @@ export default function App() {
       setState({ ...state, loggedIn: false });
     }
   }
-
-  function showToast(cfg: ToastConfig) {
-    console.log("SHOW TOAST");
-    cfg.show = true;
-    setToastState({ ...toastState, ...cfg });
-  }
-
-  function hideToast() {
-    const cfg: ToastConfig = { show: false };
-    setToastState({ ...toastState, ...cfg });
-  }
-
-  useEffect(() => {
-    PubSub.subscribe('SHOW_TOAST', (message: string, data: ToastConfig) => {
-      showToast(data);
-    });
-  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -86,7 +58,7 @@ export default function App() {
               </Switch>
             </Router>
           </AppContextProvider>
-          <Toast {...toastState} />
+          <Toast />
         </Container>
       </ModalProvider>
     </ThemeProvider>

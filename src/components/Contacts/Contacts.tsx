@@ -144,6 +144,9 @@ export default function Contacts() {
       loading: true,
     });
     loadContacts(gridState.page);
+    PubSub.publish('TOAST.SHOW', {
+      message: "Refreshed"
+    })
   };
 
   useEffect(() => {
