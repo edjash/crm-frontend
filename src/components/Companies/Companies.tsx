@@ -170,7 +170,7 @@ export default function Companies() {
                 const a = params.row.address[0];
                 const v = !a
                     ? ''
-                    : [a.line1, a.line2, a.town, a.postcode, a.country]
+                    : [a.steet, a.town, a.county, a.postcode, a.country]
                         .filter((e) => e)
                         .join(', ');
 

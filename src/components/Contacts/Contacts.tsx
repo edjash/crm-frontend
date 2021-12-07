@@ -13,7 +13,7 @@ export default function Contacts() {
   const { showModal } = useModal();
 
   const [gridState, setGridState] = useState<GridProps>({
-    title:'Contacts',
+    title: 'Contacts',
     searchQuery: '',
     searchChanged: false,
     rows: [],
@@ -168,7 +168,7 @@ export default function Contacts() {
         const a = params.row.address[0];
         const v = !a
           ? ''
-          : [a.line1, a.line2, a.town, a.postcode, a.country]
+          : [a.street, a.town, a.county, a.postcode, a.country]
             .filter((e) => e)
             .join(', ');
 
