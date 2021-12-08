@@ -13,8 +13,8 @@ interface ToolbarProps {
     onSearch?: (value: string) => void;
     onCreateClick?: () => void;
     onRefreshClick?: () => void;
-    title: string,
     onPageChange?: (event: object, page: number) => void;
+    title: string,
     pageCount: number;
     page: number;
     loading: boolean;
@@ -41,8 +41,7 @@ export default function MainGridToolbar(props: ToolbarProps) {
         if (!value) {
             handleSearch('');
         } else {
-            handleSearch(value);
-            //handleSearchDelayed(value);
+            handleSearchDelayed(value);
         }
     };
 

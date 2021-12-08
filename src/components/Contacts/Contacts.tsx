@@ -19,7 +19,6 @@ export default function Contacts() {
     rows: [],
     columns: [],
     loading: true,
-    init: true,
     page: 1,
     rowCount: 10,
     pageSize: 10,
@@ -62,30 +61,34 @@ export default function Contacts() {
   };
 
   const handleDelete = (rowIds: GridRowId[]) => {
-    setGridState({ ...gridState, loading: true });
+    //setGridState({ ...gridState, loading: true });
 
     apiClient
       .delete('/contacts/' + rowIds.join(','))
       .then((res) => {
-        loadContacts(gridState.page);
+        //  loadContacts(gridState.page);
       }).catch((error) => {
         console.log('Delete error!', error);
       });
   };
 
-  const loadContacts = (page: number, searchQuery?: string) => {
+  const loadContacts = () => {
 
     apiClient
       .get('/contacts', {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: gridState.pageSize,
-        search: searchQuery,
-        page: page,
+        search: gridState.searchQuery,
+        page: gridState.page,
       })
       .then((res) => {
         if (res.data.last_page < res.data.current_page) {
-          return loadContacts(res.data.last_page);
+          setGridState({
+            ...gridState,
+            page: res.data.last_page
+          });
+          return;
         }
 
         setGridState({
@@ -95,7 +98,6 @@ export default function Contacts() {
           rows: res.data.data,
           pageCount: Math.ceil(res.data.total / gridState.pageSize),
           loading: false,
-          init: false,
           searchChanged: false,
         });
       })
@@ -115,7 +117,6 @@ export default function Contacts() {
       page: 1,
       loading: true,
     });
-    loadContacts(1, query);
   };
 
   const onPageChange = (event: object, newPage: number) => {
@@ -145,16 +146,25 @@ export default function Contacts() {
       ...gridState,
       loading: true,
     });
-    loadContacts(gridState.page);
+
     PubSub.publish('TOAST.SHOW', {
       message: "Refreshed"
     })
   };
 
   useEffect(() => {
+    if (gridState.loading) {
+      loadContacts();
+    }
+  }, [gridState.loading]);
+
+  useEffect(() => {
     PubSub.subscribe('CONTACTS.REFRESH', onRefreshClick);
 
-    loadContacts(1);
+    setGridState({
+      ...gridState,
+      loading: true
+    });
 
     return () => {
       PubSub.unsubscribe('CONTACTS');
@@ -176,12 +186,11 @@ export default function Contacts() {
       field: 'address',
       headerName: 'Address',
       width: 410,
-      headerClassName: 'no-header',
       valueGetter: (params) => {
         const a = params.row.address[0];
         const v = !a
           ? ''
-          : [a.street, a.town, a.county, a.postcode, a.country]
+          : [a.street, a.town, a.county, a.postcode, a.country_name]
             .filter((e) => e)
             .join(', ');
 

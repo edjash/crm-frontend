@@ -19,7 +19,6 @@ export default function Companies() {
         rows: [],
         columns: [],
         loading: true,
-        init: true,
         page: 1,
         rowCount: 10,
         pageSize: 10,
@@ -94,7 +93,6 @@ export default function Companies() {
                     rows: res.data.data,
                     pageCount: Math.ceil(res.data.total / gridState.pageSize),
                     loading: false,
-                    init: false,
                     searchChanged: false,
                 });
             })
@@ -159,11 +157,11 @@ export default function Companies() {
 
     useEffect(() => {
         if (gridState.loading) {
-            const delay = gridState.init ? 1000 : 0;
-            const timer = setTimeout(() => {
-                loadCompanies(gridState.page);
-            }, delay);
-            return () => clearTimeout(timer);
+            // const delay = gridState.init ? 1000 : 0;
+            // const timer = setTimeout(() => {
+            //     loadCompanies(gridState.page);
+            // }, delay);
+            // return () => clearTimeout(timer);
         }
     }, [gridState.page]);
 
@@ -182,7 +180,7 @@ export default function Companies() {
                 const a = params.row.address[0];
                 const v = !a
                     ? ''
-                    : [a.steet, a.town, a.county, a.postcode, a.country]
+                    : [a.steet, a.town, a.county, a.postcode, a.country_name]
                         .filter((e) => e)
                         .join(', ');
 

@@ -6,12 +6,13 @@ import {
     GridValueFormatterParams,
 } from '@mui/x-data-grid';
 import { ReactChild } from 'react';
-import { useTheme } from '@mui/material/styles';
 import { Delete } from '@mui/icons-material/';
 import ActionButton from './MainGrid.ActionButton';
 import GridToolbar from './MainGrid.Toolbar';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
 import GridInnerToolbar from './MainGrid.InnerToolbar';
+import { Box } from '@mui/system';
+import uniqueId from 'lodash/uniqueId';
 
 export interface GridProps {
     rows: GridRowData[];
@@ -22,7 +23,6 @@ export interface GridProps {
     rowCount: number;
     pageSize: number;
     pageCount: number;
-    init: boolean;
     searchQuery: string;
     searchChanged: boolean;
     onSearch?: (value: string) => void;
@@ -33,41 +33,54 @@ export interface GridProps {
     onDelete?: (rowIds: GridRowId[]) => void;
 }
 
+const queryWrapped = (query: string): ReactChild => {
+
+    return (
+        <Box sx={{ color: 'primary.main' }} key={uniqueId()}>
+            {query}
+        </Box>
+    );
+};
+
 export default function MainGrid(props: GridProps) {
     const actionWidth = 42;
-
-    const theme = useTheme();
 
     const cellRenderer = (params: GridValueFormatterParams) => {
 
         //Add a span wrap to highlight any search query
         if (typeof params.value === 'string' && props.searchQuery.length) {
-            let queryWrapped = (
-                <span style={{ color: theme.palette.primary.main }}>
-                    {props.searchQuery}
-                </span>
-            );
 
-            const result: ReactChild[] = [];
-            const parts = params.value.split(new RegExp(props.searchQuery, 'i'));
-            const space = <span>&nbsp;</span>;
+            const regex = new RegExp(props.searchQuery, 'ig');
 
-            parts.forEach((part, index) => {
-                //JSX needs special handling of spaces
-                let spaces = part.split(' ');
-                spaces.forEach((str, index2) => {
-                    result.push(str);
-                    if (index2 < spaces.length - 1) {
-                        result.push(space);
+            const matches: string[] = [];
+            params.value.replace(regex, function (match) {
+                matches.push(match);
+                return match;
+            });
+
+            if (matches.length) {
+                const result: ReactChild[] = [];
+                const parts = params.value.split(regex);
+
+                parts.map((part, index) => {
+                    const spaces = part.split(' ');
+                    spaces.map((str, index) => {
+                        result.push(str);
+                        if (index < spaces.length - 1) {
+                            //JSX requires special handling of spaces..
+                            const space = <Box key={uniqueId()}>&nbsp;</Box>;
+                            result.push(space);
+                        }
+                    });
+
+                    if (index < parts.length - 1) {
+                        const match = matches.shift();
+                        result.push(queryWrapped(match ?? ""));
                     }
                 });
 
-                if (index < parts.length - 1) {
-                    result.push(queryWrapped);
-                }
-            });
-
-            return result;
+                return result;
+            }
         }
         return params.value;
     };
