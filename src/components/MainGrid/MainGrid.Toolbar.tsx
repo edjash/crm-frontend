@@ -60,8 +60,7 @@ export default function MainGridToolbar(props: ToolbarProps) {
 
     return (
         <Toolbar
-            style={{ paddingLeft: 0 }}
-            className="gridToolbar"
+            style={{ paddingLeft: 0, paddingRight: 0 }}
             sx={{
                 display: 'flex',
                 justifyContent: 'space-between',

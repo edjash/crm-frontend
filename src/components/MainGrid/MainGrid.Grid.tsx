@@ -4,15 +4,14 @@ import {
     GridRowData,
     GridRowId,
     GridValueFormatterParams,
-    GridToolbar as DataGridToolbar
 } from '@mui/x-data-grid';
 import { ReactChild } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Delete } from '@mui/icons-material/';
-import GridFooter from './MainGrid.Footer';
 import ActionButton from './MainGrid.ActionButton';
 import GridToolbar from './MainGrid.Toolbar';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
+import GridInnerToolbar from './MainGrid.InnerToolbar';
 
 export interface GridProps {
     rows: GridRowData[];
@@ -143,7 +142,11 @@ export default function MainGrid(props: GridProps) {
                 rowHeight={44}
                 disableColumnSelector={true}
                 components={{
+                    Toolbar: GridInnerToolbar,
                     LoadingOverlay: LoadingOverlay,
+                }}
+                componentsProps={{
+                    toolbar:{ onDelete: props.onDelete }
                 }}
             />
         </>
