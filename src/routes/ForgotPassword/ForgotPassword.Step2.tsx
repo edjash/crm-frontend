@@ -1,7 +1,7 @@
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
 import { ChangeEvent, SyntheticEvent } from 'react';
 
 interface FormProps {

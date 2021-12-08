@@ -1,6 +1,6 @@
 
-import { GridOverlay } from '@material-ui/data-grid/';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import { GridOverlay } from '@mui/x-data-grid/';
+import LinearProgress from '@mui/material/LinearProgress';
 
 export default function LoadingOverlay(msg:string) {
     return (

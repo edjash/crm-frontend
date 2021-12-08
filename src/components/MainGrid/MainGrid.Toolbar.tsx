@@ -1,19 +1,25 @@
-import Toolbar from '@material-ui/core/Toolbar';
+import Toolbar from '@mui/material/Toolbar';
 import { useState, useMemo, ChangeEvent } from 'react';
-import SearchIcon from '@material-ui/icons/Search';
-import TextField from '@material-ui/core/TextField';
+import SearchIcon from '@mui/icons-material/Search';
+import TextField from '@mui/material/TextField';
 import debounce from 'lodash/debounce';
-import Typography from '@material-ui/core/Typography';
-import { IconButton } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import RefreshIcon from '@material-ui/icons/Refresh';
+import Typography from '@mui/material/Typography';
+import { Box, IconButton, Pagination } from '@mui/material';
+import AddIcon from '@mui/icons-material/AddCircleOutlined';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { InputAdornment } from '@material-ui/core';
 
 interface ToolbarProps {
     onSearch?: (value: string) => void;
     onCreateClick?: () => void;
     onRefreshClick?: () => void;
-    title: string
-}
+    title: string,
+    onPageChange?: (event: object, page: number) => void;
+    pageCount: number;
+    page: number;
+    loading: boolean;
+    searchChanged: boolean;
+};
 
 export default function MainGridToolbar(props: ToolbarProps) {
     const [inputValue, setInputValue] = useState('');
@@ -39,25 +45,54 @@ export default function MainGridToolbar(props: ToolbarProps) {
         }
     };
 
+    let PaginationElement = <></>;
+    if (!props.loading || !props.searchChanged) {
+        PaginationElement = (
+            <Pagination
+                count={props.pageCount}
+                page={props.page}
+                onChange={props.onPageChange}
+                variant="outlined"
+                shape="rounded"
+            />
+        );
+    }
+
     return (
-        <Toolbar className="gridToolbar">
-            <Typography className="label">
-                {props.title}
-            </Typography>
-            <div className="search">
-                <div className="searchIcon">
-                    <SearchIcon />
-                </div>
-                <TextField type="search" placeholder="Search" onChange={onSearch} />
-            </div>
-            <div>
+        <Toolbar
+            style={{ paddingLeft: 0 }}
+            className="gridToolbar"
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+            }}>
+
+            <IconButton onClick={props.onCreateClick} size="large">
+                <AddIcon fontSize="inherit" />
+            </IconButton>
+            <Box sx={{ display: 'inline' }}>
+                <TextField
+                    type="search"
+                    placeholder={`Search ${props.title}`}
+                    onChange={onSearch}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon />
+                            </InputAdornment>
+                        ),
+                    }}
+                    fullWidth
+                    variant="standard"
+                />
+            </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {PaginationElement}
                 <IconButton onClick={props.onRefreshClick}>
                     <RefreshIcon />
                 </IconButton>
-                <IconButton onClick={props.onCreateClick}>
-                    <AddIcon />
-                </IconButton>
-            </div>
+            </Box>
         </Toolbar>
     );
 }

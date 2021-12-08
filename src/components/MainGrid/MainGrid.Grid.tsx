@@ -4,10 +4,11 @@ import {
     GridRowData,
     GridRowId,
     GridValueFormatterParams,
-} from '@material-ui/data-grid';
+    GridToolbar as DataGridToolbar
+} from '@mui/x-data-grid';
 import { ReactChild } from 'react';
-import { useTheme } from '@material-ui/core/styles';
-import { Delete } from '@material-ui/icons/';
+import { useTheme } from '@mui/material/styles';
+import { Delete } from '@mui/icons-material/';
 import GridFooter from './MainGrid.Footer';
 import ActionButton from './MainGrid.ActionButton';
 import GridToolbar from './MainGrid.Toolbar';
@@ -120,9 +121,14 @@ export default function MainGrid(props: GridProps) {
                 onCreateClick={props.onCreateClick}
                 onRefreshClick={props.onRefreshClick}
                 title={props.title}
+                onPageChange={props.onPageChange}
+                pageCount={props.pageCount}
+                page={props.page}
+                loading={props.loading}
+                searchChanged={props.searchChanged}
             />
             <DataGrid
-                columns={[...columns, ...columnActions]}
+                columns={columns}
                 rows={props.rows}
                 loading={props.loading}
                 pagination
@@ -132,21 +138,12 @@ export default function MainGrid(props: GridProps) {
                 disableSelectionOnClick
                 disableColumnFilter
                 disableColumnMenu
+                hideFooter={true}
                 autoHeight={true}
                 rowHeight={44}
                 disableColumnSelector={true}
                 components={{
                     LoadingOverlay: LoadingOverlay,
-                    Footer: () => (
-                        <GridFooter
-                            onPageChange={props.onPageChange}
-                            onDelete={props.onDelete}
-                            pageCount={props.pageCount}
-                            page={props.page}
-                            loading={props.loading}
-                            searchChanged={props.searchChanged}
-                        />
-                    ),
                 }}
             />
         </>

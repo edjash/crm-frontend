@@ -1,7 +1,7 @@
 import { ChangeEvent, SyntheticEvent } from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
 
 export const title = 'New Password';
 

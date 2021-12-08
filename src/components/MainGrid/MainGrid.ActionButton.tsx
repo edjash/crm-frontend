@@ -1,5 +1,5 @@
-import IconButton from '@material-ui/core/IconButton';
-import { GridRowModel, GridRowId } from '@material-ui/data-grid';
+import IconButton from '@mui/material/IconButton';
+import { GridRowModel, GridRowId } from '@mui/x-data-grid';
 
 export interface IGridActionButton {
     onClick?: (rowIds: GridRowId[]) => void;

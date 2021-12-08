@@ -1,6 +1,6 @@
 import TextFieldEx from './TextFieldEx';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
 import React, { ChangeEvent, SyntheticEvent } from 'react';
 import apiClient from './apiClient';
 
@@ -48,9 +48,8 @@ export default function CountrySelect(props: CountrySelectProps) {
             onClose={() => {
                 setOpen(false);
             }}
-            getOptionSelected={(option, value) => option.name === value.name}
+            isOptionEqualToValue={(option, value) => option.name === value.name}
             getOptionLabel={(option) => option.name}
-            onChange={props.onChange}
             options={options}
             loading={loading}
             renderInput={(params) => (

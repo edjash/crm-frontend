@@ -7,9 +7,9 @@ import { Register } from '../routes/Register';
 import PrivateRoute from '../components/PrivateRoute';
 import Toast from './Toast';
 import { AppContextProvider } from './AppContext';
-import Container from '@material-ui/core/Container';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider } from '@material-ui/core/styles';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
 import theme from '../theme';
 import ModalProvider from 'mui-modal-provider';
 
@@ -43,23 +43,21 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <ModalProvider beta={true}>
-        <Container>
-          <AppContextProvider value={state}>
-            <Router>
-              <Switch>
-                <Route path="/login" component={Login} />
-                <Route path="/register" component={Register} />
-                <Route path="/forgot-password" component={ForgotPassword} />
-                <PrivateRoute
-                  path="/"
-                  component={Home}
-                  loggedIn={state.loggedIn}
-                />
-              </Switch>
-            </Router>
-          </AppContextProvider>
-          <Toast />
-        </Container>
+        <AppContextProvider value={state}>
+          <Router>
+            <Switch>
+              <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
+              <Route path="/forgot-password" component={ForgotPassword} />
+              <PrivateRoute
+                path="/"
+                component={Home}
+                loggedIn={state.loggedIn}
+              />
+            </Switch>
+          </Router>
+        </AppContextProvider>
+        <Toast />
       </ModalProvider>
     </ThemeProvider>
   );

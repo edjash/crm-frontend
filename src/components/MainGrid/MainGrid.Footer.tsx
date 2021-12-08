@@ -1,6 +1,6 @@
-import Pagination from '@material-ui/lab/Pagination';
-import { useGridSlotComponentProps, GridRowId } from '@material-ui/data-grid';
-import NativeSelect from '@material-ui/core/NativeSelect';
+import { Pagination } from '@mui/material';
+import { GridRowId, useGridApiContext, useGridState } from '@mui/x-data-grid';
+import NativeSelect from '@mui/material/NativeSelect';
 import { useState } from 'react';
 
 interface FooterProps {
@@ -13,7 +13,9 @@ interface FooterProps {
 }
 
 export default function MainGridFooter(props: FooterProps) {
-    const { state, apiRef, options } = useGridSlotComponentProps();
+    const apiRef = useGridApiContext();
+    const [state] = useGridState(apiRef);
+
     const [actionValue, setActionValue] = useState('-');
 
     const handleActionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -65,3 +67,5 @@ export default function MainGridFooter(props: FooterProps) {
         </div>
     );
 }
+
+

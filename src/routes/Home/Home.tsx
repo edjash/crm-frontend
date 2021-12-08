@@ -1,14 +1,66 @@
+import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import MuiDrawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ContactsIcon from '@mui/icons-material/AccountBox';
+import CompaniesIcon from '@mui/icons-material/Business';
+import { useState } from 'react';
 import { Contacts } from '../../components/Contacts';
 import { Companies } from '../../components/Companies';
-import TopBar from '../../components/TopBar';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ContactsIcon from '@material-ui/icons/AccountBox';
-import CompaniesIcon from '@material-ui/icons/Business';
-import { useState } from 'react';
-import clsx from 'clsx';
+import { SystemProps } from '@mui/system';
+import TopBar, { navWidth } from '../../components/TopBar';
+
+
+const openedMixin = (theme: Theme): CSSObject => ({
+    width: navWidth,
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+    }),
+    overflowX: 'hidden',
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+    width: `calc(${theme.spacing(7)} + 1px)`,
+    [theme.breakpoints.up('sm')]: {
+        width: `calc(${theme.spacing(9)} + 1px)`,
+    },
+});
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+    ({ theme, open }) => ({
+        width: navWidth,
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+        boxSizing: 'border-box',
+        ...(open && {
+            ...openedMixin(theme),
+            '& .MuiDrawer-paper': openedMixin(theme),
+        }),
+        ...(!open && {
+            ...closedMixin(theme),
+            '& .MuiDrawer-paper': closedMixin(theme),
+        }),
+    }),
+);
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+}));
+
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -19,34 +71,62 @@ interface TabPanelProps {
 function TabPanel(props: TabPanelProps) {
     const { children, value, ident, ...other } = props;
 
+    let sx = {
+        zIndex: 2,
+        paddingLeft:'10px'
+    } as SystemProps;
+
+    if (value !== ident) {
+        sx = {
+            position: 'absolute',
+            top: 0,
+            left: -9000,
+            zIndex: 1,
+            visibility: 'hidden'
+        } as SystemProps;
+    }
+
     return (
-        <div className={clsx("contentPanel", { "hidden": value !== ident })}
+        <Box
+            sx={{ ...sx }}
             role="tabpanel"
             id={`nav-tabpanel-${ident}`}
             aria-labelledby={`nav-tab-${ident}`}
             {...other}
         >
             {children}
-        </div>
+        </Box>
     );
 }
 
 export default function Home() {
-
+    const theme = useTheme();
     const [state, setState] = useState({
+        navOpen: true,
         selected: 'contacts'
     });
 
+    const handleDrawerOpen = () => {
+        setState({
+            ...state,
+            navOpen: (state.navOpen) ? false : true
+        });
+    };
+
     const onNavClick = (ident: string) => {
         console.log(ident);
-        setState({ selected: ident });
+        setState({
+            ...state,
+            selected: ident
+        });
     };
 
     return (
-        <div className="home">
-            <TopBar />
-            <div className="main">
-                <List className="nav MuiAppBar-colorDefault">
+        <Box sx={{ display: 'flex', width: '100%' }}>
+            <TopBar navOpen={state.navOpen} onNavBurgerClick={handleDrawerOpen} />
+            <Drawer variant="permanent" open={state.navOpen} PaperProps={{elevation:1}}>
+                <DrawerHeader />
+                <List>
                     <ListItem button key="contacts"
                         onClick={() => { onNavClick('contacts'); }}
                         selected={state.selected === 'contacts'}
@@ -62,15 +142,16 @@ export default function Home() {
                         <ListItemText primary="Companies" />
                     </ListItem>
                 </List>
-                <div className="content">
-                    <TabPanel value={state.selected} ident="contacts">
-                        <Contacts />
-                    </TabPanel>
-                    <TabPanel value={state.selected} ident="companies">
-                        <Companies />
-                    </TabPanel>
-                </div>
-            </div>
-        </div>
+            </Drawer>
+            <Box component="main" sx={{ flexGrow: 1, position: 'relative', }}>
+                <DrawerHeader />
+                <TabPanel value={state.selected} ident="contacts">
+                    <Contacts />
+                </TabPanel>
+                <TabPanel value={state.selected} ident="companies">
+                    <Companies />
+                </TabPanel>
+            </Box>
+        </Box>
     );
 }

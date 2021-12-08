@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../apiClient';
 import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
-import { GridRowId, GridColDef } from '@material-ui/data-grid';
+import { GridRowId, GridColDef } from '@mui/x-data-grid';
 import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
 import CreateEditDlg from './Companies.CreateEdit';
@@ -178,7 +178,7 @@ export default function Companies() {
             headerName: 'Address',
             width: 410,
             headerClassName: 'no-header',
-            valueGetter: (params) => {
+            valueGetter: (params: any) => {
                 const a = params.row.address[0];
                 const v = !a
                     ? ''
@@ -188,30 +188,19 @@ export default function Companies() {
 
                 return v;
             },
-        },
-        {
-            field: 'spacer',
-            flex: 1,
-            headerName: '',
-            headerClassName: 'no-header',
-            renderHeader: () => <></>,
-            hideSortIcons: true,
-            disableColumnMenu: true,
-            filterable: false,
         }
     ];
 
     return (
-        <Paper>
-            <MainGrid
-                {...gridState}
-                columns={columns}
-                onSearch={onSearch}
-                onCreateClick={onCreateClick}
-                onRefreshClick={onRefreshClick}
-                onPageChange={onPageChange}
-                onDelete={onDelete}
-            />
-        </Paper>
+        <MainGrid
+            {...gridState}
+            columns={columns}
+            onSearch={onSearch}
+            onCreateClick={onCreateClick}
+            onRefreshClick={onRefreshClick}
+            onPageChange={onPageChange}
+            onDelete={onDelete}
+        />
+
     );
 }
