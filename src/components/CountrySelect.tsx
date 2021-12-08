@@ -52,6 +52,7 @@ export default function CountrySelect(props: CountrySelectProps) {
             getOptionLabel={(option) => option.name}
             options={options}
             loading={loading}
+            onChange={props.onChange}
             renderInput={(params) => (
                 <TextFieldEx
                     {...params}

@@ -43,7 +43,7 @@ export default function MainGrid(props: GridProps) {
         //Add a span wrap to highlight any search query
         if (typeof params.value === 'string' && props.searchQuery.length) {
             let queryWrapped = (
-                <span style={{ color: theme.palette.primary.main }} key="0">
+                <span style={{ color: theme.palette.primary.main }}>
                     {props.searchQuery}
                 </span>
             );
@@ -146,7 +146,7 @@ export default function MainGrid(props: GridProps) {
                     LoadingOverlay: LoadingOverlay,
                 }}
                 componentsProps={{
-                    toolbar:{ onDelete: props.onDelete }
+                    toolbar: { onDelete: props.onDelete }
                 }}
             />
         </>

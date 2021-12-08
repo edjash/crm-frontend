@@ -41,7 +41,8 @@ export default function MainGridToolbar(props: ToolbarProps) {
         if (!value) {
             handleSearch('');
         } else {
-            handleSearchDelayed(value);
+            handleSearch(value);
+            //handleSearchDelayed(value);
         }
     };
 

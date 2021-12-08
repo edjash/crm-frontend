@@ -73,13 +73,14 @@ export default function Contacts() {
       });
   };
 
-  const loadContacts = (page: number) => {
+  const loadContacts = (page: number, searchQuery?: string) => {
+
     apiClient
       .get('/contacts', {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: gridState.pageSize,
-        search: gridState.searchQuery,
+        search: searchQuery,
         page: page,
       })
       .then((res) => {
@@ -114,6 +115,7 @@ export default function Contacts() {
       page: 1,
       loading: true,
     });
+    loadContacts(1, query);
   };
 
   const onPageChange = (event: object, newPage: number) => {
@@ -150,17 +152,9 @@ export default function Contacts() {
   };
 
   useEffect(() => {
-    if (gridState.loading) {
-      const delay = gridState.init ? 1000 : 0;
-      const timer = setTimeout(() => {
-        loadContacts(gridState.page);
-      }, delay);
-      return () => clearTimeout(timer);
-    }
-  }, [gridState.page]);
-
-  useEffect(() => {
     PubSub.subscribe('CONTACTS.REFRESH', onRefreshClick);
+
+    loadContacts(1);
 
     return () => {
       PubSub.unsubscribe('CONTACTS');
