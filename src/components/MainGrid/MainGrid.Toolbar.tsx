@@ -46,7 +46,7 @@ export default function MainGridToolbar(props: ToolbarProps) {
     };
 
     let PaginationElement = <></>;
-    if (!props.loading || !props.searchChanged) {
+    if ((!props.loading || !props.searchChanged) && props.pageCount > 1) {
         PaginationElement = (
             <Pagination
                 count={props.pageCount}

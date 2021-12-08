@@ -3,7 +3,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CountrySelect, { CountryType } from '../../components/CountrySelect';
 import Overlay from '../../components/Overlay';
@@ -82,33 +82,39 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
         <Dialog
             open={props.open}
             onClose={props.onClose}
-            maxWidth="lg"
+            maxWidth="xs"
+            fullWidth
         >
-            <DialogTitle>
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 {title}
                 <IconButton aria-label="close" onClick={props.onCancel} className="closeButton">
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
             <form onSubmit={onSubmit}>
-                <DialogContent dividers={true}>
+                <DialogContent dividers={true} sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+
+                }}>
                     <Fieldset label="Name">
-                        <TextFieldEx name="name" label="Company Name" onChange={onChange} />
+                        <TextFieldEx fullWidth name="name" label="Company Name" onChange={onChange} />
                     </Fieldset>
                     <Fieldset label="Address">
-                        <TextFieldEx name="street" label="Street" onChange={onChange} />
-                        <TextFieldEx name="town" label="Town / City" onChange={onChange} />
-                        <TextFieldEx name="county" label="County / State" onChange={onChange} />
-                        <TextFieldEx name="postcode" label="Zip / Postal Code" onChange={onChange} />
-                        <CountrySelect name="country_code" onChange={onCountryChange} />
+                        <Box sx={{ display: 'grid' }}>
+                            <TextFieldEx name="street" label="Street" onChange={onChange} />
+                            <TextFieldEx name="town" label="Town / City" onChange={onChange} />
+                            <TextFieldEx name="county" label="County / State" onChange={onChange} />
+                            <TextFieldEx name="postcode" label="Zip / Postal Code" onChange={onChange} />
+                            <CountrySelect name="country_code" onChange={onCountryChange} />
+                        </Box>
                     </Fieldset>
-
                 </DialogContent>
                 <DialogActions>
-                <Button autoFocus size="small" variant="contained" color="secondary" onClick={props.onCancel}>
+                    <Button size="small" variant="contained" onClick={props.onCancel}>
                         Cancel
                     </Button>
-                    <Button variant="contained" size="small" color="secondary" autoFocus type="submit">
+                    <Button size="small" variant="contained" type="submit" autoFocus>
                         Save
                     </Button>
                 </DialogActions>

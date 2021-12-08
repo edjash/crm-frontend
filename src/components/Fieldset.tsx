@@ -8,7 +8,7 @@ type FieldsetProps = {
 export default function Fieldset(props: FieldsetProps) {
 
     return (
-        <fieldset className="MuiOutlinedInput-notchedOutline fieldSetEx">
+        <fieldset style={{ borderRadius:'6px', }}>
             <legend className=""><span>{props.label}</span></legend>
             {props.children}
         </fieldset>
