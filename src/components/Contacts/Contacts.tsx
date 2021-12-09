@@ -5,8 +5,8 @@ import { GridRowId, GridColDef } from '@mui/x-data-grid';
 import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
 import CreateEditDlg from './Contacts.CreateEdit';
-import { Paper } from '@mui/material';
 import PubSub from 'pubsub-js'
+import { Method } from 'axios';
 
 export default function Contacts() {
 
@@ -16,6 +16,7 @@ export default function Contacts() {
     title: 'Contacts',
     searchQuery: '',
     searchChanged: false,
+    deleteIds: [],
     rows: [],
     columns: [],
     loading: true,
@@ -55,37 +56,39 @@ export default function Contacts() {
       },
       onConfirm: () => {
         confirm.hide();
-        handleDelete(dialogData);
+
+        setGridState({
+          ...gridState,
+          deleteIds: dialogData,
+          loading: true
+        });
       },
     });
   };
 
-  const handleDelete = (rowIds: GridRowId[]) => {
-    //setGridState({ ...gridState, loading: true });
-
-    apiClient
-      .delete('/contacts/' + rowIds.join(','))
-      .then((res) => {
-        //  loadContacts(gridState.page);
-      }).catch((error) => {
-        console.log('Delete error!', error);
-      });
-  };
-
   const loadContacts = () => {
 
+    let method: Method = 'GET';
+    let endpoint = '/contacts';
+
+    if (gridState.deleteIds.length) {
+      endpoint += '/' + gridState.deleteIds.join(',');
+      method = 'DELETE';
+    }
+
     apiClient
-      .get('/contacts', {
+      .request(method, endpoint, {
         sortBy: 'id',
         sortDirection: 'desc',
         limit: gridState.pageSize,
         search: gridState.searchQuery,
         page: gridState.page,
-      })
+      }, true)
       .then((res) => {
         if (res.data.last_page < res.data.current_page) {
           setGridState({
             ...gridState,
+            deleteIds: [],
             page: res.data.last_page
           });
           return;
@@ -98,6 +101,7 @@ export default function Contacts() {
           rows: res.data.data,
           pageCount: Math.ceil(res.data.total / gridState.pageSize),
           loading: false,
+          deleteIds: [],
           searchChanged: false,
         });
       })
@@ -105,7 +109,11 @@ export default function Contacts() {
         if (error) {
           error = 4;
         }
-        setGridState({ ...gridState, loading: false });
+        setGridState({
+          ...gridState,
+          deleteIds: [],
+          loading: false
+        });
       });
   };
 

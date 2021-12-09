@@ -5,6 +5,7 @@ const apiClient = {
   post,
   put,
   delete: _delete,
+  request: request
 };
 
 function request(
@@ -63,7 +64,7 @@ function get(endpoint: string, params: object, sendToken = true) {
 }
 
 function post(endpoint: string, data: object, sendToken = true) {
-  return request('post', endpoint, data, sendToken);
+  return request('POST', endpoint, data, sendToken);
 }
 
 function put(endpoint: string, data: object, sendToken = true) {

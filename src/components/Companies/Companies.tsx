@@ -5,7 +5,6 @@ import { GridRowId, GridColDef } from '@mui/x-data-grid';
 import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
 import CreateEditDlg from './Companies.CreateEdit';
-import { Paper } from '@material-ui/core';
 import PubSub from 'pubsub-js'
 
 export default function Companies() {
@@ -19,6 +18,7 @@ export default function Companies() {
         rows: [],
         columns: [],
         loading: true,
+        deleteIds:[],
         page: 1,
         rowCount: 10,
         pageSize: 10,
@@ -61,29 +61,33 @@ export default function Companies() {
     };
 
     const handleDelete = (rowIds: GridRowId[]) => {
-        setGridState({ ...gridState, loading: true });
+       // setGridState({ ...gridState, loading: true });
 
         apiClient
             .delete('/companies/' + rowIds.join(','))
             .then((res) => {
-                loadCompanies(gridState.page);
+               // loadCompanies(gridState.page);
             }).catch((error) => {
                 console.log('Delete error!', error);
             });
     };
 
-    const loadCompanies = (page: number) => {
+    const loadCompanies = () => {
         apiClient
             .get('/companies', {
                 sortBy: 'id',
                 sortDirection: 'desc',
                 limit: gridState.pageSize,
                 search: gridState.searchQuery,
-                page: page,
+                page: gridState.page,
             })
             .then((res) => {
                 if (res.data.last_page < res.data.current_page) {
-                    return loadCompanies(res.data.last_page);
+                    setGridState({
+                        ...gridState,
+                        page: res.data.last_page
+                    });
+                    return;
                 }
 
                 setGridState({
@@ -129,7 +133,6 @@ export default function Companies() {
             ...gridState,
             loading: true,
         });
-        loadCompanies(gridState.page);
 
         PubSub.publish('TOAST.SHOW', {
             message: "Refreshed"
@@ -157,13 +160,9 @@ export default function Companies() {
 
     useEffect(() => {
         if (gridState.loading) {
-            // const delay = gridState.init ? 1000 : 0;
-            // const timer = setTimeout(() => {
-            //     loadCompanies(gridState.page);
-            // }, delay);
-            // return () => clearTimeout(timer);
+            loadCompanies();
         }
-    }, [gridState.page]);
+    }, [gridState.loading]);
 
     const columns: GridColDef[] = [
         {

@@ -25,6 +25,7 @@ export interface GridProps {
     pageCount: number;
     searchQuery: string;
     searchChanged: boolean;
+    deleteIds: GridRowId[],
     onSearch?: (value: string) => void;
     onCreateClick?: () => void;
     onRefreshClick?: () => void;
