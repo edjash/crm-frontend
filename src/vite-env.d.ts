@@ -2,6 +2,7 @@
 interface ImportMetaEnv
   extends Readonly<Record<string, string | boolean | undefined>> {
   readonly VITE_API_URL: string;
+  readonly VITE_APP_TITLE: string;
   // more env variables...
 }
 

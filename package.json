@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "staging": "tsc && vite build --mode staging",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/react": "^11.7.0",

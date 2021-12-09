@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Home } from '../routes/Home';
 import { ForgotPassword } from '../routes/ForgotPassword';
@@ -38,6 +38,10 @@ export default function App() {
       setState({ ...state, loggedIn: false });
     }
   }
+
+  useEffect(() => {
+    document.title = import.meta.env.VITE_APP_TITLE;
+  }, [])
 
   return (
     <ThemeProvider theme={theme}>
