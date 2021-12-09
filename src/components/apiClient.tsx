@@ -28,11 +28,11 @@ function request(
   } as AxiosRequestConfig;
 
   switch (method) {
-    case 'post':
-    case 'put':
+    case 'POST':
+    case 'PUT':
       options.data = data;
       break;
-    case 'get':
+    case 'GET':
     default:
       options.params = data;
   }
