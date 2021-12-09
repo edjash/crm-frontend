@@ -6,6 +6,7 @@ import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
 import CreateEditDlg from './Companies.CreateEdit';
 import PubSub from 'pubsub-js'
+import { Method } from 'axios';
 
 export default function Companies() {
 
@@ -17,8 +18,8 @@ export default function Companies() {
         searchChanged: false,
         rows: [],
         columns: [],
-        loading: true,
-        deleteIds:[],
+        loading: false,
+        deleteIds: [],
         page: 1,
         rowCount: 10,
         pageSize: 10,
@@ -55,36 +56,38 @@ export default function Companies() {
             },
             onConfirm: () => {
                 confirm.hide();
-                handleDelete(dialogData);
+
+                setGridState({
+                    ...gridState,
+                    deleteIds: dialogData,
+                    loading: true
+                });
             },
         });
     };
 
-    const handleDelete = (rowIds: GridRowId[]) => {
-       // setGridState({ ...gridState, loading: true });
-
-        apiClient
-            .delete('/companies/' + rowIds.join(','))
-            .then((res) => {
-               // loadCompanies(gridState.page);
-            }).catch((error) => {
-                console.log('Delete error!', error);
-            });
-    };
-
     const loadCompanies = () => {
+        let method: Method = 'GET';
+        let endpoint = '/companies';
+
+        if (gridState.deleteIds.length) {
+            endpoint += '/' + gridState.deleteIds.join(',');
+            method = 'DELETE';
+        }
+
         apiClient
-            .get('/companies', {
+            .request(method, endpoint, {
                 sortBy: 'id',
                 sortDirection: 'desc',
                 limit: gridState.pageSize,
                 search: gridState.searchQuery,
                 page: gridState.page,
-            })
+            }, true)
             .then((res) => {
                 if (res.data.last_page < res.data.current_page) {
                     setGridState({
                         ...gridState,
+                        deleteIds: [],
                         page: res.data.last_page
                     });
                     return;
@@ -97,6 +100,7 @@ export default function Companies() {
                     rows: res.data.data,
                     pageCount: Math.ceil(res.data.total / gridState.pageSize),
                     loading: false,
+                    deleteIds: [],
                     searchChanged: false,
                 });
             })
@@ -104,7 +108,11 @@ export default function Companies() {
                 if (error) {
                     error = 4;
                 }
-                setGridState({ ...gridState, loading: false });
+                setGridState({
+                    ...gridState,
+                    deleteIds: [],
+                    loading: false
+                });
             });
     };
 
@@ -128,17 +136,6 @@ export default function Companies() {
         }
     };
 
-    const onRefreshClick = () => {
-        setGridState({
-            ...gridState,
-            loading: true,
-        });
-
-        PubSub.publish('TOAST.SHOW', {
-            message: "Refreshed"
-        })
-    };
-
     const onCreateClick = () => {
         const dlg = showModal(CreateEditDlg, {
             type: 'new',
@@ -151,18 +148,36 @@ export default function Companies() {
         });
     }
 
-    useEffect(() => {
-        PubSub.subscribe('COMPANIES.REFRESH', onRefreshClick);
-        return () => {
-            PubSub.unsubscribe('COMPANIES');
-        }
-    }, []);
+    const onRefreshClick = () => {
+        setGridState({
+            ...gridState,
+            loading: true,
+        });
+
+        PubSub.publish('TOAST.SHOW', {
+            message: "Refreshed"
+        })
+    };
 
     useEffect(() => {
         if (gridState.loading) {
             loadCompanies();
         }
     }, [gridState.loading]);
+
+    useEffect(() => {
+        PubSub.subscribe('COMPANIES.REFRESH', onRefreshClick);
+
+        setGridState({
+            ...gridState,
+            loading: true
+        });
+
+        return () => {
+            PubSub.unsubscribe('COMPANIES');
+        }
+    }, []);
+
 
     const columns: GridColDef[] = [
         {
