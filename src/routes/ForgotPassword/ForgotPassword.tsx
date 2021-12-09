@@ -18,6 +18,7 @@ import ForgotPasswordStep2, {
 import ForgotPasswordStep3, {
   title as step3Title,
 } from './ForgotPassword.Step3';
+import { Box } from '@mui/system';
 
 export default function ForgotPassword() {
   const history = useHistory();
@@ -131,7 +132,9 @@ export default function ForgotPassword() {
 
   return (
     <AuthPage title={title} isLoading={state.isLoading}>
-      {form}
+      <Box sx={{ display: 'grid', rowGap: 1 }}>
+        {form}
+      </Box>
     </AuthPage>
   );
 }
