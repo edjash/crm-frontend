@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
+import Link from '../../components/Link';
 import { ChangeEvent, SyntheticEvent } from 'react';
 import { Box } from '@mui/system';
 
@@ -49,7 +49,7 @@ export default function RegisterForm(props: RegisterFormProps) {
         <Button type="submit" fullWidth variant="contained" color="primary">
           Sign Up
         </Button>
-        <Link href="/login" variant="body2">
+        <Link to="/login">
           Already have an account? Sign in
         </Link>
       </Box>

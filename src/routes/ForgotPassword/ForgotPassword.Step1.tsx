@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
+import Link from '../../components/Link';
 import { ChangeEvent, SyntheticEvent } from 'react';
 import { Box } from '@mui/system';
 
@@ -29,7 +29,7 @@ export default function ForgotPasswordStep1(props: FormProps) {
         <Button type="submit" fullWidth variant="contained" color="primary">
           Send Password Reset Email
         </Button>
-        <Link href="/login" variant="body2">
+        <Link to="/login">
           Return to Login
         </Link>
       </Box>

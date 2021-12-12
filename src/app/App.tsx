@@ -7,7 +7,6 @@ import { Register } from '../routes/Register';
 import PrivateRoute from '../components/PrivateRoute';
 import Toast from './Toast';
 import { AppContextProvider } from './AppContext';
-import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../theme';
@@ -42,6 +41,8 @@ export default function App() {
   useEffect(() => {
     document.title = import.meta.env.VITE_APP_TITLE;
   }, [])
+
+
 
   return (
     <ThemeProvider theme={theme}>

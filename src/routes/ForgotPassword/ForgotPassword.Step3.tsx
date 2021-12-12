@@ -1,7 +1,7 @@
 import { ChangeEvent, SyntheticEvent } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
+import Link from '../../components/Link';
 import { Box } from '@mui/system';
 
 export const title = 'New Password';
@@ -40,7 +40,7 @@ export default function ForgotPasswordStep3(props: FormProps) {
         <Button type="submit" fullWidth variant="contained" color="primary">
           Submit Password
         </Button>
-        <Link href="/login" variant="body2">
+        <Link to="/login">
           Return to Login
         </Link>
       </Box>
