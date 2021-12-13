@@ -4,6 +4,9 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     mode: 'dark',
+    info: {
+      main: '#263238',
+    },
   },
   components: {
     MuiCssBaseline: {
