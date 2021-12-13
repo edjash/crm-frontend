@@ -189,16 +189,8 @@ export default function Companies() {
             field: 'address',
             headerName: 'Address',
             width: 410,
-            headerClassName: 'no-header',
             valueGetter: (params: any) => {
-                const a = params.row.address[0];
-                const v = !a
-                    ? ''
-                    : [a.steet, a.town, a.county, a.postcode, a.country_name]
-                        .filter((e) => e)
-                        .join(', ');
-
-                return v;
+                return params.row.address[0].full_address;
             },
         }
     ];

@@ -194,15 +194,8 @@ export default function Contacts() {
       field: 'address',
       headerName: 'Address',
       width: 410,
-      valueGetter: (params) => {
-        const a = params.row.address[0];
-        const v = !a
-          ? ''
-          : [a.street, a.town, a.county, a.postcode, a.country_name]
-            .filter((e) => e)
-            .join(', ');
-
-        return v;
+      valueGetter: (params: any) => {
+        return params.row.address[0].full_address;
       },
     }];
 
