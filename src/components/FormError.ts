@@ -25,12 +25,13 @@ export const errorResponse = (errorResponse: AxiosResponse) => {
   let list: string[] = [];
 
   for (let i in errors) {
+    console.log(i);
     list = list.concat(errors[i]);
   }
 
   if (!list.length) {
     const status = errorResponse?.status;
-    console.log(`${status} errorResponse`, errorResponse);
+    //console.log(`${status} errorResponse`, errorResponse);
     if (status) {
       return;
     }

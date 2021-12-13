@@ -7,10 +7,11 @@ import { Box, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CountrySelect, { CountryType } from '../../components/CountrySelect';
 import Overlay from '../../components/Overlay';
-import { ChangeEvent, SyntheticEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, FormEventHandler, SyntheticEvent, useState } from 'react';
 import apiClient from '../apiClient';
 import Fieldset from '../Fieldset';
 import TextFieldEx from '../TextFieldEx';
+import { errorResponse } from '../../components/FormError';
 
 type CreateEditProps = DialogProps & {
     type: string,
@@ -28,7 +29,7 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
         }
     });
 
-    const onSubmit = (e: SyntheticEvent) => {
+    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setState({
@@ -52,7 +53,7 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
             })
             .catch((error) => {
                 setState({ ...state, loading: false });
-                //errorResponse(appContext, error);
+                errorResponse(error);
             });
     };
 
@@ -95,10 +96,9 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                 <DialogContent dividers={true} sx={{
                     display: 'flex',
                     flexDirection: 'column',
-
                 }}>
                     <Fieldset label="Name">
-                        <TextFieldEx fullWidth name="name" label="Company Name" onChange={onChange} />
+                        <TextFieldEx fullWidth name="name" label="Company Name" required onChange={onChange} />
                     </Fieldset>
                     <Fieldset label="Address">
                         <Box sx={{ display: 'grid' }}>
