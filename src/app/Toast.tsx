@@ -53,9 +53,8 @@ export default function Toast() {
     <Snackbar
       open={state.show}
       onClose={onClose}
-      className="toast"
+      style={{ marginTop: '-15px' }}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      TransitionComponent={(props) => <Slide {...props} direction="down" />}
       autoHideDuration={state.autoHide ? 3000 : null}
     >
       <Alert elevation={6} variant="filled" severity={state.type}>
