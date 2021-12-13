@@ -4,7 +4,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import TextField from '@mui/material/TextField';
 import debounce from 'lodash/debounce';
 import Typography from '@mui/material/Typography';
-import { Box, IconButton, Pagination } from '@mui/material';
+import { Box, IconButton, Pagination, useMediaQuery, useTheme } from '@mui/material';
 import AddIcon from '@mui/icons-material/AddCircleOutlined';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { InputAdornment } from '@material-ui/core';
@@ -23,6 +23,8 @@ interface ToolbarProps {
 
 export default function MainGridToolbar(props: ToolbarProps) {
     const [inputValue, setInputValue] = useState('');
+    const theme = useTheme();
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true });
 
     const handleSearch = (value: string) => {
         if (props.onSearch) {
@@ -46,7 +48,7 @@ export default function MainGridToolbar(props: ToolbarProps) {
     };
 
     let PaginationElement = <></>;
-    if ((!props.loading || !props.searchChanged) && props.pageCount > 1) {
+    if ((!props.loading || !props.searchChanged) && props.pageCount > 1 && isDesktop) {
         PaginationElement = (
             <Pagination
                 count={props.pageCount}

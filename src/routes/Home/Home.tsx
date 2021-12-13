@@ -1,6 +1,6 @@
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
+import MuiDrawer, { DrawerProps } from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -12,55 +12,7 @@ import { Contacts } from '../../components/Contacts';
 import { Companies } from '../../components/Companies';
 import { SystemProps } from '@mui/system';
 import TopBar, { navWidth } from '../../components/TopBar';
-
-
-const openedMixin = (theme: Theme): CSSObject => ({
-    width: navWidth,
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: 'hidden',
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up('sm')]: {
-        width: `calc(${theme.spacing(9)} + 1px)`,
-    },
-});
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
-        width: navWidth,
-        flexShrink: 0,
-        whiteSpace: 'nowrap',
-        boxSizing: 'border-box',
-        ...(open && {
-            ...openedMixin(theme),
-            '& .MuiDrawer-paper': openedMixin(theme),
-        }),
-        ...(!open && {
-            ...closedMixin(theme),
-            '& .MuiDrawer-paper': closedMixin(theme),
-        }),
-    }),
-);
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-}));
-
+import { useMediaQuery } from '@mui/material';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -73,7 +25,8 @@ function TabPanel(props: TabPanelProps) {
 
     let sx = {
         zIndex: 2,
-        paddingLeft:'10px'
+        paddingLeft: '10px',
+        paddingRight: '10px'
     } as SystemProps;
 
     if (value !== ident) {
@@ -99,8 +52,79 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
+const openedMixin = (theme: Theme): CSSObject => ({
+    width: navWidth,
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+    }),
+    overflowX: 'hidden',
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+    width: `calc(${theme.spacing(7)} + 1px)`,
+    [theme.breakpoints.up('sm')]: {
+        width: `calc(${theme.spacing(9)} + 1px)`,
+    },
+});
+
+const DesktopDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+    ({ theme, open }) => ({
+        width: navWidth,
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+        boxSizing: 'border-box',
+        ...(open && {
+            ...openedMixin(theme),
+            '& .MuiDrawer-paper': openedMixin(theme),
+        }),
+        ...(!open && {
+            ...closedMixin(theme),
+            '& .MuiDrawer-paper': closedMixin(theme),
+        }),
+    }),
+);
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+}));
+
+const Drawer = (props: DrawerProps) => {
+    const theme = useTheme();
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true });
+    const isTablet = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
+
+    if (isMobile) {
+        return (
+            <MuiDrawer anchor="left" open={false}>
+                {props.children}
+            </MuiDrawer >
+        );
+    }
+
+    return (
+        <DesktopDrawer variant="permanent" {...props} sx={{ zIndex: 1 }}>
+            <DrawerHeader />
+            {props.children}
+        </DesktopDrawer>
+    );
+};
+
+
 export default function Home() {
     const theme = useTheme();
+
     const [state, setState] = useState({
         navOpen: true,
         selected: 'contacts'
@@ -124,8 +148,7 @@ export default function Home() {
     return (
         <Box sx={{ display: 'flex', width: '100%' }}>
             <TopBar navOpen={state.navOpen} onNavBurgerClick={handleDrawerOpen} />
-            <Drawer variant="permanent" open={state.navOpen} PaperProps={{elevation:1}}>
-                <DrawerHeader />
+            <Drawer variant="permanent" open={state.navOpen} PaperProps={{ elevation: 1 }}>
                 <List>
                     <ListItem button key="contacts"
                         onClick={() => { onNavClick('contacts'); }}

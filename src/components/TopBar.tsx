@@ -63,7 +63,7 @@ export default function TopBar(props: TopBarProps) {
   };
 
   return (
-    <AppBar position="fixed" elevation={1}>
+    <MuiAppBar position="fixed" elevation={1}>
       <Toolbar>
         <IconButton
           color="inherit"
@@ -99,6 +99,6 @@ export default function TopBar(props: TopBarProps) {
           </Popover>
         </div>
       </Toolbar>
-    </AppBar>
+    </MuiAppBar>
   );
 }
