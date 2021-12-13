@@ -99,7 +99,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                 }}>
                     <Fieldset label="Name">
                         <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: 'repeat(2, 1fr)' }}>
-                            <TextFieldEx name="firstname" label="First Name" onChange={onChange} />
+                            <TextFieldEx name="firstname" label="First Name" required onChange={onChange} />
                             <TextFieldEx name="lastname" label="Last Name" onChange={onChange} />
                         </Box>
                     </Fieldset>
