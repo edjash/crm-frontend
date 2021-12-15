@@ -53,7 +53,6 @@ export default function Toast() {
     <Snackbar
       open={state.show}
       onClose={onClose}
-      style={{ marginTop: '-15px' }}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       autoHideDuration={state.autoHide ? 3000 : null}
     >
