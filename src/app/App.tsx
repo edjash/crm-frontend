@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Home } from '../routes/Home';
-import { ForgotPassword } from '../routes/ForgotPassword';
-import { Login } from '../routes/Login';
-import { Register } from '../routes/Register';
-import PrivateRoute from '../components/PrivateRoute';
-import Toast from './Toast';
-import { AppContextProvider } from './AppContext';
+import { Container } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
-import theme from '../theme';
 import ModalProvider from 'mui-modal-provider';
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import PrivateRoute from '../components/PrivateRoute';
+import { ForgotPassword } from '../routes/ForgotPassword';
+import { Home } from '../routes/Home';
+import { Login } from '../routes/Login';
+import { Register } from '../routes/Register';
+import theme from '../theme';
+import { AppContextProvider } from './AppContext';
+import Toast from './Toast';
 
 export default function App() {
 
@@ -49,18 +50,20 @@ export default function App() {
       <CssBaseline />
       <ModalProvider beta={true}>
         <AppContextProvider value={state}>
-          <Router>
-            <Switch>
-              <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
-              <Route path="/forgot-password" component={ForgotPassword} />
-              <PrivateRoute
-                path="/"
-                component={Home}
-                loggedIn={state.loggedIn}
-              />
-            </Switch>
-          </Router>
+          <Container maxWidth="xl">
+            <Router>
+              <Switch>
+                <Route path="/login" component={Login} />
+                <Route path="/register" component={Register} />
+                <Route path="/forgot-password" component={ForgotPassword} />
+                <PrivateRoute
+                  path="/"
+                  component={Home}
+                  loggedIn={state.loggedIn}
+                />
+              </Switch>
+            </Router>
+          </Container>
         </AppContextProvider>
         <Toast />
       </ModalProvider>

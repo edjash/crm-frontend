@@ -25,8 +25,6 @@ function TabPanel(props: TabPanelProps) {
 
     let sx = {
         zIndex: 2,
-        paddingLeft: '10px',
-        paddingRight: '10px'
     } as SystemProps;
 
     if (value !== ident) {
@@ -64,7 +62,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function Home() {
 
     const [state, setState] = useState({
-        navOpen: true,
+        navOpen: false,
         selected: 'contacts'
     });
 
