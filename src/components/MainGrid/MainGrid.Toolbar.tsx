@@ -1,19 +1,17 @@
-import Toolbar from '@mui/material/Toolbar';
-import { useState, useMemo, ChangeEvent } from 'react';
-import SearchIcon from '@mui/icons-material/Search';
-import TextField from '@mui/material/TextField';
-import debounce from 'lodash/debounce';
-import Typography from '@mui/material/Typography';
-import { Box, IconButton, Pagination, useMediaQuery, useTheme } from '@mui/material';
 import AddIcon from '@mui/icons-material/AddCircleOutlined';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, IconButton, InputAdornment, useMediaQuery, useTheme } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import Toolbar from '@mui/material/Toolbar';
+import debounce from 'lodash/debounce';
+import { ChangeEvent, useMemo, useState } from 'react';
 
 interface ToolbarProps {
     onSearch?: (value: string) => void;
     onCreateClick?: () => void;
     onRefreshClick?: () => void;
-    onPageChange?: (event: object, page: number) => void;
+    onPageChange?: (page: number) => void;
     title: string,
     pageCount: number;
     page: number;
@@ -47,19 +45,6 @@ export default function MainGridToolbar(props: ToolbarProps) {
         }
     };
 
-    let PaginationElement = <></>;
-    if ((!props.loading || !props.searchChanged) && props.pageCount > 1 && isDesktop) {
-        PaginationElement = (
-            <Pagination
-                count={props.pageCount}
-                page={props.page}
-                onChange={props.onPageChange}
-                variant="outlined"
-                shape="rounded"
-            />
-        );
-    }
-
     return (
         <Toolbar
             style={{ paddingLeft: 0, paddingRight: 0 }}
@@ -89,7 +74,6 @@ export default function MainGridToolbar(props: ToolbarProps) {
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                {PaginationElement}
                 <IconButton onClick={props.onRefreshClick}>
                     <RefreshIcon />
                 </IconButton>

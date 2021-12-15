@@ -1,12 +1,10 @@
-import { Pagination } from '@mui/material';
-import { GridRowId, useGridApiContext, useGridState } from '@mui/x-data-grid';
-import NativeSelect from '@mui/material/NativeSelect';
-import { useState } from 'react';
+import { Box, TablePagination } from '@mui/material';
+import { useGridApiContext, useGridState } from '@mui/x-data-grid';
 
 interface FooterProps {
-    onDelete?: (rowIds: GridRowId[]) => void;
-    onPageChange?: (event: object, page: number) => void;
+    onPageChange: (page: number) => void;
     pageCount: number;
+    rowCount: number;
     page: number;
     loading: boolean;
     searchChanged: boolean;
@@ -16,55 +14,34 @@ export default function MainGridFooter(props: FooterProps) {
     const apiRef = useGridApiContext();
     const [state] = useGridState(apiRef);
 
-    const [actionValue, setActionValue] = useState('-');
-
-    const handleActionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        if (event.target.value === '-') {
-            return;
-        }
-        if (event.target.value === 'delete') {
-            if (props.onDelete) {
-                props.onDelete(state.selection);
-            }
-            setActionValue('-');
-        }
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
+        props.onPageChange(page + 1);
     };
-
-    const selectedRowCount = state.selection.length;
-    let selectedRowCountElement = <div></div>;
-    if (selectedRowCount) {
-        const select = (
-            <NativeSelect onChange={handleActionChange} value={actionValue}>
-                <option value="-"></option>
-                <option value="delete">Delete</option>
-            </NativeSelect>
-        );
-        selectedRowCountElement = (
-            <div className="selected-controls">
-                <div>{selectedRowCount} Selected:</div>
-                {select}
-            </div>
-        );
-    }
 
     let PaginationElement = <></>;
     if (!props.loading || !props.searchChanged) {
         PaginationElement = (
-            <Pagination
-                count={props.pageCount}
-                page={props.page}
-                onChange={props.onPageChange}
-                variant="outlined"
-                shape="rounded"
+            <TablePagination
+                showFirstButton
+                showLastButton
+                component='div'
+                count={props.rowCount}
+                page={props.page - 1}
+                onPageChange={handlePageChange}
+                rowsPerPage={10}
+                rowsPerPageOptions={[]}
             />
         );
     }
 
+
     return (
-        <div className="cl-footer">
-            {selectedRowCountElement}
+        <Box sx={{
+            display: 'flex',
+            justifyContent: 'right'
+        }}>
             {PaginationElement}
-        </div>
+        </Box>
     );
 }
 

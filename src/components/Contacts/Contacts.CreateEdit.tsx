@@ -82,7 +82,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         <Dialog
             open={props.open}
             onClose={props.onClose}
-            maxWidth="lg"
+            maxWidth="xl"
         >
             <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 {title}

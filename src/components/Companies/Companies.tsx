@@ -22,7 +22,7 @@ export default function Companies() {
         deleteIds: [],
         page: 1,
         rowCount: 10,
-        pageSize: 10,
+        rowsPerPage: 10,
         pageCount: 10
     });
 
@@ -79,7 +79,7 @@ export default function Companies() {
             .request(method, endpoint, {
                 sortBy: 'id',
                 sortDirection: 'desc',
-                limit: gridState.pageSize,
+                limit: gridState.rowsPerPage,
                 search: gridState.searchQuery,
                 page: gridState.page,
             }, true)
@@ -98,7 +98,7 @@ export default function Companies() {
                     page: res.data.current_page,
                     rowCount: res.data.total,
                     rows: res.data.data,
-                    pageCount: Math.ceil(res.data.total / gridState.pageSize),
+                    pageCount: Math.ceil(res.data.total / gridState.rowsPerPage),
                     loading: false,
                     deleteIds: [],
                     searchChanged: false,
@@ -126,7 +126,7 @@ export default function Companies() {
         });
     };
 
-    const onPageChange = (event: object, newPage: number) => {
+    const onPageChange = (newPage: number) => {
         if (newPage != gridState.page) {
             setGridState({
                 ...gridState,

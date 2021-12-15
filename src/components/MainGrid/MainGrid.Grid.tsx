@@ -11,6 +11,7 @@ import ActionButton from './MainGrid.ActionButton';
 import GridToolbar from './MainGrid.Toolbar';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
 import GridInnerToolbar from './MainGrid.InnerToolbar';
+import MainGridFooter from './MainGrid.Footer';
 import { Box } from '@mui/system';
 import uniqueId from 'lodash/uniqueId';
 
@@ -21,7 +22,7 @@ export interface GridProps {
     loading: boolean;
     page: number;
     rowCount: number;
-    pageSize: number;
+    rowsPerPage: number;
     pageCount: number;
     searchQuery: string;
     searchChanged: boolean;
@@ -29,7 +30,7 @@ export interface GridProps {
     onSearch?: (value: string) => void;
     onCreateClick?: () => void;
     onRefreshClick?: () => void;
-    onPageChange?: (event: object, page: number) => void;
+    onPageChange?: (page: number) => void;
     onEdit?: () => void;
     onDelete?: (rowIds: GridRowId[]) => void;
 }
@@ -151,16 +152,22 @@ export default function MainGrid(props: GridProps) {
                 disableSelectionOnClick
                 disableColumnFilter
                 disableColumnMenu
-                hideFooter={true}
                 autoHeight={true}
-                rowHeight={44}
                 disableColumnSelector={true}
                 components={{
                     Toolbar: GridInnerToolbar,
                     LoadingOverlay: LoadingOverlay,
+                    Footer: MainGridFooter
                 }}
                 componentsProps={{
-                    toolbar: { onDelete: props.onDelete }
+                    toolbar: { onDelete: props.onDelete },
+                    footer: {
+                        rowCount: props.rowCount,
+                        page: props.page,
+                        pageCount: props.pageCount,
+                        onPageChange: props.onPageChange,
+                        searchChanged: props.searchChanged,
+                    }
                 }}
             />
         </>
