@@ -1,5 +1,4 @@
 import { createContext, useContext } from 'react';
-import { ToastConfig } from './Toast';
 
 interface AppContext {
   loggedIn: boolean;

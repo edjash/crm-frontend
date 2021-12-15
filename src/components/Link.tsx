@@ -7,7 +7,6 @@ const StyledLink = styled(RouterLink)(({ theme }) => ({
 }));
 
 export default function Link(props: LinkProps) {
-
     return (
         <StyledLink {...props}>
             {props.children}

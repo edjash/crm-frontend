@@ -1,18 +1,18 @@
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import ContactsIcon from '@mui/icons-material/AccountBox';
+import CompaniesIcon from '@mui/icons-material/Business';
 import Box from '@mui/material/Box';
-import Drawer, { DrawerProps } from '@mui/material/Drawer';
+import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ContactsIcon from '@mui/icons-material/AccountBox';
-import CompaniesIcon from '@mui/icons-material/Business';
-import { useEffect, useState } from 'react';
-import { Contacts } from '../../components/Contacts';
-import { Companies } from '../../components/Companies';
+import { styled } from '@mui/material/styles';
 import { SystemProps } from '@mui/system';
-import TopBar from '../../components/TopBar';
 import PubSub from 'pubsub-js';
+import { useEffect, useState } from 'react';
+import { Companies } from '../../components/Companies';
+import { Contacts } from '../../components/Contacts';
+import TopBar from '../../components/TopBar';
 
 interface TabPanelProps {
     children?: React.ReactNode;
