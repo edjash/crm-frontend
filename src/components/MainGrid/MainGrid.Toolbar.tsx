@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { Box, IconButton, Pagination, useMediaQuery, useTheme } from '@mui/material';
 import AddIcon from '@mui/icons-material/AddCircleOutlined';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { InputAdornment } from '@material-ui/core';
+import { InputAdornment } from '@mui/material';
 
 interface ToolbarProps {
     onSearch?: (value: string) => void;

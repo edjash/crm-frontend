@@ -1,5 +1,4 @@
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
+import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Popover from '@mui/material/Popover';
@@ -18,38 +17,8 @@ import {
   bindTrigger,
   bindPopover,
 } from 'material-ui-popup-state/hooks';
-import { styled } from '@mui/material';
 
-export const navWidth = 240;
-
-export type TopBarProps = {
-  navOpen: boolean;
-  onNavBurgerClick: () => void;
-};
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: navWidth,
-    width: `calc(100% - ${navWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-export default function TopBar(props: TopBarProps) {
+export default function TopBar() {
   const appContext = useAppContext();
 
   const accountMenuState = usePopupState({
@@ -62,13 +31,17 @@ export default function TopBar(props: TopBarProps) {
     appContext.setLoginStatus(false, '');
   };
 
+  const onNavBurgerClick = () => {
+    PubSub.publishSync('NAV.BURGERCLICK');
+  }
+
   return (
-    <MuiAppBar position="fixed" elevation={1}>
+    <AppBar position="fixed" elevation={1}>
       <Toolbar>
         <IconButton
           color="inherit"
           aria-label="open drawer"
-          onClick={props.onNavBurgerClick}
+          onClick={onNavBurgerClick}
           edge="start"
         >
           <MenuIcon />
@@ -99,6 +72,6 @@ export default function TopBar(props: TopBarProps) {
           </Popover>
         </div>
       </Toolbar>
-    </MuiAppBar>
+    </AppBar>
   );
 }
