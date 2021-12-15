@@ -74,6 +74,7 @@ export default function Home() {
             selected: ident
         });
 
+        toggleNav();
         PubSub.publish('NAV.ITEMCLICK', { ident: ident });
     };
 
