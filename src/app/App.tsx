@@ -50,20 +50,18 @@ export default function App() {
       <CssBaseline />
       <ModalProvider beta={true}>
         <AppContextProvider value={state}>
-          <Container maxWidth="xl">
-            <Router>
-              <Switch>
-                <Route path="/login" component={Login} />
-                <Route path="/register" component={Register} />
-                <Route path="/forgot-password" component={ForgotPassword} />
-                <PrivateRoute
-                  path="/"
-                  component={Home}
-                  loggedIn={state.loggedIn}
-                />
-              </Switch>
-            </Router>
-          </Container>
+          <Router>
+            <Switch>
+              <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
+              <Route path="/forgot-password" component={ForgotPassword} />
+              <PrivateRoute
+                path="/"
+                component={Home}
+                loggedIn={state.loggedIn}
+              />
+            </Switch>
+          </Router>
         </AppContextProvider>
         <Toast />
       </ModalProvider>

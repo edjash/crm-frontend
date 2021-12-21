@@ -3,7 +3,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { Box, IconButton } from '@mui/material';
+import { AppBar, Box, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CountrySelect, { CountryType } from '../../components/CountrySelect';
 import Overlay from '../../components/Overlay';
@@ -82,7 +82,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         <Dialog
             open={props.open}
             onClose={props.onClose}
-            maxWidth="xl"
+            fullScreen={false}
         >
             <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 {title}

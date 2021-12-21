@@ -1,5 +1,6 @@
 import ContactsIcon from '@mui/icons-material/AccountBox';
 import CompaniesIcon from '@mui/icons-material/Business';
+import { Paper } from '@mui/material';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
