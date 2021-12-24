@@ -37,12 +37,14 @@ export default function TopBar() {
 
   return (
     <AppBar position="fixed" elevation={1}>
-      <Toolbar>
+      <Toolbar disableGutters sx={{ml:2, mr: 3}}>
         <IconButton
           color="inherit"
           aria-label="open drawer"
           onClick={onNavBurgerClick}
           edge="start"
+          sx={{ mr: 4 }}
+          size="small"
         >
           <MenuIcon />
         </IconButton>
