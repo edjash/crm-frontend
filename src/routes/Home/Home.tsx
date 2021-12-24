@@ -104,6 +104,9 @@ export default function Home() {
 
     const theme = useTheme();
     const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+    const margin = (isDesktop) ? 1 : 0;
+
+    console.log("IS_DESKTOP", isDesktop);
 
     const [state, setState] = useState({
         navOpen: false,
@@ -115,8 +118,6 @@ export default function Home() {
             ...state,
             selected: ident
         });
-
-        console.log("STATE", isDesktop);
 
         if (!isDesktop) {
             toggleNav();
@@ -183,7 +184,7 @@ export default function Home() {
                     </ListItem>
                 </List>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, position: 'relative', marginLeft:1, marginRight: 1}}>
+            <Box component="main" sx={{ flexGrow: 1, position: 'relative', marginLeft: margin, marginRight: margin }}>
                 <DrawerHeader />
                 <TabPanel value={state.selected} ident="contacts">
                     <Contacts />

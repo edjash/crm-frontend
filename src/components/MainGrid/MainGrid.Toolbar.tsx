@@ -1,5 +1,4 @@
 import AddIcon from '@mui/icons-material/AddCircleOutlined';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, IconButton, InputAdornment, useMediaQuery, useTheme } from '@mui/material';
 import TextField from '@mui/material/TextField';
@@ -10,7 +9,6 @@ import { ChangeEvent, useMemo, useState } from 'react';
 interface ToolbarProps {
     onSearch?: (value: string) => void;
     onCreateClick?: () => void;
-    onRefreshClick?: () => void;
     onPageChange?: (page: number) => void;
     title: string,
     pageCount: number;
@@ -45,12 +43,14 @@ export default function MainGridToolbar(props: ToolbarProps) {
         }
     };
 
+    const selectionMode = false;
+
     return (
         <Toolbar
             style={{ paddingLeft: 0, paddingRight: 0 }}
             sx={{
                 display: 'flex',
-                justifyContent: 'space-between',
+                justifyContent: 'left',
             }}>
 
             <IconButton onClick={props.onCreateClick} size="large">
@@ -71,12 +71,6 @@ export default function MainGridToolbar(props: ToolbarProps) {
                     fullWidth
                     variant="standard"
                 />
-            </Box>
-
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton onClick={props.onRefreshClick}>
-                    <RefreshIcon />
-                </IconButton>
             </Box>
         </Toolbar>
     );

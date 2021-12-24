@@ -1,4 +1,5 @@
-import { Box, TablePagination } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { Box, IconButton, TablePagination } from '@mui/material';
 import { useGridApiContext, useGridState } from '@mui/x-data-grid';
 
 interface FooterProps {
@@ -38,9 +39,14 @@ export default function MainGridFooter(props: FooterProps) {
     return (
         <Box sx={{
             display: 'flex',
-            justifyContent: 'right'
+            justifyContent: 'center'
         }}>
             {PaginationElement}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton>
+                    <RefreshIcon />
+                </IconButton>
+            </Box>
         </Box>
     );
 }

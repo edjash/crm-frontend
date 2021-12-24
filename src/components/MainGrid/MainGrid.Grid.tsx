@@ -1,19 +1,21 @@
+import { Delete } from '@mui/icons-material/';
+import { Box } from '@mui/system';
 import {
     DataGrid,
+    GridCallbackDetails,
     GridColDef,
     GridRowData,
     GridRowId,
-    GridValueFormatterParams,
+    GridSelectionModel,
+    GridValueFormatterParams
 } from '@mui/x-data-grid';
-import { ReactChild } from 'react';
-import { Delete } from '@mui/icons-material/';
-import ActionButton from './MainGrid.ActionButton';
-import GridToolbar from './MainGrid.Toolbar';
-import LoadingOverlay from './MainGrid.LoadingOverlay';
-import GridInnerToolbar from './MainGrid.InnerToolbar';
-import MainGridFooter from './MainGrid.Footer';
-import { Box } from '@mui/system';
 import uniqueId from 'lodash/uniqueId';
+import { ReactChild, useState } from 'react';
+import ActionButton from './MainGrid.ActionButton';
+import MainGridFooter from './MainGrid.Footer';
+import SelectionToolbar from './MainGrid.SelectionToolbar';
+import LoadingOverlay from './MainGrid.LoadingOverlay';
+import GridToolbar from './MainGrid.Toolbar';
 
 export interface GridProps {
     rows: GridRowData[];
@@ -29,7 +31,6 @@ export interface GridProps {
     deleteIds: GridRowId[],
     onSearch?: (value: string) => void;
     onCreateClick?: () => void;
-    onRefreshClick?: () => void;
     onPageChange?: (page: number) => void;
     onEdit?: () => void;
     onDelete?: (rowIds: GridRowId[]) => void;
@@ -46,6 +47,11 @@ const queryWrapped = (query: string): ReactChild => {
 
 export default function MainGrid(props: GridProps) {
     const actionWidth = 42;
+
+    const [state, setState] = useState({
+        displaySelectionToolbar: false,
+        selectedGridRows: [] as GridRowId[],
+    });
 
     const cellRenderer = (params: GridValueFormatterParams) => {
 
@@ -128,19 +134,36 @@ export default function MainGrid(props: GridProps) {
 
     const columns = props.columns.map(v => ({ ...v, renderCell: cellRenderer }));
 
+    const onSelectionChange = (
+        selRows: GridSelectionModel,
+        details: GridCallbackDetails) => {
+
+        setState({
+            ...state,
+            displaySelectionToolbar: (selRows.length > 0),
+            selectedGridRows: selRows
+        });
+    }
+
     return (
         <>
-            <GridToolbar
-                onSearch={props.onSearch}
-                onCreateClick={props.onCreateClick}
-                onRefreshClick={props.onRefreshClick}
-                title={props.title}
-                onPageChange={props.onPageChange}
-                pageCount={props.pageCount}
-                page={props.page}
-                loading={props.loading}
-                searchChanged={props.searchChanged}
-            />
+            {state.displaySelectionToolbar ?
+                <SelectionToolbar
+                    selRows={state.selectedGridRows}
+                    onDelete={props.onDelete}
+                />
+                :
+                <GridToolbar
+                    onSearch={props.onSearch}
+                    onCreateClick={props.onCreateClick}
+                    title={props.title}
+                    onPageChange={props.onPageChange}
+                    pageCount={props.pageCount}
+                    page={props.page}
+                    loading={props.loading}
+                    searchChanged={props.searchChanged}
+                />
+            }
             <DataGrid
                 columns={columns}
                 rows={props.rows}
@@ -154,13 +177,15 @@ export default function MainGrid(props: GridProps) {
                 disableColumnMenu
                 autoHeight={true}
                 disableColumnSelector={true}
+                onSelectionModelChange={onSelectionChange}
+                sx={{
+                    border: 0
+                }}
                 components={{
-                    Toolbar: GridInnerToolbar,
                     LoadingOverlay: LoadingOverlay,
                     Footer: MainGridFooter
                 }}
                 componentsProps={{
-                    toolbar: { onDelete: props.onDelete },
                     footer: {
                         rowCount: props.rowCount,
                         page: props.page,

@@ -201,7 +201,6 @@ export default function Companies() {
             columns={columns}
             onSearch={onSearch}
             onCreateClick={onCreateClick}
-            onRefreshClick={onRefreshClick}
             onPageChange={onPageChange}
             onDelete={onDelete}
         />

@@ -9,6 +9,11 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiUseMediaQuery: {
+      defaultProps: {
+        noSsr: true,
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: `
         body, html, #root {
@@ -23,7 +28,7 @@ const theme = createTheme({
     button: {
       textTransform: 'none',
     },
-  },
+  }
 });
 
 export default theme;
