@@ -13,7 +13,8 @@ export default function Companies() {
     const { showModal } = useModal();
 
     const [gridState, setGridState] = useState<GridProps>({
-        title: 'Companies',
+        title: 'Company',
+        titlePlural: 'Companies',
         searchQuery: '',
         searchChanged: false,
         rows: [],

@@ -13,7 +13,8 @@ export default function Contacts() {
   const { showModal } = useModal();
 
   const [gridState, setGridState] = useState<GridProps>({
-    title: 'Contacts',
+    title: 'Contact',
+    titlePlural:'Contacts',
     searchQuery: '',
     searchChanged: false,
     rows: [],
@@ -23,7 +24,7 @@ export default function Contacts() {
     page: 1,
     rowCount: 10,
     rowsPerPage: 10,
-    pageCount: 10,
+    pageCount: 10, 
   });
 
   const onDelete = (rowIds: GridRowId[]) => {

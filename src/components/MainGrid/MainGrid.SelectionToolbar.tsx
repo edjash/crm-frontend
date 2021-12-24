@@ -26,8 +26,7 @@ export default function MainGridSelectionToolbar(props: ToolbarProps) {
     };
 
     return (
-        <Toolbar
-            style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <Toolbar disableGutters>
             <Button variant="outlined" onClick={handleDelete}>{deleteText}</Button>
         </Toolbar >
     );

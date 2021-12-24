@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/AddCircleOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, IconButton, InputAdornment, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Divider, IconButton, InputAdornment, useMediaQuery, useTheme } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
 import debounce from 'lodash/debounce';
@@ -11,6 +11,7 @@ interface ToolbarProps {
     onCreateClick?: () => void;
     onPageChange?: (page: number) => void;
     title: string,
+    titlePlural: string;
     pageCount: number;
     page: number;
     loading: boolean;
@@ -43,23 +44,33 @@ export default function MainGridToolbar(props: ToolbarProps) {
         }
     };
 
-    const selectionMode = false;
-
     return (
         <Toolbar
-            style={{ paddingLeft: 0, paddingRight: 0 }}
-            sx={{
-                display: 'flex',
-                justifyContent: 'left',
-            }}>
-
-            <IconButton onClick={props.onCreateClick} size="large">
-                <AddIcon fontSize="inherit" />
-            </IconButton>
-            <Box sx={{ display: 'inline' }}>
+            disableGutters
+            sx={{ display: 'flex', justifyContent: 'left' }}
+        >
+            <Box sx={{ gap: 30 }}>
+                {isDesktop ?
+                    <Button
+                        size="large"
+                        startIcon={<AddIcon fontSize="inherit" htmlColor="white" />}
+                        onClick={props.onCreateClick}
+                        sx={{color:'text.primary'}}
+                    >
+                        Create {props.title}
+                    </Button>
+                    :
+                    <IconButton onClick={props.onCreateClick} size="large">
+                        <AddIcon fontSize="inherit" />
+                    </IconButton>
+                }
+            </Box>
+            <Divider orientation="vertical" flexItem sx={{ height: 30, mr: '10px', ml: '10px', alignSelf: 'center' }} />
+            <Box sx={{ flexGrow: 0.2 }}>
                 <TextField
                     type="search"
-                    placeholder={`Search ${props.title}`}
+                    size="small"
+                    placeholder={`Search ${props.titlePlural}`}
                     onChange={onSearch}
                     InputProps={{
                         startAdornment: (

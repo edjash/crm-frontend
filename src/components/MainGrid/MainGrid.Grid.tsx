@@ -21,6 +21,7 @@ export interface GridProps {
     rows: GridRowData[];
     columns: GridColDef[];
     title: string;
+    titlePlural: string;
     loading: boolean;
     page: number;
     rowCount: number;
@@ -157,6 +158,7 @@ export default function MainGrid(props: GridProps) {
                     onSearch={props.onSearch}
                     onCreateClick={props.onCreateClick}
                     title={props.title}
+                    titlePlural={props.titlePlural}
                     onPageChange={props.onPageChange}
                     pageCount={props.pageCount}
                     page={props.page}

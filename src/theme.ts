@@ -5,7 +5,7 @@ const theme = createTheme({
   palette: {
     mode: 'dark',
     info: {
-      main: '#263238',
+      main: '#CCCCCC',
     },
   },
   components: {
@@ -27,6 +27,7 @@ const theme = createTheme({
   typography: {
     button: {
       textTransform: 'none',
+      color:'red'
     },
   }
 });
