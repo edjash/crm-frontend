@@ -2,7 +2,7 @@ import ContactsIcon from '@mui/icons-material/AccountBox';
 import CompaniesIcon from '@mui/icons-material/Business';
 import { useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
-import MuiDrawer, { DrawerProps } from '@mui/material/Drawer';
+import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -100,13 +100,48 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
 }));
 
+type DrawerProps = {
+    open: boolean;
+    isDesktop: boolean;
+    children: React.ReactNode;
+    onClose: () => void;
+};
+
+const Drawer = (props: DrawerProps) => {
+    if (!props.isDesktop) {
+        return (
+            <MuiDrawer
+                anchor="left"
+                open={props.open}
+                onClose={props.onClose}
+                ModalProps={{
+                    keepMounted: true,
+                }}
+            >
+                {props.children}
+            </MuiDrawer>);
+    }
+    return (
+        <DesktopDrawer
+            anchor="left"
+            open={props.open}
+            PaperProps={{ elevation: 1 }}
+            sx={{ zIndex: 1 }}
+            variant="permanent"
+            ModalProps={{
+                keepMounted: true,
+            }}
+        >
+            {props.children}
+        </DesktopDrawer>
+    );
+};
+
 export default function Home() {
 
     const theme = useTheme();
     const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
     const margin = (isDesktop) ? 1 : 0;
-
-    console.log("IS_DESKTOP", isDesktop);
 
     const [state, setState] = useState({
         navOpen: false,
@@ -149,29 +184,10 @@ export default function Home() {
         }
     }, []);
 
-
-    let Drawer = (props: DrawerProps) => {
-        if (!isDesktop) {
-            return <MuiDrawer anchor="left" variant="temporary" open={props.open}>{props.children}</MuiDrawer>;
-        }
-        return <DesktopDrawer {...props} />;
-    };
-
-
-
     return (
         <Box sx={{ display: 'flex', width: '100%' }}>
             <TopBar />
-            <Drawer
-                open={state.navOpen}
-                anchor="left"
-                PaperProps={{ elevation: 1 }}
-                sx={{ zIndex: 1 }}
-                variant="permanent"
-                ModalProps={{
-                    keepMounted: true,
-                }}
-            >
+            <Drawer isDesktop={isDesktop} onClose={closeNav} open={state.navOpen}>
                 <DrawerHeader />
                 <List>
                     <ListItem button key="contacts"
