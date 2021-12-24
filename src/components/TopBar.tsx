@@ -43,7 +43,7 @@ export default function TopBar() {
           aria-label="open drawer"
           onClick={onNavBurgerClick}
           edge="start"
-          sx={{ mr: 4 }}
+          sx={{ mr: 2 }}
           size="small"
         >
           <MenuIcon />

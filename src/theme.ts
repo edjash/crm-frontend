@@ -27,9 +27,8 @@ const theme = createTheme({
   typography: {
     button: {
       textTransform: 'none',
-      color:'red'
     },
-  }
+  },
 });
 
 export default theme;
