@@ -1,14 +1,14 @@
 import ContactsIcon from '@mui/icons-material/AccountBox';
 import CompaniesIcon from '@mui/icons-material/Business';
-import { Paper } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
+import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { styled } from '@mui/material/styles';
-import { SystemProps } from '@mui/system';
+import { styled, Theme, useTheme } from '@mui/material/styles';
+import { CSSObject, SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
 import { useEffect, useState } from 'react';
 import { Companies } from '../../components/Companies';
@@ -51,6 +51,46 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
+const drawerWidth = 240;
+
+const openedMixin = (theme: Theme): CSSObject => ({
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+    }),
+    overflowX: 'hidden',
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+    width: `calc(${theme.spacing(7)} + 1px)`,
+    [theme.breakpoints.up('sm')]: {
+        width: `calc(${theme.spacing(9)} + 1px)`,
+    },
+});
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+    ({ theme, open }) => ({
+        width: drawerWidth,
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+        boxSizing: 'border-box',
+        ...(open && {
+            ...openedMixin(theme),
+            '& .MuiDrawer-paper': openedMixin(theme),
+        }),
+        ...(!open && {
+            ...closedMixin(theme),
+            '& .MuiDrawer-paper': closedMixin(theme),
+        }),
+    }),
+);
+
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -62,9 +102,12 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function Home() {
 
+    const theme = useTheme();
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
     const [state, setState] = useState({
         navOpen: false,
-        selected: 'contacts'
+        selected: 'contacts',
     });
 
     const onNavClick = (ident: string) => {
@@ -73,7 +116,12 @@ export default function Home() {
             selected: ident
         });
 
-        toggleNav();
+        console.log("STATE", isDesktop);
+
+        if (!isDesktop) {
+            toggleNav();
+        }
+
         PubSub.publish('NAV.ITEMCLICK', { ident: ident });
     };
 
@@ -108,9 +156,11 @@ export default function Home() {
                 open={state.navOpen}
                 anchor="left"
                 PaperProps={{ elevation: 1 }}
-                onClose={closeNav}
-                sx={{ zIndex: 1 }}
-                variant="temporary"
+
+                sx={{
+                    zIndex: 1,
+                }}
+                variant="permanent"
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -133,7 +183,7 @@ export default function Home() {
                     </ListItem>
                 </List>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, position: 'relative', }}>
+            <Box component="main" sx={{ flexGrow: 1, position: 'relative', marginLeft:1, marginRight: 1}}>
                 <DrawerHeader />
                 <TabPanel value={state.selected} ident="contacts">
                     <Contacts />
