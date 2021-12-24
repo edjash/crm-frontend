@@ -2,7 +2,7 @@ import ContactsIcon from '@mui/icons-material/AccountBox';
 import CompaniesIcon from '@mui/icons-material/Business';
 import { useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
+import MuiDrawer, { DrawerProps } from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -74,7 +74,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
     },
 });
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+const DesktopDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
         width: drawerWidth,
         flexShrink: 0,
@@ -150,6 +150,15 @@ export default function Home() {
     }, []);
 
 
+    let Drawer = (props: DrawerProps) => {
+        if (!isDesktop) {
+            return <MuiDrawer anchor="left" variant="temporary" open={props.open}>{props.children}</MuiDrawer>;
+        }
+        return <DesktopDrawer {...props} />;
+    };
+
+
+
     return (
         <Box sx={{ display: 'flex', width: '100%' }}>
             <TopBar />
@@ -157,10 +166,7 @@ export default function Home() {
                 open={state.navOpen}
                 anchor="left"
                 PaperProps={{ elevation: 1 }}
-
-                sx={{
-                    zIndex: 1,
-                }}
+                sx={{ zIndex: 1 }}
                 variant="permanent"
                 ModalProps={{
                     keepMounted: true,
