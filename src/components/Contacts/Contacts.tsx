@@ -14,7 +14,7 @@ export default function Contacts() {
 
   const [gridState, setGridState] = useState<GridProps>({
     title: 'Contact',
-    titlePlural:'Contacts',
+    titlePlural: 'Contacts',
     searchQuery: '',
     searchChanged: false,
     rows: [],
@@ -24,7 +24,7 @@ export default function Contacts() {
     page: 1,
     rowCount: 10,
     rowsPerPage: 10,
-    pageCount: 10, 
+    pageCount: 10,
   });
 
   const onDelete = (rowIds: GridRowId[]) => {
@@ -208,6 +208,7 @@ export default function Contacts() {
       onCreateClick={onCreateClick}
       onPageChange={onPageChange}
       onDelete={onDelete}
+      onRefreshClick={onRefreshClick}
     />
   );
 }

@@ -37,7 +37,7 @@ export default function TopBar() {
 
   return (
     <AppBar position="fixed" elevation={1}>
-      <Toolbar disableGutters sx={{ml:2, mr: 3}}>
+      <Toolbar disableGutters sx={{ml:2, mr: 2}}>
         <IconButton
           color="inherit"
           aria-label="open drawer"

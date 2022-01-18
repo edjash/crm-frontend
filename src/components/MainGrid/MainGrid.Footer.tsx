@@ -9,6 +9,7 @@ interface FooterProps {
     page: number;
     loading: boolean;
     searchChanged: boolean;
+    onRefreshClick?: () => void;
 }
 
 export default function MainGridFooter(props: FooterProps) {
@@ -43,7 +44,7 @@ export default function MainGridFooter(props: FooterProps) {
         }}>
             {PaginationElement}
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton>
+                <IconButton onClick={props.onRefreshClick}>
                     <RefreshIcon />
                 </IconButton>
             </Box>

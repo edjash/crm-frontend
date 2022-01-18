@@ -35,6 +35,7 @@ export interface GridProps {
     onPageChange?: (page: number) => void;
     onEdit?: () => void;
     onDelete?: (rowIds: GridRowId[]) => void;
+    onRefreshClick?: () => void;
 }
 
 const queryWrapped = (query: string): ReactChild => {
@@ -194,6 +195,7 @@ export default function MainGrid(props: GridProps) {
                         pageCount: props.pageCount,
                         onPageChange: props.onPageChange,
                         searchChanged: props.searchChanged,
+                        onRefreshClick: props.onRefreshClick
                     }
                 }}
             />

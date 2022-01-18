@@ -204,6 +204,7 @@ export default function Companies() {
             onCreateClick={onCreateClick}
             onPageChange={onPageChange}
             onDelete={onDelete}
+            onRefreshClick={onRefreshClick}
         />
 
     );
