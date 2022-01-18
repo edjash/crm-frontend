@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
-  if (mode === 'staging') {
+  if (mode === 'staging' || mode == 'production') {
     return {
       base: '/',
       plugins: [react()],
