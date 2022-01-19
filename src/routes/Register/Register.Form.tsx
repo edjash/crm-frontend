@@ -12,6 +12,7 @@ interface RegisterFormProps {
 export default function RegisterForm(props: RegisterFormProps) {
   return (
     <form onSubmit={props.onSubmit}>
+      <h2>Registration is disabled for this demo</h2>
       <Box sx={{ display: 'grid', rowGap: 1 }}>
         <TextField
           variant="outlined"
@@ -46,7 +47,7 @@ export default function RegisterForm(props: RegisterFormProps) {
           autoComplete=""
           onChange={props.onChange}
         />
-        <Button type="submit" fullWidth variant="contained" color="primary">
+        <Button type="submit" fullWidth variant="contained" color="primary" disabled={true}>
           Sign Up
         </Button>
         <Link to="/login">
