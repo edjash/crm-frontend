@@ -118,7 +118,7 @@ const Drawer = (props: DrawerProps) => {
                     keepMounted: true,
                 }}
             >
-                <Typography variant="h7" sx={{
+                <Typography variant="subtitle2" sx={{
                     textAlign: 'center',
                     padding: 3,
                     overflow: 'hidden',
