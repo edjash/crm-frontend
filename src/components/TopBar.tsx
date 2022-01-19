@@ -49,7 +49,7 @@ export default function TopBar() {
           <MenuIcon />
         </IconButton>
         <Typography variant="h5" sx={{ flexGrow: 1 }}>
-          Ed CRM
+          Demo Company
         </Typography>
         <span className="spacer" />
         <div>

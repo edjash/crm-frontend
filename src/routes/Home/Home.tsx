@@ -1,6 +1,6 @@
 import ContactsIcon from '@mui/icons-material/AccountBox';
 import CompaniesIcon from '@mui/icons-material/Business';
-import { useMediaQuery } from '@mui/material';
+import { Typography, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -118,6 +118,14 @@ const Drawer = (props: DrawerProps) => {
                     keepMounted: true,
                 }}
             >
+                <Typography variant="h7" sx={{
+                    textAlign: 'center',
+                    padding: 3,
+                    overflow: 'hidden',
+                    mb: 1
+                }}>
+                    <i>CRMdemo</i>
+                </Typography>
                 {props.children}
             </MuiDrawer>);
     }
@@ -132,6 +140,7 @@ const Drawer = (props: DrawerProps) => {
                 keepMounted: true,
             }}
         >
+            <DrawerHeader />
             {props.children}
         </DesktopDrawer>
     );
@@ -188,7 +197,6 @@ export default function Home() {
         <Box sx={{ display: 'flex', width: '100%' }}>
             <TopBar />
             <Drawer isDesktop={isDesktop} onClose={closeNav} open={state.navOpen}>
-                <DrawerHeader />
                 <List>
                     <ListItem button key="contacts"
                         onClick={() => { onNavClick('contacts'); }}
