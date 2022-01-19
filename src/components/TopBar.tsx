@@ -66,7 +66,7 @@ export default function TopBar() {
                 <ListItemIcon><PowerSettingsNewIcon fontSize="small" /></ListItemIcon>
                 <ListItemText primary="Logout" />
               </ListItem>
-              <ListItem button onClick={accountMenuState.close}>
+              <ListItem button onClick={accountMenuState.close} disabled={true}>
                 <ListItemIcon><PersonIcon fontSize="small" /></ListItemIcon>
                 <ListItemText primary="My Account" />
               </ListItem>
