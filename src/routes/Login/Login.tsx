@@ -30,6 +30,8 @@ export default function Login() {
     localStorage.removeItem('token');
     setState({ ...state, isLoading: true });
 
+    console.log("Submit");
+
     apiClient
       .post(
         '/login',
@@ -40,15 +42,12 @@ export default function Login() {
       )
       .then((response) => {
         setState({ ...state, isLoading: false });
-        if (response.statusText === 'OK') {
-          appContext.setLoginStatus(true, response.data.access_token);
-
-          PubSub.publish('TOAST.SHOW', {
-            message: 'Successfully Logged In',
-            autoHide: true,
-          });
-          history.push('/');
-        }
+        appContext.setLoginStatus(true, response.data.access_token);
+        PubSub.publish('TOAST.SHOW', {
+          message: 'Successfully Logged In',
+          autoHide: true,
+        });
+        history.push('/');
       })
       .catch((error) => {
         setState({ ...state, isLoading: false });
