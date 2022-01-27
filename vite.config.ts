@@ -17,10 +17,10 @@ export default defineConfig(({ command, mode }) => {
     return {
       base: '/',
       plugins: [react()],
-      server:{
-        port:9000,
-        host:'0.0.0.0',
-      }
+      server: {
+        port: 9000,
+        host: '0.0.0.0',
+      },
     };
   }
 });
