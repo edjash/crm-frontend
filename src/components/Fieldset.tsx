@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 
 
 type FieldsetProps = {
@@ -8,9 +9,11 @@ type FieldsetProps = {
 export default function Fieldset(props: FieldsetProps) {
 
     return (
-        <fieldset style={{ borderRadius:'6px', }}>
+        <fieldset style={{ borderRadius: '6px' }}>
             <legend className=""><span>{props.label}</span></legend>
-            {props.children}
+            <Box m={1}>
+                {props.children}
+            </Box>
         </fieldset>
     );
 }

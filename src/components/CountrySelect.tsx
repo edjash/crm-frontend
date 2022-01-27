@@ -1,8 +1,9 @@
 import TextFieldEx from './TextFieldEx';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import React, { ChangeEvent, SyntheticEvent } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import apiClient from './apiClient';
+import { TextField } from '@mui/material';
 
 export type CountryType = {
     name: string;
@@ -11,16 +12,19 @@ export type CountryType = {
 
 export type CountrySelectProps = {
     className?: string;
-    name?: string
+    name?: string;
+    value?: string;
     onChange?: (event: ChangeEvent<{}>, value: CountryType | null) => void;
 };
 
 export default function CountrySelect(props: CountrySelectProps) {
-    const [open, setOpen] = React.useState(false);
-    const [options, setOptions] = React.useState<CountryType[]>([]);
+    const [open, setOpen] = useState(false);
+    const [options, setOptions] = useState<CountryType[]>([]);
+    const [selectedCode, setSelected] = useState<string | null>(null);
+
     const loading = open && options.length === 0;
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!loading) {
             return undefined;
         }
@@ -32,43 +36,56 @@ export default function CountrySelect(props: CountrySelectProps) {
             })
     }, [loading]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!open) {
             setOptions([]);
         }
     }, [open]);
 
+    const onChange = (event: ChangeEvent<{}>, value: CountryType | null) => {
+
+        const code = value?.code ?? null;
+
+        setSelected(code);
+
+        if (props.onChange) {
+            props.onChange(event, value);
+        }
+    }
+
     return (
-        <Autocomplete
-            className="countrySelect"
-            open={open}
-            onOpen={() => {
-                setOpen(true);
-            }}
-            onClose={() => {
-                setOpen(false);
-            }}
-            isOptionEqualToValue={(option, value) => option.name === value.name}
-            getOptionLabel={(option) => option.name}
-            options={options}
-            loading={loading}
-            onChange={props.onChange}
-            renderInput={(params) => (
-                <TextFieldEx
-                    {...params}
-                    name={props.name}
-                    label="Country"
-                    InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                            <React.Fragment>
-                                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                                {params.InputProps.endAdornment}
-                            </React.Fragment>
-                        ),
-                    }}
-                />
-            )}
-        />
+        <>
+            <Autocomplete
+                className="countrySelect"
+                open={open}
+                onOpen={() => {
+                    setOpen(true);
+                }}
+                onClose={() => {
+                    setOpen(false);
+                }}
+                isOptionEqualToValue={(option, value) => option.name === value.name}
+                getOptionLabel={(option) => option.name}
+                options={options}
+                loading={loading}
+                onChange={onChange}
+                renderInput={(params) => (
+                    <TextFieldEx
+                        {...params}
+                        label="Country"
+                        InputProps={{
+                            ...params.InputProps,
+                            endAdornment: (
+                                <React.Fragment>
+                                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                    {params.InputProps.endAdornment}
+                                </React.Fragment>
+                            ),
+                        }}
+                    />
+                )}
+            />
+            <TextFieldEx name={props.name} value={selectedCode ?? ''} sx={{ display: 'none' }} />
+        </>
     );
 }
