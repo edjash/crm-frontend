@@ -2,4 +2,10 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import App from './app/App';
 
-ReactDOM.render(React.createElement(App), document.getElementById('root'));
+ReactDOM.render(
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
+    ,
+    document.getElementById('root')
+);
