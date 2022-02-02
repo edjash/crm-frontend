@@ -43,6 +43,16 @@ export function getFieldValues(form: HTMLFormElement) {
     return iterateFormControls(form.children, {});
 }
 
+export function getJsonFieldValues(form: HTMLFormElement) {
+    const inputValues = getFieldValues(form);
+    let data = {};
+    Object.keys(inputValues).map((key) => {
+
+    });
+
+    return inputValues;
+}
+
 export function getErrorMessages(errorResponse: AxiosResponse): ErrorMessages {
     const errors: ErrorMessages = {};
 
@@ -51,8 +61,21 @@ export function getErrorMessages(errorResponse: AxiosResponse): ErrorMessages {
     }
 
     Object.keys(errorResponse.data.errors).map((key, index) => {
-        errors[key] = errorResponse.data.errors[key][0];
+        const msg = errorResponse.data.errors[key][0];
+        const keyArray = key.split('.');
+
+        if (keyArray.length > 1) {
+            const newKey = [keyArray.shift()];
+            keyArray.map((part) => {
+                newKey.push(`[${part}]`);
+            });
+            key = newKey.join('');
+        }
+
+        errors[key] = msg;
     });
+
+    console.log("ERR", errors);
     return errors;
 }
 
@@ -61,4 +84,19 @@ export function isValidationError(errorResponse: AxiosResponse): boolean {
         return false;
     }
     return true;
+}
+
+export function flattenObject(obj: object, keySeparator = '.') {
+    const flattenRecursive = (obj: object, parentProperty?: string, propertyMap: Record<string, unknown> = {}) => {
+        for (const [key, value] of Object.entries(obj)) {
+            const property = parentProperty ? `${parentProperty}${keySeparator}${key}` : key;
+            if (value && typeof value === 'object') {
+                flattenRecursive(value, property, propertyMap);
+            } else {
+                propertyMap[property] = value;
+            }
+        }
+        return propertyMap;
+    };
+    return flattenRecursive(obj);
 }

@@ -30,16 +30,13 @@ export default function Login() {
     localStorage.removeItem('token');
     setState({ ...state, isLoading: true });
 
-    console.log("Submit");
-
-    apiClient
-      .post(
-        '/login',
-        {
-          ...state.fieldValues,
-        },
-        false
-      )
+    apiClient.post(
+      '/login',
+      {
+        ...state.fieldValues,
+      },
+      false
+    )
       .then((response) => {
         setState({ ...state, isLoading: false });
         appContext.setLoginStatus(true, response.data.access_token);

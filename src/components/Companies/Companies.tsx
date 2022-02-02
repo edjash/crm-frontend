@@ -191,7 +191,7 @@ export default function Companies() {
             headerName: 'Address',
             width: 410,
             valueGetter: (params: any) => {
-                return params.row.address[0].full_address;
+                return params.row.address[0]?.full_address;
             },
         }
     ];

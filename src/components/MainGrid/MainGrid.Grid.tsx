@@ -134,7 +134,8 @@ export default function MainGrid(props: GridProps) {
         },
     }];
 
-    const columns = props.columns.map(v => ({ ...v, renderCell: cellRenderer }));
+    //const columns = props.columns.map(v => ({ ...v, renderCell: cellRenderer }));
+    const columns = props.columns;
 
     const onSelectionChange = (
         selRows: GridSelectionModel,

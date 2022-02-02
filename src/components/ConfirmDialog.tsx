@@ -7,11 +7,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 type ConfirmProps = Omit<DialogProps, 'onExited'> & {
   title?: string;
-  content: string | JSX.Element | JSX.Element[];
+  content?: string | JSX.Element | JSX.Element[];
   confirmButtonText?: string;
   cancelButtonText?: string;
-  onCancel: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  onConfirm: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onCancel: () => void;
+  onConfirm: () => void;
 };
 
 export default function ConfirmDialog(props: ConfirmProps) {

@@ -14,6 +14,7 @@ export type CountrySelectProps = {
     className?: string;
     name?: string;
     value?: string;
+    defaultValue?: CountryType;
     onChange?: (event: ChangeEvent<{}>, value: CountryType | null) => void;
 };
 
@@ -42,14 +43,14 @@ export default function CountrySelect(props: CountrySelectProps) {
         }
     }, [open]);
 
-    const onChange = (event: ChangeEvent<{}>, value: CountryType | null) => {
+    const onChange = (event: ChangeEvent<{}>, opt: CountryType | null) => {
 
-        const code = value?.code ?? null;
+        const code = opt?.code ?? null;
 
         setSelected(code);
 
         if (props.onChange) {
-            props.onChange(event, value);
+            props.onChange(event, opt);
         }
     }
 

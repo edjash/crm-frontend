@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
-import apiClient from '../apiClient';
-import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
-import { GridRowId, GridColDef } from '@mui/x-data-grid';
-import ConfirmDialog from '../ConfirmDialog';
-import { useModal } from 'mui-modal-provider';
-import CreateEditDlg from './Contacts.CreateEdit';
-import PubSub from 'pubsub-js'
+import { Link } from '@mui/material';
+import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
 import { Method } from 'axios';
+import { useModal } from 'mui-modal-provider';
+import PubSub from 'pubsub-js';
+import { useEffect, useState } from 'react';
+import apiClient from '../apiClient';
+import ConfirmDialog from '../ConfirmDialog';
+import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
+import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
 
 export default function Contacts() {
 
@@ -138,11 +139,24 @@ export default function Contacts() {
     }
   };
 
-  const onCreateClick = () => {
+  const onRefreshClick = () => {
+    setGridState({
+      ...gridState,
+      loading: true,
+    });
+    PubSub.publish('TOAST.SHOW', {
+      message: "Refreshed"
+    })
+  };
+
+  const showCreateEditDlg = (props?: ShowCreateEditProps) => {
+    const type = (!props?.id) ? 'new' : 'edit';
+
     const dlg = showModal(CreateEditDlg, {
-      type: 'new',
+      type: type,
+      data: props,
       onCancel: () => {
-        dlg.hide();
+        dlg.destroy();
       },
       onSave: () => {
         dlg.destroy();
@@ -150,15 +164,12 @@ export default function Contacts() {
     });
   };
 
-  const onRefreshClick = () => {
-    setGridState({
-      ...gridState,
-      loading: true,
+  const onClickContact = (e: React.MouseEvent, rowData: GridRowModel) => {
+    e.preventDefault();
+    showCreateEditDlg({
+      id: rowData.id,
+      fullname: rowData.fullname,
     });
-
-    PubSub.publish('TOAST.SHOW', {
-      message: "Refreshed"
-    })
   };
 
   useEffect(() => {
@@ -185,6 +196,13 @@ export default function Contacts() {
       field: 'firstname',
       headerName: 'First name',
       width: 250,
+      renderCell: (params: GridRenderCellParams<string>) => {
+        return (
+          <Link href="" onClick={(e) => { onClickContact(e, params.row) }}>
+            {params.value}
+          </Link>
+        );
+      }
     },
     {
       field: 'lastname',
@@ -196,7 +214,7 @@ export default function Contacts() {
       headerName: 'Address',
       width: 410,
       valueGetter: (params: any) => {
-        return params.row.address[0].full_address;
+        return params.row.address[0]?.full_address;
       },
     }];
 
@@ -205,7 +223,7 @@ export default function Contacts() {
       {...gridState}
       columns={columns}
       onSearch={onSearch}
-      onCreateClick={onCreateClick}
+      onCreateClick={showCreateEditDlg}
       onPageChange={onPageChange}
       onDelete={onDelete}
       onRefreshClick={onRefreshClick}

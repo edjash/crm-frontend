@@ -5,84 +5,106 @@ import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useState } from 'react';
-import CountrySelect from '../../components/CountrySelect';
+import { useEffect, useState } from 'react';
+import RemoteSelect, { SelectOption } from '../RemoteSelect';
 import apiClient from '../apiClient';
 import Fieldset from '../Fieldset';
 import * as FormUtil from '../FormUtil';
 import MultiFieldset from '../MultiFieldset';
+import Overlay from '../Overlay';
 import TextFieldEx from '../TextFieldEx';
 
+export interface ShowCreateEditProps {
+    id: number;
+    fullname: string;
+};
+
+interface fieldProps {
+    helperText: string;
+    error: boolean;
+    name: string;
+    defaultValue: string;
+};
+
+interface CreateEditState {
+    loading: boolean;
+    ready: boolean;
+    open: boolean;
+    errors: FormUtil.ErrorMessages;
+    values: Record<string, any>;
+}
+
 type CreateEditProps = DialogProps & {
-    type: string,
+    type: 'new' | 'edit',
+    data?: ShowCreateEditProps,
     onCancel: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     onSave: () => void;
 };
 
-type FormState = {
-    loading: boolean;
-    errors: FormUtil.ErrorMessages;
-};
-
-interface HelperProps {
-    helperText: string;
-    error: boolean;
-};
-
 export default function ContactCreateEdit(props: CreateEditProps) {
 
-    const title = "New Contact";
-
-    const [state, setState] = useState<FormState>({
+    const [state, setState] = useState<CreateEditState>({
         loading: false,
+        ready: (props.type === 'new'),
+        open: (props.type === 'new'),
         errors: {},
+        values: {},
     });
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        let data: FormUtil.FieldValues = FormUtil.getFieldValues(e.currentTarget);
-
         setState({
             ...state,
-            loading: true
+            loading: false
         });
 
-        apiClient.post('/contacts', { ...data })
-            .then((response) => {
-                setState({ ...state, loading: false });
+        const formData: FormData = new FormData(e.currentTarget);
 
-                if (response.statusText === 'OK') {
-                    props.onSave();
+        let url = '/contacts';
+        if (props.type === 'edit' && props.data?.id) {
+            url = `${url}/${props.data.id}`;
+        }
 
-                    PubSub.publish('CONTACTS.REFRESH');
-                    PubSub.publish('TOAST.SHOW', {
-                        message: 'Contact Added',
-                        autoHide: true,
-                    });
-                }
-            })
-            .catch((error) => {
-                if (FormUtil.isValidationError(error)) {
-                    setState({
-                        ...state,
-                        errors: FormUtil.getErrorMessages(error),
-                        loading: false
-                    });
-                } else {
-                    PubSub.publish('TOAST.SHOW', {
-                        autoHide: false,
-                        message: 'An unexpected server error occured.',
-                        type: 'error',
-                    });
-                }
-            });
+        apiClient.postForm(url, formData,).then((response) => {
+            setState({ ...state, loading: false });
+
+            if (response.statusText === 'OK') {
+                props.onSave();
+
+                PubSub.publish('CONTACTS.REFRESH');
+                PubSub.publish('TOAST.SHOW', {
+                    message: 'Contact Added',
+                    autoHide: true,
+                });
+            }
+        }).catch((error) => {
+            if (FormUtil.isValidationError(error)) {
+                setState({
+                    ...state,
+                    errors: FormUtil.getErrorMessages(error),
+                    loading: false
+                });
+            } else {
+                PubSub.publish('TOAST.SHOW', {
+                    autoHide: false,
+                    message: 'An unexpected server error occured.',
+                    type: 'error',
+                });
+                setState({
+                    ...state,
+                    loading: false
+                });
+            }
+        });
     };
 
-    const helperProps = (fieldName: string, defaultText: string = ''): HelperProps => {
-        let ob: HelperProps = {
+    const fieldProps = (fieldName: string, defaultText: string = ''): fieldProps => {
+        let ob: fieldProps = {
+            name: fieldName,
             helperText: state.errors?.[fieldName] || defaultText,
             error: !!(state.errors?.[fieldName]) ?? false,
+            defaultValue: state.values?.[fieldName] ?? ''
         };
         return ob;
     };
@@ -92,16 +114,55 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         if (name && state.errors[name]) {
             const errors = { ...state.errors };
             delete errors[name];
-            setState({
+            setState((state) => ({
                 ...state,
                 errors: errors
-            });
+            }));
         }
+    }
+
+    useEffect(() => {
+        apiClient.get(`/contacts/${props.data?.id}`).then((response) => {
+            let valueData = response.data;
+            let addressArray: Record<string, any>[] = valueData.address;
+
+            addressArray.map((addr, index) => {
+                if (addr.country && addr.country_name) {
+                    addressArray[index].country = {
+                        name: addr?.country_name,
+                        value: addr?.country
+                    };
+                } else {
+                    addressArray[index].country = null;
+                }
+            });
+
+            valueData.address = addressArray;
+            console.log(valueData);
+
+            setState((state) => ({
+                ...state,
+                open: true,
+                values: valueData,
+                ready: true,
+            }));
+        }).catch((error) => {
+
+        });
+    }, []);
+
+    let title = "New Contact";
+
+    if (props.type == 'edit') {
+        if (!state.ready) {
+            return (<Overlay open={true} />);
+        }
+        title = `${state.values?.fullname}`;
     }
 
     return (
         <Dialog
-            open={props.open}
+            open={state.open}
             onClose={props.onClose}
             fullScreen={false}
             scroll="paper"
@@ -120,30 +181,39 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                         <Box display="grid" gap={2}>
                             <Fieldset label="Name">
                                 <Box sx={{ display: 'grid' }}>
-                                    <TextFieldEx name="title" label="Title" sx={{ width: '50%' }} />
-                                    <TextFieldEx name="firstname" label="First Name" required />
-                                    <TextFieldEx name="lastname" label="Last Name" {...helperProps('lastname')} />
+                                    <TextFieldEx {...fieldProps('title')} label="Title" sx={{ width: '50%' }} />
+                                    <TextFieldEx {...fieldProps('firstname')} label="First Name" required />
+                                    <TextFieldEx {...fieldProps('lastname')} label="Last Name" />
                                 </Box>
                             </Fieldset>
                             <MultiFieldset
                                 legend="Email Address"
-                                defaultFieldLabel="Primary"
+                                defaultTabLabel="Primary"
                                 baseName="email"
+                                errors={state.errors}
+                                values={state.values.email_address}
                             >
-                                <TextFieldEx name="email" label="Email Address" />
+                                <TextFieldEx name="address" type="email" label="Email Address" />
                             </MultiFieldset>
                         </Box>
                         <Box sx={{ overflowX: 'hidden', minWidth: 0 }}>
                             <MultiFieldset
                                 baseName="address"
                                 legend="Address"
-                                defaultFieldLabel="Home"
+                                defaultTabLabel="Home"
+                                errors={state.errors}
+                                values={state.values.address}
                             >
                                 <TextFieldEx name="street" label="Street" />
                                 <TextFieldEx name="town" label="Town / City" />
                                 <TextFieldEx name="county" label="County / State" />
                                 <TextFieldEx name="postcode" label="Zip / Postal Code" />
-                                <CountrySelect name="country_code" />
+                                <RemoteSelect
+                                    label="Country"
+                                    url="/countries"
+                                    valueField="code"
+                                    name="country"
+                                />
                             </MultiFieldset>
                         </Box>
                     </Box>
@@ -157,6 +227,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                     </Button>
                 </DialogActions>
             </form>
+            <Overlay open={state.loading} />
         </Dialog>
     );
 }
