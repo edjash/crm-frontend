@@ -199,7 +199,11 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                     <Box display="grid" gridTemplateColumns="auto auto auto" alignItems="start" gap={2}>
                         <Box display="grid" gap={2}>
                             <Fieldset label="Personal">
-                                <Box display="grid" justifyContent="space-between" gridTemplateColumns="1fr">
+                                <Box
+                                    display="grid"
+                                    justifyContent="space-between"
+                                    gridTemplateColumns="1fr"
+                                >
                                     <Avatar
                                         alt={state.values?.firstname}
                                         sx={{
@@ -208,7 +212,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                             alignSelf: 'center',
                                             justifySelf: 'center',
                                             mr: 2,
-                                            mb: 1
+                                            mb: 1,
+                                            color:'#e0e0e0'
                                         }}
                                     />
                                     <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
@@ -285,7 +290,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                             </MultiFieldset>
                             <Fieldset label="Social Media">
                                 {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
-                                    <Box sx={{ display: 'flex', alignItems: 'center'}} gap={1} key={network}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>
                                         <Box>
                                             <SocialIcon network={network.toLowerCase()} fgColor="white" style={{ height: 25, width: 25 }} />
                                         </Box>

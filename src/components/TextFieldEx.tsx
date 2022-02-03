@@ -18,9 +18,7 @@ export default function TextFieldEx(props: TextFieldProps) {
             margin="dense"
             fullWidth
             inputRef={ref}
-            InputLabelProps={{
-                shrink: true,
-            }}
+  
         />
     );
 }
