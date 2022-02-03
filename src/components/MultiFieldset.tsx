@@ -238,7 +238,7 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
             <legend className=""><span>{props.legend}</span></legend>
             <Box sx={{
                 width: {
-                    md: 385
+                    md: 320
                 }
             }}>
                 <Box sx={{
@@ -250,11 +250,11 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
                     <Tabs
                         onChange={onTabChange}
                         variant="scrollable"
-                        scrollButtons={true}
+                        scrollButtons="auto"
                         sx={{
                             flexGrow: 1,
                             width: {
-                                md: 305
+                               
                             }
                         }}
                         value={state.activeTab}
@@ -263,7 +263,7 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
                             <Tab label={values?.label ?? ':-('} value={index} key={index} />
                         ))}
                     </Tabs>
-                    <Box>
+                    <Box sx={{flexShrink:0}}>
                         <IconButton size="small" sx={{ alignSelf: 'center' }} onClick={onAddClick}>
                             <AddIcon fontSize="small" />
                         </IconButton>

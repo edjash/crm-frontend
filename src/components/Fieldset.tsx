@@ -9,9 +9,11 @@ type FieldsetProps = {
 export default function Fieldset(props: FieldsetProps) {
 
     return (
-        <fieldset style={{ borderRadius: '6px' }}>
-            <legend className=""><span>{props.label}</span></legend>
-            <Box m={1}>
+        <fieldset style={{ borderRadius: '6px'}}>
+            <legend><span>{props.label}</span></legend>
+            <Box m={0} width={{
+                md: 320
+            }}>
                 {props.children}
             </Box>
         </fieldset>

@@ -4,13 +4,13 @@ import TextFieldEx from "./TextFieldEx";
 import PromptDialog, { PromptProps } from './PromptDialog';
 import { useModal } from "mui-modal-provider";
 
-type option = {
-    id: string,
+type ComboOption = {
+    value: string,
     label: string
 };
 
 type CustomComboProps = {
-    options: Array<option>;
+    options: ComboOption[];
     selected: string | null;
     promptProps?: PromptProps;
     label?: string
@@ -22,14 +22,14 @@ export default function CustomCombo(props: CustomComboProps) {
 
     const [state, setState] = useState({
         selected: props.selected,
-        options: props.options.concat({ id: 'custom', label: 'Custom' })
+        options: props.options.concat({ value: 'custom', label: 'Custom' })
     });
 
     const { showModal } = useModal();
 
-    const onChange = (event: SyntheticEvent, newValue: option | null) => {
+    const onChange = (event: SyntheticEvent, newValue: ComboOption | null) => {
 
-        if (newValue?.id == 'custom') {
+        if (newValue?.value == 'custom') {
             setState({
                 ...state,
                 selected: defaultOption
@@ -43,7 +43,7 @@ export default function CustomCombo(props: CustomComboProps) {
                 onConfirm: (value: string) => {
 
                     let options = state.options;
-                    options.unshift({ id: value, label: value });
+                    options.unshift({ value: value, label: value });
 
                     setState({
                         ...state,
@@ -61,14 +61,14 @@ export default function CustomCombo(props: CustomComboProps) {
 
         setState({
             ...state,
-            selected: newValue?.id ?? null
+            selected: newValue?.value ?? null
         });
     };
 
     let selectedOption = null;
 
     state.options.map((option) => {
-        if (option.id === state.selected) {
+        if (option.value === state.selected) {
             selectedOption = option;
         }
     });

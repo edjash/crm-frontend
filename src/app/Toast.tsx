@@ -1,8 +1,7 @@
-import Snackbar from '@mui/material/Snackbar';
-import Slide from '@mui/material/Slide';
 import { Alert } from '@mui/material';
-import { useEffect, useState } from 'react';
+import Snackbar from '@mui/material/Snackbar';
 import PubSub from 'pubsub-js';
+import { useEffect, useState } from 'react';
 
 export type ToastConfig = {
   show: boolean;

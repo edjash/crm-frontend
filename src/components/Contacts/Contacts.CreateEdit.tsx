@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, IconButton } from '@mui/material';
+import { Autocomplete, Avatar, Box, IconButton, InputAdornment } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -13,6 +13,7 @@ import * as FormUtil from '../FormUtil';
 import MultiFieldset from '../MultiFieldset';
 import Overlay from '../Overlay';
 import TextFieldEx from '../TextFieldEx';
+import { SocialIcon } from 'react-social-icons';
 
 export interface ShowCreateEditProps {
     id: number;
@@ -23,7 +24,7 @@ interface fieldProps {
     helperText: string;
     error: boolean;
     name: string;
-    defaultValue: string;
+    defaultValue: any;
 };
 
 interface CreateEditState {
@@ -123,22 +124,40 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
     useEffect(() => {
         apiClient.get(`/contacts/${props.data?.id}`).then((response) => {
-            let valueData = response.data;
-            let addressArray: Record<string, any>[] = valueData.address;
+            const valueData = response.data;
+            const addresses: Record<string, any>[] = valueData.address;
+            const socialmedia: Record<string, string>[] = valueData.social_media_url;
+            delete valueData['social_media_url'];
 
-            addressArray.map((addr, index) => {
-                if (addr.country && addr.country_name) {
-                    addressArray[index].country = {
-                        name: addr?.country_name,
-                        value: addr?.country
-                    };
-                } else {
-                    addressArray[index].country = null;
-                }
+            socialmedia.map((item, index) => {
+                valueData[`socialmedia[${item.ident}]`] = item.url;
             });
 
-            valueData.address = addressArray;
-            console.log(valueData);
+            valueData.address = addresses.map((addr, index) => {
+                if (addr.country && addr.country_name) {
+                    addr.country = {
+                        value: addr?.country,
+                        label: addr?.country_name,
+                    };
+                } else {
+                    addr.country = null;
+                }
+                return addr;
+            });
+
+
+            if (valueData.title) {
+                valueData.title = {
+                    value: valueData.title,
+                    label: valueData.title,
+                };
+            }
+            if (valueData.pronouns) {
+                valueData.pronouns = {
+                    value: valueData.pronouns,
+                    label: valueData.pronouns,
+                }
+            }
 
             setState((state) => ({
                 ...state,
@@ -166,8 +185,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             onClose={props.onClose}
             fullScreen={false}
             scroll="paper"
-            maxWidth="md"
-            fullWidth
+            maxWidth="xl"
+            fullWidth={false}
         >
             <form onSubmit={onSubmit} onFocus={onFocus}>
                 <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -177,11 +196,47 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+                    <Box display="grid" gridTemplateColumns="auto auto auto" alignItems="start" gap={2}>
                         <Box display="grid" gap={2}>
-                            <Fieldset label="Name">
+                            <Fieldset label="Personal">
+                                <Box display="grid" justifyContent="space-between" gridTemplateColumns="1fr">
+                                    <Avatar
+                                        alt={state.values?.firstname}
+                                        sx={{
+                                            width: 100,
+                                            height: 100,
+                                            alignSelf: 'center',
+                                            justifySelf: 'center',
+                                            mr: 2,
+                                            mb: 1
+                                        }}
+                                    />
+                                    <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
+                                        <RemoteSelect
+                                            {...fieldProps('title')}
+                                            label="Title"
+                                            options={[
+                                                { value: '', label: '' },
+                                                { value: 'Mr', label: 'Mr' },
+                                                { value: 'Mrs', label: 'Mrs' },
+                                                { value: 'Miss', label: 'Miss' },
+                                                { value: 'Ms', label: 'Ms' },
+                                                { value: 'Mx', label: 'Mx' },
+                                            ]}
+                                        />
+                                        <RemoteSelect
+                                            {...fieldProps('pronouns')}
+                                            label="Pronouns"
+                                            options={[
+                                                { value: '', label: '' },
+                                                { value: 'She/Her', label: 'She/Her' },
+                                                { value: 'He/Him', label: 'He/Him' },
+                                                { value: 'They/Them', label: 'They/Them' },
+                                            ]}
+                                        />
+                                    </Box>
+                                </Box>
                                 <Box sx={{ display: 'grid' }}>
-                                    <TextFieldEx {...fieldProps('title')} label="Title" sx={{ width: '50%' }} />
                                     <TextFieldEx {...fieldProps('firstname')} label="First Name" required />
                                     <TextFieldEx {...fieldProps('lastname')} label="Last Name" />
                                 </Box>
@@ -212,9 +267,32 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                     label="Country"
                                     url="/countries"
                                     valueField="code"
+                                    labelField="name"
                                     name="country"
+                                    clearable
                                 />
                             </MultiFieldset>
+                        </Box>
+                        <Box display="grid" gap={2}>
+                            <MultiFieldset
+                                legend="Phone Number"
+                                defaultTabLabel="Primary"
+                                baseName="phone"
+                                errors={state.errors}
+                                values={state.values.phone_number}
+                            >
+                                <TextFieldEx name="number" type="text" label="Phone Number" />
+                            </MultiFieldset>
+                            <Fieldset label="Social Media">
+                                {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
+                                    <Box sx={{ display: 'flex', alignItems: 'center'}} gap={1} key={network}>
+                                        <Box>
+                                            <SocialIcon network={network.toLowerCase()} fgColor="white" style={{ height: 25, width: 25 }} />
+                                        </Box>
+                                        <TextFieldEx {...fieldProps(`socialmedia[${network.toLowerCase()}]`)} label={network} />
+                                    </Box>
+                                ))}
+                            </Fieldset>
                         </Box>
                     </Box>
                 </DialogContent>
