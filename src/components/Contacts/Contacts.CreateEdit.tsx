@@ -5,7 +5,7 @@ import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import RemoteSelect, { SelectOption } from '../RemoteSelect';
 import apiClient from '../apiClient';
 import Fieldset from '../Fieldset';
@@ -14,6 +14,7 @@ import MultiFieldset from '../MultiFieldset';
 import Overlay from '../Overlay';
 import TextFieldEx from '../TextFieldEx';
 import { SocialIcon } from 'react-social-icons';
+import ProfileAvatar from '../ProfileAvatar';
 
 export interface ShowCreateEditProps {
     id: number;
@@ -67,7 +68,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             url = `${url}/${props.data.id}`;
         }
 
-        apiClient.postForm(url, formData,).then((response) => {
+        apiClient.postForm(url, formData).then((response) => {
             setState({ ...state, loading: false });
 
             if (response.statusText === 'OK') {
@@ -145,13 +146,13 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                 return addr;
             });
 
-
             if (valueData.title) {
                 valueData.title = {
                     value: valueData.title,
                     label: valueData.title,
                 };
             }
+
             if (valueData.pronouns) {
                 valueData.pronouns = {
                     value: valueData.pronouns,
@@ -170,13 +171,19 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         });
     }, []);
 
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setState((state) => ({ ...state, [e.target.name]: e.target.value }));
+    }
+
     let title = "New Contact";
+    let avatarPostUrl = '/contacts/avatar';
 
     if (props.type == 'edit') {
         if (!state.ready) {
             return (<Overlay open={true} />);
         }
         title = `${state.values?.fullname}`;
+        avatarPostUrl = `${avatarPostUrl}/${props?.data?.id}`;
     }
 
     return (
@@ -199,22 +206,12 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                     <Box display="grid" gridTemplateColumns="auto auto auto" alignItems="start" gap={2}>
                         <Box display="grid" gap={2}>
                             <Fieldset label="Personal">
-                                <Box
-                                    display="grid"
-                                    justifyContent="space-between"
-                                    gridTemplateColumns="1fr"
-                                >
-                                    <Avatar
-                                        alt={state.values?.firstname}
-                                        sx={{
-                                            width: 100,
-                                            height: 100,
-                                            alignSelf: 'center',
-                                            justifySelf: 'center',
-                                            mr: 2,
-                                            mb: 1,
-                                            color:'#e0e0e0'
-                                        }}
+                                <Box display="grid" gap={1}>
+                                    <ProfileAvatar
+                                        sx={{ justifySelf: "center" }}
+                                        postEndPoint={avatarPostUrl}
+                                        name="avatar"
+                                        defaultValue={state.values.avatar}
                                     />
                                     <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
                                         <RemoteSelect
@@ -242,8 +239,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                     </Box>
                                 </Box>
                                 <Box sx={{ display: 'grid' }}>
-                                    <TextFieldEx {...fieldProps('firstname')} label="First Name" required />
-                                    <TextFieldEx {...fieldProps('lastname')} label="Last Name" />
+                                    <TextFieldEx {...fieldProps('firstname')} label="First Name" onChange={onChange} required />
+                                    <TextFieldEx {...fieldProps('lastname')} label="Last Name" onChange={onChange} />
                                 </Box>
                             </Fieldset>
                             <MultiFieldset

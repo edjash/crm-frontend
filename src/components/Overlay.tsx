@@ -1,22 +1,43 @@
-import { CircularProgress } from "@mui/material";
-import Backdrop from '@mui/material/Backdrop';
+import Backdrop, { BackdropProps } from '@mui/material/Backdrop';
+import { CircularProgress, SxProps, Theme } from "@mui/material";
+import { ReactNode } from 'react';
 
-type OverlayProps = {
+interface OverlayProps {
     open: boolean;
-    message?: string;
-};
-
+    content?: string | JSX.Element;
+    useAbsolute?: boolean;
+    showProgress?: boolean;
+    zIndex?: number;
+    backdropProps?: BackdropProps;
+    sx?: SxProps<Theme>;
+    children?: ReactNode;
+}
 
 export default function Overlay(props: OverlayProps) {
 
+    const zIndex = props.zIndex ?? 1000;
+    let sx = {
+        ...props?.sx,
+        zIndex: zIndex,
+    };
+
+    if (props.useAbsolute) {
+        sx = {
+            ...sx,
+            position: 'absolute',
+            // backgroundColor: 'rgb(100 100 100 / 50%)',
+        };
+    }
+
     return (
-        <Backdrop open={props.open}>
-            <CircularProgress color="primary" />
-            {props?.message && (
-                <div className="message">
-                    {props.message}
-                </div>
+        <Backdrop {...props.backdropProps} sx={sx} open={props.open}>
+            {props.showProgress &&
+                <CircularProgress color="primary" />
+            }
+            {props?.content && (
+                props.content
             )}
+            {props.children}
         </Backdrop>
     );
 }

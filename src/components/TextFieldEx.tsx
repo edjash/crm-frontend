@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 export default function TextFieldEx(props: TextFieldProps) {
 
     const ref = useRef<HTMLInputElement>();
-    
+
     useEffect(() => {
         if (ref.current) {
             ref.current.value = `${props?.defaultValue}`;
@@ -18,7 +18,6 @@ export default function TextFieldEx(props: TextFieldProps) {
             margin="dense"
             fullWidth
             inputRef={ref}
-  
         />
     );
 }

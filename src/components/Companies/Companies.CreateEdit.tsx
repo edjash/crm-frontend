@@ -1,17 +1,17 @@
-import Button from '@mui/material/Button';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import { Box, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import CountrySelect, { CountryType } from '../../components/CountrySelect';
+import { Box, IconButton } from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { errorResponse } from '../../components/FormError';
 import Overlay from '../../components/Overlay';
-import { ChangeEvent, FormEvent, FormEventHandler, SyntheticEvent, useState } from 'react';
 import apiClient from '../apiClient';
 import Fieldset from '../Fieldset';
+import RemoteSelect from '../RemoteSelect';
 import TextFieldEx from '../TextFieldEx';
-import { errorResponse } from '../../components/FormError';
 
 type CreateEditProps = DialogProps & {
     type: string,
@@ -68,16 +68,16 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
         });
     };
 
-    const onCountryChange = (event: ChangeEvent<{}>, value: CountryType | null) => {
+    // const onCountryChange = (event: ChangeEvent<{}>, value: CountryType | null) => {
 
-        setState({
-            ...state,
-            fieldValues: {
-                ...state.fieldValues,
-                country_code: (value === null) ? '' : value.code
-            }
-        });
-    }
+    //     setState({
+    //         ...state,
+    //         fieldValues: {
+    //             ...state.fieldValues,
+    //             country_code: (value === null) ? '' : value.code
+    //         }
+    //     });
+    // }
 
     return (
         <Dialog
@@ -106,7 +106,14 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                             <TextFieldEx name="town" label="Town / City" onChange={onChange} />
                             <TextFieldEx name="county" label="County / State" onChange={onChange} />
                             <TextFieldEx name="postcode" label="Zip / Postal Code" onChange={onChange} />
-                            <CountrySelect name="country_code" onChange={onCountryChange} />
+                            <RemoteSelect
+                                label="Country"
+                                url="/countries"
+                                valueField="code"
+                                labelField="name"
+                                name="country"
+                                clearable
+                            />
                         </Box>
                     </Fieldset>
                 </DialogContent>

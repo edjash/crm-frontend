@@ -234,8 +234,8 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
     }
 
     return (
-        <fieldset style={{ borderRadius: '6px' }}>
-            <legend className=""><span>{props.legend}</span></legend>
+        <fieldset style={{ borderRadius: '6px'}}>
+            <legend className="" style={{lineHeight: '1em'}}><span>{props.legend}</span></legend>
             <Box sx={{
                 width: {
                     md: 320

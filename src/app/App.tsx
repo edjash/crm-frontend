@@ -10,7 +10,7 @@ import { Login } from '../routes/Login';
 import { Register } from '../routes/Register';
 import theme from '../theme';
 import { AppContextProvider } from './AppContext';
-import Toast from './Toast';
+import Toast from '../components/Toast';
 
 export default function App() {
 

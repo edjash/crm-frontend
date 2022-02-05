@@ -22,7 +22,7 @@ export interface RemoteSelectProps {
     helperText?: string;
     error?: boolean;
     clearable?: boolean;
-    sx?: SxProps<Theme> | undefined;
+    sx?: SxProps<Theme>;
 };
 
 interface RemoteSelectState {
