@@ -1,25 +1,21 @@
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Popover from '@mui/material/Popover';
-import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
+import PersonIcon from '@mui/icons-material/Person';
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+import AppBar from '@mui/material/AppBar';
+import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
-import PersonIcon from '@mui/icons-material/Person';
-import { useAppContext } from '../app/AppContext';
+import Popover from '@mui/material/Popover';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import {
-  usePopupState,
-  bindTrigger,
-  bindPopover,
+  bindPopover, bindTrigger, usePopupState
 } from 'material-ui-popup-state/hooks';
 
 export default function TopBar() {
-  const appContext = useAppContext();
 
   const accountMenuState = usePopupState({
     variant: 'popover',
@@ -28,7 +24,7 @@ export default function TopBar() {
 
   const handleLogout = () => {
     accountMenuState.close();
-    appContext.setLoginStatus(false, '');
+    PubSub.publish('AUTH.LOGOUT');
   };
 
   const onNavBurgerClick = () => {

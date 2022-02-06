@@ -2,7 +2,6 @@ import { createContext, useContext } from 'react';
 
 interface AppContext {
   loggedIn: boolean;
-  setLoginStatus: (loggedIn: boolean, accessToken: string) => void;
 }
 
 const appCtx = createContext({} as AppContext);

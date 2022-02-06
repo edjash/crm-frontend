@@ -1,13 +1,11 @@
-import { useState, SyntheticEvent, ChangeEvent } from 'react';
+import { ChangeEvent, SyntheticEvent, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
-import { errorResponse } from '../../components/FormError';
 import AuthPage from '../../components/AuthPage';
+import { errorResponse } from '../../components/FormError';
 import LoginForm from './Login.Form';
-import { useAppContext } from '../../app/AppContext';
 
 export default function Login() {
-  const appContext = useAppContext();
   const history = useHistory();
 
   const [state, setState] = useState({
@@ -39,10 +37,8 @@ export default function Login() {
     )
       .then((response) => {
         setState({ ...state, isLoading: false });
-        appContext.setLoginStatus(true, response.data.access_token);
-        PubSub.publish('TOAST.SHOW', {
-          message: 'Successfully Logged In',
-          autoHide: true,
+        PubSub.publishSync('AUTH.LOGIN', {
+          accessToken: response.data.access_token
         });
         history.push('/');
       })

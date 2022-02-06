@@ -12,37 +12,46 @@ import theme from '../theme';
 import { AppContextProvider } from './AppContext';
 import Toast from '../components/Toast';
 
+interface loginData {
+  accessToken: string;
+}
+
 export default function App() {
 
   const [state, setState] = useState({
     loggedIn: localStorage.getItem('token') ? true : false,
-    setLoginStatus: setLoginStatus,
   });
 
-  function setLoginStatus(loggedIn: boolean, accessToken: string) {
-    if (loggedIn === true && accessToken) {
-      localStorage.setItem('token', accessToken);
-      setState({
+  useEffect(() => {
+    document.title = import.meta.env.VITE_APP_TITLE;
+
+    PubSub.subscribe('AUTH.LOGIN', (msg, data: loginData) => {
+      if (!data?.accessToken) {
+        return false;
+      }
+      localStorage.setItem('token', data.accessToken);
+      setState(state => ({
         ...state,
         loggedIn: true,
-      });
+      }));
+
       PubSub.publish('TOAST.SHOW', {
         show: true,
         message: 'Logged In',
         type: 'info',
         autoHide: true,
       });
-    } else {
+    });
+
+    PubSub.subscribe('AUTH.LOGOUT', () => {
       localStorage.removeItem('token');
-      setState({ ...state, loggedIn: false });
+      setState(state => ({ ...state, loggedIn: false }));
+    })
+
+    return () => {
+      PubSub.unsubscribe('AUTH.');
     }
-  }
-
-  useEffect(() => {
-    document.title = import.meta.env.VITE_APP_TITLE;
   }, [])
-
-
 
   return (
     <ThemeProvider theme={theme}>
