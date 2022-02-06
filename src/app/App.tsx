@@ -12,7 +12,7 @@ import theme from '../theme';
 import { AppContextProvider } from './AppContext';
 import Toast from '../components/Toast';
 
-interface loginData {
+interface LoginData {
   accessToken: string;
 }
 
@@ -24,8 +24,10 @@ export default function App() {
 
   useEffect(() => {
     document.title = import.meta.env.VITE_APP_TITLE;
+  }, []);
 
-    PubSub.subscribe('AUTH.LOGIN', (msg, data: loginData) => {
+  useEffect(() => {
+    PubSub.subscribe('AUTH.LOGIN', (msg: string, data: LoginData) => {
       if (!data?.accessToken) {
         return false;
       }
@@ -41,6 +43,8 @@ export default function App() {
         type: 'info',
         autoHide: true,
       });
+
+      return true;
     });
 
     PubSub.subscribe('AUTH.LOGOUT', () => {
@@ -49,7 +53,8 @@ export default function App() {
     })
 
     return () => {
-      PubSub.unsubscribe('AUTH.');
+      localStorage.removeItem('token');
+      PubSub.unsubscribe('AUTH');
     }
   }, [])
 
