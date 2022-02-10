@@ -13,71 +13,71 @@ import { AppContextProvider } from './AppContext';
 import Toast from '../components/Toast';
 
 interface LoginData {
-  accessToken: string;
+    accessToken: string;
 }
 
 export default function App() {
 
-  const [state, setState] = useState({
-    loggedIn: localStorage.getItem('token') ? true : false,
-  });
-
-  useEffect(() => {
-    document.title = import.meta.env.VITE_APP_TITLE;
-  }, []);
-
-  useEffect(() => {
-    PubSub.subscribe('AUTH.LOGIN', (msg: string, data: LoginData) => {
-      if (!data?.accessToken) {
-        return false;
-      }
-      localStorage.setItem('token', data.accessToken);
-      setState(state => ({
-        ...state,
-        loggedIn: true,
-      }));
-
-      PubSub.publish('TOAST.SHOW', {
-        show: true,
-        message: 'Logged In',
-        type: 'info',
-        autoHide: true,
-      });
-
-      return true;
+    const [state, setState] = useState({
+        loggedIn: localStorage.getItem('token') ? true : false,
     });
 
-    PubSub.subscribe('AUTH.LOGOUT', () => {
-      localStorage.removeItem('token');
-      setState(state => ({ ...state, loggedIn: false }));
-    })
+    useEffect(() => {
+        document.title = import.meta.env.VITE_APP_TITLE;
+    }, []);
 
-    return () => {
-      localStorage.removeItem('token');
-      PubSub.unsubscribe('AUTH');
-    }
-  }, [])
+    useEffect(() => {
+        PubSub.subscribe('AUTH.LOGIN', (msg: string, data: LoginData) => {
+            if (!data?.accessToken) {
+                return false;
+            }
+            localStorage.setItem('token', data.accessToken);
+            setState(state => ({
+                ...state,
+                loggedIn: true,
+            }));
 
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <ModalProvider beta={true}>
-        <AppContextProvider value={state}>
-          <Router>
-            <Switch>
-              <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
-              <Route path="/forgot-password" component={ForgotPassword} />
-              <PrivateRoute
-                path="/"
-                component={Home}
-                loggedIn={state.loggedIn}
-              />
-            </Switch>
-          </Router>
-        </AppContextProvider>
-        <Toast />
-      </ModalProvider>
-    </ThemeProvider>
-  );
+            PubSub.publish('TOAST.SHOW', {
+                show: true,
+                message: 'Logged In',
+                type: 'info',
+                autoHide: true,
+            });
+
+            return true;
+        });
+
+        PubSub.subscribe('AUTH.LOGOUT', () => {
+            localStorage.removeItem('token');
+            setState(state => ({ ...state, loggedIn: false }));
+        })
+
+        return () => {
+            localStorage.removeItem('token');
+            PubSub.unsubscribe('AUTH');
+        }
+    }, [])
+
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <ModalProvider beta={true}>
+                <AppContextProvider value={state}>
+                    <Router>
+                        <Switch>
+                            <Route path="/login" component={Login} />
+                            <Route path="/register" component={Register} />
+                            <Route path="/forgot-password" component={ForgotPassword} />
+                            <PrivateRoute
+                                path="/"
+                                component={Home}
+                                loggedIn={state.loggedIn}
+                            />
+                        </Switch>
+                    </Router>
+                </AppContextProvider>
+                <Toast />
+            </ModalProvider>
+        </ThemeProvider>
+    );
 }

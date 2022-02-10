@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 
 interface AppContext {
-  loggedIn: boolean;
+    loggedIn: boolean;
 }
 
 const appCtx = createContext({} as AppContext);

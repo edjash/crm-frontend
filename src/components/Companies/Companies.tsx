@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import apiClient from '../apiClient';
+import { request, HTTPVerb } from '../apiClient';
 import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
 import { GridRowId, GridColDef } from '@mui/x-data-grid';
 import ConfirmDialog from '../ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
 import CreateEditDlg from './Companies.CreateEdit';
 import PubSub from 'pubsub-js'
-import { Method } from 'axios';
+
 
 export default function Companies() {
 
@@ -68,7 +68,7 @@ export default function Companies() {
     };
 
     const loadCompanies = () => {
-        let method: Method = 'GET';
+        let method: HTTPVerb = 'GET';
         let endpoint = '/companies';
 
         if (gridState.deleteIds.length) {
@@ -76,8 +76,7 @@ export default function Companies() {
             method = 'DELETE';
         }
 
-        apiClient
-            .request(method, endpoint, {
+       request(method, endpoint, {
                 sortBy: 'id',
                 sortDirection: 'desc',
                 limit: gridState.rowsPerPage,

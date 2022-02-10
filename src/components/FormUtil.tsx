@@ -4,9 +4,7 @@ export type FieldValues = {
     [index: string]: string;
 };
 
-export type ErrorMessages = {
-    [index: string]: string;
-};
+
 
 const iterateFormControls = (nodes: HTMLCollection, data: FieldValues) => {
 
@@ -53,38 +51,7 @@ export function getJsonFieldValues(form: HTMLFormElement) {
     return inputValues;
 }
 
-export function getErrorMessages(errorResponse: AxiosResponse): ErrorMessages {
-    const errors: ErrorMessages = {};
 
-    if (!isValidationError(errorResponse)) {
-        return errors;
-    }
-
-    Object.keys(errorResponse.data.errors).map((key, index) => {
-        const msg = errorResponse.data.errors[key][0];
-        const keyArray = key.split('.');
-
-        if (keyArray.length > 1) {
-            const newKey = [keyArray.shift()];
-            keyArray.map((part) => {
-                newKey.push(`[${part}]`);
-            });
-            key = newKey.join('');
-        }
-
-        errors[key] = msg;
-    });
-
-    console.log("ERR", errors);
-    return errors;
-}
-
-export function isValidationError(errorResponse: AxiosResponse): boolean {
-    if (errorResponse?.status !== 422 || !errorResponse?.data?.errors) {
-        return false;
-    }
-    return true;
-}
 
 export function flattenObject(obj: object, keySeparator = '.') {
     const flattenRecursive = (obj: object, parentProperty?: string, propertyMap: Record<string, unknown> = {}) => {

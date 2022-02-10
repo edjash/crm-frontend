@@ -1,10 +1,9 @@
 import { Link } from '@mui/material';
 import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
-import { Method } from 'axios';
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
 import { useEffect, useState } from 'react';
-import apiClient from '../apiClient';
+import { request, HTTPVerb } from '../apiClient';
 import ConfirmDialog from '../ConfirmDialog';
 import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
 import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
@@ -69,8 +68,7 @@ export default function Contacts() {
   };
 
   const loadContacts = () => {
-
-    let method: Method = 'GET';
+    let method: HTTPVerb = 'GET';
     let endpoint = '/contacts';
 
     if (gridState.deleteIds.length) {
@@ -78,14 +76,13 @@ export default function Contacts() {
       method = 'DELETE';
     }
 
-    apiClient
-      .request(method, endpoint, {
-        sortBy: 'id',
-        sortDirection: 'desc',
-        limit: gridState.rowsPerPage,
-        search: gridState.searchQuery,
-        page: gridState.page,
-      }, true)
+    request(method, endpoint, {
+      sortBy: 'id',
+      sortDirection: 'desc',
+      limit: gridState.rowsPerPage,
+      search: gridState.searchQuery,
+      page: gridState.page,
+    }, true)
       .then((res) => {
         if (res.data.last_page < res.data.current_page) {
           setGridState({
@@ -150,7 +147,7 @@ export default function Contacts() {
   };
 
   const showCreateEditDlg = (props?: ShowCreateEditProps) => {
-    const type = (!props?.id) ? 'new' : 'edit';
+    const type = (!props?.contactId) ? 'new' : 'edit';
 
     const dlg = showModal(CreateEditDlg, {
       type: type,
@@ -167,7 +164,7 @@ export default function Contacts() {
   const onClickContact = (e: React.MouseEvent, rowData: GridRowModel) => {
     e.preventDefault();
     showCreateEditDlg({
-      id: rowData.id,
+      contactId: rowData.id,
       fullname: rowData.fullname,
     });
   };

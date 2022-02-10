@@ -108,13 +108,21 @@ export default function (props: ProfileAvatarProps) {
                 }));
             }
         }).catch((error) => {
-            PubSub.publish('TOAST.SHOW', {
-                autoHide: false,
-                message: "An error occured uploading the file.",
-                list: error?.data?.errors?.avatar ?? [],
-                type: 'error',
-            });
 
+            if (error?.data?.errors?.avatar) {
+                PubSub.publish('TOAST.SHOW', {
+                    autoHide: false,
+                    message: "There was a problem updating the avatar:",
+                    list: error.data.errors.avatar,
+                    type: 'error',
+                });
+            } else {
+                PubSub.publish('TOAST.SHOW', {
+                    autoHide: false,
+                    message: "An error occured uploading the avatar. Please try again.",
+                    type: 'error',
+                });
+            }
             setState(state => ({
                 ...state,
                 showMask: false,

@@ -1,56 +1,79 @@
-import { ChangeEvent, SyntheticEvent, useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Box, Button } from '@mui/material';
+import { useState } from 'react';
+import { FormProvider, useForm } from "react-hook-form";
 import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
 import AuthPage from '../../components/AuthPage';
-import { errorResponse } from '../../components/FormError';
-import LoginForm from './Login.Form';
+import Link from '../../components/Link';
+import TextFieldEx from '../../components/TextFieldEx';
+import loginSchema from '../../validation/loginSchema';
 
 export default function Login() {
-  const history = useHistory();
 
-  const [state, setState] = useState({
-    fieldValues: {},
-    isLoading: false,
-  });
+    const formMethods = useForm({ resolver: yupResolver(loginSchema) });
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      fieldValues: {
-        ...state.fieldValues,
-        [e.target.name]: e.target.value.trim(),
-      },
+    const history = useHistory();
+
+    const [state, setState] = useState({
+        fieldValues: {},
+        isLoading: false,
     });
-  };
 
-  const onSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
-    localStorage.removeItem('token');
-    setState({ ...state, isLoading: true });
+    const onSubmit = (data: any) => {
+        localStorage.removeItem('token');
+        setState({ ...state, isLoading: true });
+        apiClient.post('/login', data, false)
+            .then((response) => {
+                setState({ ...state, isLoading: false });
+                PubSub.publishSync('AUTH.LOGIN', {
+                    accessToken: response.data.access_token
+                });
+                history.push('/');
+            })
+            .catch((response) => {
+                setState({ ...state, isLoading: false })
+                apiClient.showErrors(response, formMethods.setError);
+            });
+    };
 
-    apiClient.post(
-      '/login',
-      {
-        ...state.fieldValues,
-      },
-      false
-    )
-      .then((response) => {
-        setState({ ...state, isLoading: false });
-        PubSub.publishSync('AUTH.LOGIN', {
-          accessToken: response.data.access_token
-        });
-        history.push('/');
-      })
-      .catch((error) => {
-        setState({ ...state, isLoading: false });
-        errorResponse(error);
-      });
-  };
+    const onSubmitError = (data: any) => {
+        console.log(data);
+    }
 
-  return (
-    <AuthPage title="Sign In" isLoading={state.isLoading}>
-      <LoginForm onChange={onChange} onSubmit={onSubmit} />
-    </AuthPage>
-  );
+    return (
+        <AuthPage title="Sign In" isLoading={state.isLoading}>
+            <FormProvider {...formMethods}>
+                <form onSubmit={formMethods.handleSubmit(onSubmit)}>
+                    <Box display="grid" sx={{ rowGap: 1 }}>
+                        <TextFieldEx
+                            name="email"
+                            label="Email Address"
+                            required
+                            autoComplete="username"
+                        />
+                        <TextFieldEx
+                            name="password"
+                            label="Password"
+                            type="password"
+                            required
+                            autoComplete="current-password"
+                        />
+                        <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 1 }}>
+                            Sign In
+                        </Button>
+                        <Box display="flex" justifyContent="space-between">
+                            <Link to="/forgot-password">
+                                Forgot password?
+                            </Link>
+                            <Link to="/register">
+                                Don't have an account? Sign Up!
+                            </Link>
+                        </Box>
+                    </Box>
+                </form>
+            </FormProvider>
+        </AuthPage>
+    );
 }
+

@@ -1,36 +1,39 @@
+import { SxProps, TextField, Theme } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import React, { useEffect, useRef, useState } from 'react';
+import { Ref, useEffect, useState } from 'react';
+import { Control, FieldError, FieldValues } from 'react-hook-form';
 import apiClient from './apiClient';
-import TextFieldEx from './TextFieldEx';
-import { uniqueId } from 'lodash';
-import { SxProps, Theme } from '@mui/material';
 
 export type SelectOption = {
     value: string;
-    label: string | JSX.Element;
+    label: string;
 };
 
 export interface RemoteSelectProps {
+    name: string;
     url?: string;
-    name?: string;
     label?: string;
     options?: SelectOption[];
     valueField?: string;
     labelField?: string;
     defaultValue?: SelectOption;
     helperText?: string;
-    error?: boolean;
-    clearable?: boolean;
+    errors?: FieldError;
+    disableClearable?: boolean;
     sx?: SxProps<Theme>;
+    control?: Control<FieldValues, object>;
+    inputRef?: Ref<HTMLInputElement>;
+    onChange?: (selValue: SelectOption | null) => void;
 };
 
 interface RemoteSelectState {
     dropdownOpen: boolean;
+    loading: boolean;
+    loadCount: number;
     options: SelectOption[];
     inputValue: string;
     defaultValue: SelectOption | null;
-    key: string;
 };
 
 export default function RemoteSelect(props: RemoteSelectProps) {
@@ -45,22 +48,22 @@ export default function RemoteSelect(props: RemoteSelectProps) {
                 label: value,
             });
         }
+
         return {
             dropdownOpen: false,
-            options: props?.options ?? [],
+            loading: false,
+            loadCount: 0,
+            options: options,
             inputValue: props.defaultValue?.value ?? '',
             defaultValue: props.defaultValue ?? null,
-            key: uniqueId('remoteSelect_'),
         }
     });
 
-    const inputRef = useRef<HTMLInputElement>();
-    const loading = state.dropdownOpen && state.options.length === 0;
-
     useEffect(() => {
-        if (!loading) {
+        if (!state.loading) {
             return undefined;
         }
+
         if (props.url) {
             apiClient
                 .get(props.url, {})
@@ -68,6 +71,13 @@ export default function RemoteSelect(props: RemoteSelectProps) {
                     const options: SelectOption[] = [];
                     const valueField = props.valueField ?? 'value';
                     const labelField = props.labelField ?? 'label';
+
+                    if (res.data.length) {
+                        if (!(labelField in res.data[0]) || !(valueField in res.data[0])) {
+                            console.log(`RemoteSelect '${props.name}', valueField or labelField are invalid`);
+                            return;
+                        }
+                    }
 
                     res.data.map((item: Record<string, string>) => {
                         const value = item[valueField];
@@ -78,80 +88,80 @@ export default function RemoteSelect(props: RemoteSelectProps) {
                         });
                     });
 
-                    setState({ ...state, options: options });
+                    setState(state => ({
+                        ...state,
+                        loading: false,
+                        loadCount: state.loadCount + 1,
+                        options: options
+                    }));
                 })
         }
-    }, [loading]);
-
-    useEffect(() => {
-        setState(state => ({
-            ...state,
-            key: uniqueId('remoteSelect_'),//Required because of MUI Autocomplete bug.
-            defaultValue: props.defaultValue || null,
-            inputValue: props.defaultValue?.value || '',
-        }));
-    }, [props.defaultValue]);
+    }, [state.loading]);
 
     const onChange = (event: React.SyntheticEvent, selValue: SelectOption | null) => {
-        setState(state => ({ ...state, inputValue: selValue?.value ?? '' }));
+        setState(state => ({
+            ...state,
+            inputValue: selValue?.value ?? '',
+            defaultValue: selValue
+        }));
+        if (props.onChange) {
+            console.log(selValue);
+            props.onChange(selValue);
+        }
     }
 
     const setDropdownOpen = (open: boolean) => {
-        setState(state => ({ ...state, dropdownOpen: open }));
+        setState(state => ({
+            ...state,
+            dropdownOpen: open,
+            loading: (open && state.loadCount === 0),
+        }));
     };
 
     return (
-        <>
-            <Autocomplete
-                key={state.key}
-                className="remoteSelect"
-                disablePortal
-                disableClearable={!props.clearable}
-                open={state.dropdownOpen}
-                onOpen={() => setDropdownOpen(true)}
-                onClose={() => setDropdownOpen(false)}
-                onChange={onChange}
-                //getOptionLabel={(option) => option.label}
-                isOptionEqualToValue={(option, value) => {
-                    return option?.value === value?.value;
-                }}
-                options={state.options}
-                loading={loading}
-                renderOption={(props, option, state) => (
-                    <li {...props}>
+        <Autocomplete
+            className="remoteSelect"
+            disableClearable={props?.disableClearable}
+            open={state.dropdownOpen}
+            onOpen={() => setDropdownOpen(true)}
+            onClose={() => setDropdownOpen(false)}
+            onChange={onChange}
+            getOptionLabel={(option) => option.label}
+            isOptionEqualToValue={(option, value) => {
+                return option?.value === value?.value;
+            }}
+            options={state.options}
+            loading={state.loading}
+            renderOption={(props, option) => {
+                return (
+                    <li {...props} key={option.value}>
                         {option.label == '' ?
                             <span> </span>
                             : option.label
                         }
                     </li>
-                )}
-                defaultValue={state.defaultValue || null}
-                onFocus={() => {
-                    if (inputRef) {
-                        inputRef?.current?.focus();
-                    }
-                }}
-                sx={props.sx}
-                renderInput={(params) => (
-                    <TextFieldEx
-                        {...params}
-                        label={props.label}
-                        helperText={props?.helperText}
-                        error={props?.error ?? false}
-                        inputRef={inputRef}
-                        InputProps={{
-                            ...params.InputProps,
-                            endAdornment: (
-                                <React.Fragment>
-                                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                                    {params.InputProps.endAdornment}
-                                </React.Fragment>
-                            ),
-                        }}
-                    />
-                )}
-            />
-            <input type="hidden" name={props.name} value={state.inputValue} readOnly />
-        </>
+                );
+            }}
+            value={state.defaultValue || null}
+            ref={props.inputRef}
+            sx={props.sx}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    label={props.label}
+                    helperText={props?.errors?.message ?? props?.helperText}
+                    error={!!props?.errors ?? false}
+                    InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                            <>
+                                {state.loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                {params.InputProps.endAdornment}
+                            </>
+                        ),
+                    }}
+                />
+            )}
+        />
     );
 }

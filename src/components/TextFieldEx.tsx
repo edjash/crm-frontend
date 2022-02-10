@@ -1,23 +1,42 @@
 import TextField, { TextFieldProps } from "@mui/material/TextField";
-import { useEffect, useRef } from "react";
+import { ChangeEvent } from "react";
+import { Controller } from "react-hook-form";
 
-export default function TextFieldEx(props: TextFieldProps) {
+type TextFieldExProps = TextFieldProps & {
+    name: string;
+}
 
-    const ref = useRef<HTMLInputElement>();
-
-    useEffect(() => {
-        if (ref.current) {
-            ref.current.value = `${props?.defaultValue}`;
-        }
-    }, [props.defaultValue]);
-
+export function TextFieldEx(props: TextFieldExProps) {
     return (
-        <TextField
-            {...props}
-            variant="filled"
-            margin="dense"
-            fullWidth
-            inputRef={ref}
+        <Controller
+            render={({ ...controlProps }) => {
+                const errorMessage = controlProps.formState.errors?.[props.name]?.message ?? '';
+
+                const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+                    controlProps.field.onChange(e.target.value);
+                    if (props.onChange) {
+                        props.onChange(e);
+                    }
+                }
+
+                return (
+                    <TextField
+                        {...props}
+                        error={!!(errorMessage)}
+                        helperText={errorMessage || props?.helperText}
+                        inputRef={controlProps.field.ref}
+                        onChange={onChange}
+                        defaultValue={controlProps.field.value}
+                        InputProps={{
+                            required: false,
+                            ...props.InputProps
+                        }}
+                    />
+                );
+            }}
+            name={props.name}
         />
     );
 }
+export default TextFieldEx;
+
