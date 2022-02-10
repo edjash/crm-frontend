@@ -1,6 +1,5 @@
 import { createTheme } from '@mui/material/styles';
 
-// A custom theme for this app
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -12,6 +11,13 @@ const theme = createTheme({
     MuiUseMediaQuery: {
       defaultProps: {
         noSsr: true,
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: "filled",
+        margin: "dense",
+        fullWidth: true,
       },
     },
     MuiCssBaseline: {
