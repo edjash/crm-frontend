@@ -2,13 +2,10 @@ import { SxProps, TextField, Theme } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Ref, useEffect, useState } from 'react';
-import { Control, FieldError, FieldValues } from 'react-hook-form';
+import { Control, Controller, FieldError, FieldValues } from 'react-hook-form';
 import apiClient from './apiClient';
 
-export type SelectOption = {
-    value: string;
-    label: string;
-};
+export type SelectOption = Record<string, string>;
 
 export interface RemoteSelectProps {
     name: string;
@@ -17,14 +14,14 @@ export interface RemoteSelectProps {
     options?: SelectOption[];
     valueField?: string;
     labelField?: string;
-    defaultValue?: SelectOption;
+    defaultValue?: any;
     helperText?: string;
     errors?: FieldError;
     disableClearable?: boolean;
     sx?: SxProps<Theme>;
     control?: Control<FieldValues, object>;
     inputRef?: Ref<HTMLInputElement>;
-    onChange?: (selValue: SelectOption | null) => void;
+    onChange?: (selValue: string | null) => void;
 };
 
 interface RemoteSelectState {
@@ -32,30 +29,75 @@ interface RemoteSelectState {
     loading: boolean;
     loadCount: number;
     options: SelectOption[];
-    inputValue: string;
-    defaultValue: SelectOption | null;
+    selectedOption: SelectOption | null;
 };
 
 export default function RemoteSelect(props: RemoteSelectProps) {
 
+    let defaultValue = props?.defaultValue ?? null;
+    const valueField: string = props.valueField ?? 'value';
+    const labelField: string = props.labelField ?? 'label';
+
+    console.log(props.name, props.defaultValue);
+
+    const isValidOption = (option: any): boolean => {
+        if (!option || typeof (option) !== 'object') {
+            return false;
+        }
+        return (valueField in option && labelField in option);
+    };
+
     const [state, setState] = useState<RemoteSelectState>(() => {
 
-        const options: SelectOption[] = props.options ?? [];
-        const value = props.defaultValue?.value || '';
-        if (!options.find(option => option.value == value)) {
-            options.push({
-                value: value,
-                label: value,
-            });
+        let options: SelectOption[] = props.options ?? [];
+        let selectedOption = null;
+
+        if (typeof (defaultValue) === 'object') {
+            if (!isValidOption(defaultValue)) {
+                console.error(`RemoteSelect: The defaultValue object does contain the required keys  ` +
+                    `'${labelField}' and '${valueField}'. You can change the required keys by using ` +
+                    `the valueField and labelField props.`);
+                defaultValue = null;
+            }
+            selectedOption = defaultValue;
         }
+
+        if (defaultValue !== null) {
+
+            options.map((item) => {
+                if (!isValidOption(item)) {
+                    console.error(`RemoteSelect: The options array does not consist of objects ` +
+                        `with the required keys '${labelField}' and '${valueField}'. ` +
+                        `You can change the required keys by using the valueField and labelField props.`);
+                    return;
+                }
+
+                if (typeof (defaultValue) === 'object') {
+                    if (item[valueField] === defaultValue[valueField]) {
+                        selectedOption = item;
+                    }
+                } else if (item[valueField] === defaultValue) {
+                    selectedOption = item;
+                }
+            });
+
+            if (selectedOption === null && defaultValue !== '') {
+                selectedOption = {
+                    [valueField]: defaultValue,
+                    [labelField]: defaultValue,
+                };
+                options.push(selectedOption);
+            }
+        }
+
+        console.log("SEL", selectedOption);
 
         return {
             dropdownOpen: false,
             loading: false,
             loadCount: 0,
             options: options,
-            inputValue: props.defaultValue?.value ?? '',
-            defaultValue: props.defaultValue ?? null,
+            selectedOption: selectedOption,
         }
     });
 
@@ -69,12 +111,11 @@ export default function RemoteSelect(props: RemoteSelectProps) {
                 .get(props.url, {})
                 .then((res) => {
                     const options: SelectOption[] = [];
-                    const valueField = props.valueField ?? 'value';
-                    const labelField = props.labelField ?? 'label';
-
                     if (res.data.length) {
-                        if (!(labelField in res.data[0]) || !(valueField in res.data[0])) {
-                            console.log(`RemoteSelect '${props.name}', valueField or labelField are invalid`);
+                        if (!isValidOption(res.data[0])) {
+                            console.error(`RemoteSelect: The data returned from the server did not contain ` +
+                                `the required keys '${labelField}' and '${valueField}'. ` +
+                                `You can change the required keys by using the valueField and labelField props.`);
                             return;
                         }
                     }
@@ -83,8 +124,8 @@ export default function RemoteSelect(props: RemoteSelectProps) {
                         const value = item[valueField];
                         const label = item[labelField];
                         options.push({
-                            value: value,
-                            label: label
+                            [valueField]: value,
+                            [labelField]: label,
                         });
                     });
 
@@ -99,22 +140,21 @@ export default function RemoteSelect(props: RemoteSelectProps) {
     }, [state.loading]);
 
     const onChange = (event: React.SyntheticEvent, selValue: SelectOption | null) => {
+        if (props.onChange) {
+            props.onChange(selValue?.[valueField] ?? null);
+        }
+
         setState(state => ({
             ...state,
-            inputValue: selValue?.value ?? '',
-            defaultValue: selValue
+            selectedOption: selValue,
         }));
-        if (props.onChange) {
-            console.log(selValue);
-            props.onChange(selValue);
-        }
     }
 
     const setDropdownOpen = (open: boolean) => {
         setState(state => ({
             ...state,
             dropdownOpen: open,
-            loading: (open && state.loadCount === 0),
+            loading: !!(props?.url && open && (state.loadCount === 0)),
         }));
     };
 
@@ -126,23 +166,13 @@ export default function RemoteSelect(props: RemoteSelectProps) {
             onOpen={() => setDropdownOpen(true)}
             onClose={() => setDropdownOpen(false)}
             onChange={onChange}
-            getOptionLabel={(option) => option.label}
+            getOptionLabel={(option) => option?.[labelField] ?? ''}
             isOptionEqualToValue={(option, value) => {
-                return option?.value === value?.value;
+                return option?.[valueField] === value?.[valueField];
             }}
             options={state.options}
             loading={state.loading}
-            renderOption={(props, option) => {
-                return (
-                    <li {...props} key={option.value}>
-                        {option.label == '' ?
-                            <span> </span>
-                            : option.label
-                        }
-                    </li>
-                );
-            }}
-            value={state.defaultValue || null}
+            value={state.selectedOption}
             ref={props.inputRef}
             sx={props.sx}
             renderInput={(params) => (
@@ -162,6 +192,31 @@ export default function RemoteSelect(props: RemoteSelectProps) {
                     }}
                 />
             )}
+        />
+    );
+}
+
+export function RemoteSelectEx(props: RemoteSelectProps) {
+    return (
+        <Controller
+            render={({ ...controlProps }) => {
+                const errorMessage = controlProps.fieldState.error?.message ?? '';
+                const onChange = (selValue: string | null) => {
+                    controlProps.field.onChange(selValue);
+                }
+
+                return (
+                    <RemoteSelect
+                        {...props}
+                        errors={controlProps.fieldState.error}
+                        helperText={errorMessage || props?.helperText}
+                        inputRef={controlProps.field.ref}
+                        onChange={onChange}
+                        defaultValue={controlProps.field.value}
+                    />
+                );
+            }}
+            name={props.name}
         />
     );
 }

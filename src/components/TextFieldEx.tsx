@@ -6,12 +6,11 @@ type TextFieldExProps = TextFieldProps & {
     name: string;
 }
 
-export function TextFieldEx(props: TextFieldExProps) {
+export default function TextFieldEx(props: TextFieldExProps) {
     return (
         <Controller
             render={({ ...controlProps }) => {
-                const errorMessage = controlProps.formState.errors?.[props.name]?.message ?? '';
-
+                const errorMessage = controlProps.fieldState.error?.message ?? '';
                 const onChange = (e: ChangeEvent<HTMLInputElement>) => {
                     controlProps.field.onChange(e.target.value);
                     if (props.onChange) {
@@ -38,5 +37,5 @@ export function TextFieldEx(props: TextFieldExProps) {
         />
     );
 }
-export default TextFieldEx;
+
 

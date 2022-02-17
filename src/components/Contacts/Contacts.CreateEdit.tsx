@@ -14,10 +14,10 @@ import Fieldset from '../Fieldset';
 import MultiFieldset from '../MultiFieldset';
 import Overlay from '../Overlay';
 import ProfileAvatar from '../ProfileAvatar';
-import RemoteSelect from '../RemoteSelect';
+import RemoteSelect, { RemoteSelectEx } from '../RemoteSelect';
 import TextFieldEx from '../TextFieldEx';
 import contactSchema from '../../validation/contactSchema';
-import CountrySelect from '../CountrySelect';
+import CountrySelect, { CountrySelectEx } from '../CountrySelect';
 import DialogButton from '../DialogButton';
 import { uniqueId } from 'lodash';
 
@@ -54,6 +54,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
     const onSubmit = (data: any) => {
 
+        console.log("SUBMIT", data);
+        return;
         setState({ ...state, loading: true });
 
         const formData: FormData = new FormData();
@@ -63,8 +65,9 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
         let url = '/contacts';
         if (props.type === 'edit' && props.data?.contactId) {
-            url = `${url}/${props.data.contactId}`;
+            //url = `${url}/${props.data.contactId}`;
         }
+
 
         apiClient.post(url, data).then((response) => {
             setState({ ...state, loading: false });
@@ -85,7 +88,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     }
 
     const onError = (data: any) => {
-        console.log("ERROR", data);
+        console.log("SUBMIT ERROR", data);
     }
 
     const prepareFieldValues = (fieldValues: Record<string, any>) => {
@@ -97,31 +100,17 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             fieldValues[`socialmedia[${item.ident}]`] = item.url;
         });
 
-        fieldValues.address = addresses.map((addr, index) => {
-            if (addr.country && addr.country_name) {
-                addr.country = {
-                    value: addr?.country,
-                    label: addr?.country_name,
-                };
-            } else {
-                addr.country = null;
-            }
-            return addr;
-        });
-
-        if (fieldValues.title) {
-            fieldValues.title = {
-                value: fieldValues.title,
-                label: fieldValues.title,
-            };
-        }
-
-        if (fieldValues.pronouns) {
-            fieldValues.pronouns = {
-                value: fieldValues.pronouns,
-                label: fieldValues.pronouns,
-            }
-        }
+        // fieldValues.address = addresses.map((addr, index) => {
+        //     if (addr.country && addr.country_name) {
+        //         addr.country = {
+        //             value: addr?.country,
+        //             label: addr?.country_name,
+        //         };
+        //     } else {
+        //         addr.country = null;
+        //     }
+        //     return addr;
+        // });
 
         return fieldValues;
     }
@@ -188,18 +177,18 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                             defaultValue={state.values.avatar}
                                         />
                                         <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
-                                            {/* <RemoteSelect
-                                            errors={errors.title}
-                                            label="Title"
-                                            options={[
-                                                { value: '', label: '' },
-                                                { value: 'Mr', label: 'Mr' },
-                                                { value: 'Mrs', label: 'Mrs' },
-                                                { value: 'Miss', label: 'Miss' },
-                                                { value: 'Ms', label: 'Ms' },
-                                                { value: 'Mx', label: 'Mx' },
-                                            ]}
-                                        />
+                                            <RemoteSelectEx
+                                                name="title"
+                                                label="Title"
+                                                options={[
+                                                    { value: 'Mr', label: 'Mr' },
+                                                    { value: 'Mrs', label: 'Mrs' },
+                                                    { value: 'Miss', label: 'Miss' },
+                                                    { value: 'Ms', label: 'Ms' },
+                                                    { value: 'Mx', label: 'Mx' },
+                                                ]}
+                                            />
+                                            {/*
                                         <RemoteSelect
                                             label="Pronouns"
                                             errors={errors.pronouns}
@@ -227,10 +216,12 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                 <MultiFieldset
                                     legend="Email Address"
                                     defaultTabLabel="Primary"
-                                    baseName="email"
-                                    values={state.values.email_address}
+                                    baseName="email_address"
                                 >
-                                    <TextFieldEx name="address" type="email" label="Email Address" />
+                                    <TextFieldEx
+                                        name="address"
+                                        label="Email Address"
+                                    />
                                 </MultiFieldset>
                             </Box>
                             <Box sx={{ overflowX: 'hidden', minWidth: 0 }}>
@@ -238,13 +229,13 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                     baseName="address"
                                     legend="Address"
                                     defaultTabLabel="Home"
-                                    values={state.values.address}
+                                    defaultValues={state.values.address}
                                 >
                                     <TextFieldEx name="street" label="Street" />
                                     <TextFieldEx name="town" label="Town / City" />
                                     <TextFieldEx name="county" label="County / State" />
                                     <TextFieldEx name="postcode" label="Zip / Postal Code" />
-                                    <CountrySelect
+                                    <CountrySelectEx
                                         label="Country"
                                         name="country"
                                         url="/countries"
@@ -252,14 +243,14 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                 </MultiFieldset>
                             </Box>
                             <Box display="grid" gap={2}>
-                                <MultiFieldset
+                                {/* <MultiFieldset
                                     legend="Phone Number"
                                     defaultTabLabel="Primary"
                                     baseName="phone"
-                                    values={state.values.phone_number}
+                                    defaultValues={state.values.phone_number}
                                 >
                                     <TextFieldEx name="number" type="text" label="Phone Number" />
-                                </MultiFieldset>
+                                </MultiFieldset> */}
                                 <Fieldset label="Social Media">
                                     {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
                                         <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>

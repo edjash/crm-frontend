@@ -1,11 +1,11 @@
 import { Controller } from "react-hook-form";
 import RemoteSelect, { RemoteSelectProps } from './RemoteSelect';
 
-export default function CountrySelect(RSProps: RemoteSelectProps) {
+export default function CountrySelect(props: RemoteSelectProps) {
 
     return (
         <RemoteSelect
-            {...RSProps}
+            {...props}
             url='/countries'
             valueField="code"
             labelField="name"
@@ -13,20 +13,23 @@ export default function CountrySelect(RSProps: RemoteSelectProps) {
     );
 }
 
-export function CountrySelectEx(RSProps: RemoteSelectProps) {
+export function CountrySelectEx(props: RemoteSelectProps) {
+
     return (
         <Controller
-            render={({ ...ControlProps }) => {
+            render={({ ...controlProps }) => {
+
                 return (
                     <CountrySelect
-                        {...RSProps}
-                        errors={ControlProps.formState.errors.country}//Wrong name. zZz
-                        inputRef={ControlProps.field.ref}
-                        onChange={ControlProps.field.onChange}
+                        {...props}
+                        errors={controlProps.formState.errors?.[props?.name]}
+                        inputRef={controlProps.field.ref}
+                        onChange={controlProps.field.onChange}
+                        defaultValue={controlProps.field.value ?? null}
                     />);
             }}
-            defaultValue={RSProps?.defaultValue ?? null}
-            name={RSProps?.name}
+            defaultValue={props?.defaultValue ?? null}
+            name={props?.name}
         />
     );
 }

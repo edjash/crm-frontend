@@ -4,19 +4,20 @@ import { IconButton, Menu, MenuItem, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from '@mui/material/Tab';
 import { useModal } from "mui-modal-provider";
-import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactNode, useState } from "react";
+import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactNode, ReactElement, useState } from "react";
 import PromptDialog from "./PromptDialog";
 import ConfirmDialog from "./ConfirmDialog";
 import { uniqueId } from 'lodash';
 
 interface MultiFieldsetProps {
     baseName: string,
-    children: React.ReactNode;
+    children: ReactNode;
     legend: string;
     defaultTabLabel: string;
     activeTab?: number;
     errors?: Record<string, string>;
-    values?: Record<string, string>[];
+    defaultValues?: Record<string, string>[];
+    propsCallback?: (fieldName: string, index: number) => Record<string, any>,
 };
 
 interface MultiFieldsetState {
@@ -31,47 +32,34 @@ interface TabPanelProps {
     active: boolean;
 };
 
-interface EnrichedChild {
+interface ClonedChild {
     name: string;
-    children?: React.ReactNode,
+    children?: ReactNode,
     onChange: (e: ChangeEvent<HTMLInputElement>) => void,
     defaultValue: string | object,
     error: boolean,
     helperText: string,
 };
 
-const enrichElements = (
-    baseName: string,
-    index: number,
+const cloneChildren = (
     children: ReactNode,
-    values: Record<string, any>,
-    errors: Record<string, string> | undefined
+    propsCallback: (fieldName: string) => Record<string, any>,
 ) => {
 
-    //const fieldValues: Record<string, string> = values?.[index] ?? {};
     const arrayChildren = Children.toArray(children);
-
     return Children.map(arrayChildren, (child) => {
-        if (!isValidElement<EnrichedChild>(child)) {
+        if (!isValidElement<ClonedChild>(child)) {
             return child;
         }
 
-        let elementChild: React.ReactElement<EnrichedChild> = child;
+        let inputElement: ReactElement<ClonedChild> = child;
         if (child.props.children) {
-            elementChild = cloneElement<EnrichedChild>(elementChild, {
-                children: enrichElements(baseName, index, elementChild.props.children, values, errors),
+            inputElement = cloneElement<ClonedChild>(inputElement, {
+                children: cloneChildren(inputElement.props.children, propsCallback),
             })
         }
-
-        const name: string = `${baseName}[${index}][${elementChild.props.name}]`;
-        const value: string | object = values?.[elementChild.props.name] ?? '';
-
-        return cloneElement(elementChild, {
-            name: name,
-            defaultValue: value,
-            error: !!(errors?.[name]),
-            helperText: `${errors?.[name] ?? ''}`
-        });
+        const childProps = propsCallback(inputElement.props.name);
+        return cloneElement(inputElement, childProps);
     });
 }
 
@@ -90,7 +78,7 @@ export function TabPanel(props: TabPanelProps) {
 export default function MultiFieldset(props: MultiFieldsetProps) {
 
     const [state, setState] = useState<MultiFieldsetState>(() => {
-        const tabValues = props?.values ?? [];
+        const tabValues = props?.defaultValues ?? [];
         if (!tabValues.length) {
             tabValues.push({});
         }
@@ -101,6 +89,8 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
             values.key = values?.id || uniqueId(`new_${props.baseName}_`);
             return values;
         });
+
+        console.log(props.baseName, tabValues);
 
         const initialState = {
             menuAnchorEl: null,
@@ -234,8 +224,8 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
     }
 
     return (
-        <fieldset style={{ borderRadius: '6px'}}>
-            <legend className="" style={{lineHeight: '1em'}}><span>{props.legend}</span></legend>
+        <fieldset style={{ borderRadius: '6px' }}>
+            <legend className="" style={{ lineHeight: '1em' }}><span>{props.legend}</span></legend>
             <Box sx={{
                 width: {
                     md: 320
@@ -254,7 +244,7 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
                         sx={{
                             flexGrow: 1,
                             width: {
-                               
+
                             }
                         }}
                         value={state.activeTab}
@@ -263,7 +253,7 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
                             <Tab label={values?.label ?? ':-('} value={index} key={index} />
                         ))}
                     </Tabs>
-                    <Box sx={{flexShrink:0}}>
+                    <Box sx={{ flexShrink: 0 }}>
                         <IconButton size="small" sx={{ alignSelf: 'center' }} onClick={onAddClick}>
                             <AddIcon fontSize="small" />
                         </IconButton>
@@ -293,8 +283,15 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
                     </Box>
                 </Box>
                 {state.values.map((values, index) => (
-                    <TabPanel active={state.activeTab == index} key={values.key}>
-                        {enrichElements(props.baseName, index, props.children, values, props.errors)}
+                    <TabPanel active={state.activeTab == index} key={index}>
+                        {cloneChildren(props.children, (fieldName) => {
+                            const name: string = `${props.baseName}[${index}][${fieldName}]`;
+                            const value: string | object = values?.[fieldName] ?? '';
+                            return {
+                                name: name,
+                                //defaultValue: value
+                            };
+                        })}
                         <input type="hidden" name={`${props.baseName}[${index}][label]`} defaultValue={values?.label} />
                         {values?.id &&
                             <input type="hidden" name={`${props.baseName}[${index}][id]`} defaultValue={values?.id} />
