@@ -1,25 +1,24 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, IconButton } from '@mui/material';
-import Button from '@mui/material/Button';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { uniqueId } from 'lodash';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { SocialIcon } from 'react-social-icons';
+import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
+import { CountrySelectEx } from '../CountrySelect';
+import DialogButton from '../DialogButton';
 import Fieldset from '../Fieldset';
 import MultiFieldset from '../MultiFieldset';
 import Overlay from '../Overlay';
 import ProfileAvatar from '../ProfileAvatar';
-import RemoteSelect, { RemoteSelectEx } from '../RemoteSelect';
+import { RemoteSelectEx } from '../RemoteSelect';
 import TextFieldEx from '../TextFieldEx';
-import contactSchema from '../../validation/contactSchema';
-import CountrySelect, { CountrySelectEx } from '../CountrySelect';
-import DialogButton from '../DialogButton';
-import { uniqueId } from 'lodash';
 
 export interface ShowCreateEditProps {
     contactId: number;
@@ -54,8 +53,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
     const onSubmit = (data: any) => {
 
-        console.log("SUBMIT", data);
-        return;
+
         setState({ ...state, loading: true });
 
         const formData: FormData = new FormData();
@@ -65,7 +63,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
         let url = '/contacts';
         if (props.type === 'edit' && props.data?.contactId) {
-            //url = `${url}/${props.data.contactId}`;
+            url = `${url}/${props.data.contactId}`;
         }
 
 
@@ -85,10 +83,6 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             setState({ ...state, loading: false });
             apiClient.showErrors(response, formMethods.setError);
         });
-    }
-
-    const onError = (data: any) => {
-        console.log("SUBMIT ERROR", data);
     }
 
     const prepareFieldValues = (fieldValues: Record<string, any>) => {
@@ -144,7 +138,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         if (!state.ready) {
             return (<Overlay open={true} />);
         }
-        title = `${state.values?.fullname}`;
+        title = props?.data?.fullname ?? 'Unnamed';
         avatarPostUrl = `${avatarPostUrl}/${props?.data?.contactId}`;
     }
 
@@ -165,7 +159,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             </DialogTitle>
             <DialogContent>
                 <FormProvider {...formMethods}>
-                    <form onSubmit={formMethods.handleSubmit(onSubmit, onError)} id={formId.current}>
+                    <form onSubmit={formMethods.handleSubmit(onSubmit)} id={formId.current}>
                         <Box display="grid" gridTemplateColumns="auto auto auto" alignItems="start" gap={2}>
                             <Box display="grid" gap={2}>
                                 <Fieldset label="Personal">
