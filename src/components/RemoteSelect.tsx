@@ -50,11 +50,11 @@ export default function RemoteSelect(props: RemoteSelectProps) {
         let options: SelectOption[] = props.options ?? [];
         let selectedOption = null;
 
-        if (typeof (defaultValue) === 'object') {
+        if (typeof (defaultValue) === 'object' && defaultValue) {
             if (!isValidOption(defaultValue)) {
                 console.error(`RemoteSelect: The defaultValue object does contain the required keys  ` +
                     `'${labelField}' and '${valueField}'. You can change the required keys by using ` +
-                    `the valueField and labelField props.`);
+                    `the valueField and labelField props.`, defaultValue);
                 defaultValue = null;
             }
             selectedOption = defaultValue;
