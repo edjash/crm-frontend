@@ -38,8 +38,6 @@ export default function RemoteSelect(props: RemoteSelectProps) {
     const valueField: string = props.valueField ?? 'value';
     const labelField: string = props.labelField ?? 'label';
 
-    console.log(props.name, props.defaultValue);
-
     const isValidOption = (option: any): boolean => {
         if (!option || typeof (option) !== 'object') {
             return false;
@@ -89,8 +87,6 @@ export default function RemoteSelect(props: RemoteSelectProps) {
                 options.push(selectedOption);
             }
         }
-
-        console.log("SEL", selectedOption);
 
         return {
             dropdownOpen: false,
