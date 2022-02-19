@@ -90,8 +90,6 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
             return values;
         });
 
-        console.log(props.baseName, tabValues);
-
         const initialState = {
             menuAnchorEl: null,
             activeTab: props?.activeTab ?? 0,
