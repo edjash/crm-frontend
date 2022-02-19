@@ -182,17 +182,15 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                                     { value: 'Mx', label: 'Mx' },
                                                 ]}
                                             />
-                                            {/*
-                                        <RemoteSelect
-                                            label="Pronouns"
-                                            errors={errors.pronouns}
-                                            options={[
-                                                { value: '', label: '' },
-                                                { value: 'She/Her', label: 'She/Her' },
-                                                { value: 'He/Him', label: 'He/Him' },
-                                                { value: 'They/Them', label: 'They/Them' },
-                                            ]}
-                                        /> */}
+                                            <RemoteSelectEx
+                                                label="Pronouns"
+                                                name="pronouns"
+                                                options={[
+                                                    { value: 'She/Her', label: 'She/Her' },
+                                                    { value: 'He/Him', label: 'He/Him' },
+                                                    { value: 'They/Them', label: 'They/Them' },
+                                                ]}
+                                            />
                                         </Box>
                                     </Box>
                                     <Box sx={{ display: 'grid' }}>
@@ -223,7 +221,6 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                     baseName="address"
                                     legend="Address"
                                     defaultTabLabel="Home"
-                                    defaultValues={state.values.address}
                                 >
                                     <TextFieldEx name="street" label="Street" />
                                     <TextFieldEx name="town" label="Town / City" />
