@@ -1,7 +1,16 @@
 import { Controller } from "react-hook-form";
 import RemoteSelect, { RemoteSelectProps } from './RemoteSelect';
 
-export default function CountrySelect(props: RemoteSelectProps) {
+type CountryOption = {
+    code: string;
+    name: string;
+};
+
+interface CountrySelectProps extends RemoteSelectProps {
+    defaultValue?: CountryOption;
+};
+
+export default function CountrySelect(props: CountrySelectProps) {
 
     return (
         <RemoteSelect
@@ -13,7 +22,7 @@ export default function CountrySelect(props: RemoteSelectProps) {
     );
 }
 
-export function CountrySelectEx(props: RemoteSelectProps) {
+export function CountrySelectEx(props: CountrySelectProps) {
 
     return (
         <Controller
