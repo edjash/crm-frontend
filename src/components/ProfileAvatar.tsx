@@ -26,6 +26,8 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 export default function (props: ProfileAvatarProps) {
 
+    console.log("AVATAR PROPS", props);
+
     const [state, setState] = useState<ProfileAvatarState>(() => {
         let filename = props?.defaultValue ?? '';
         let src = null;
@@ -98,6 +100,7 @@ export default function (props: ProfileAvatarProps) {
             if (response.data.filename) {
                 const src = `${SERVER_URL}/storage/tmp_avatars/${response.data.filename}`;
 
+                console.log("FILE", response.data.filename);
                 setState(state => ({
                     ...state,
                     showMask: false,
@@ -203,7 +206,7 @@ export default function (props: ProfileAvatarProps) {
                 style={{ display: "none" }}
                 onChange={onFileInputChange}
             />
-            <input type="hidden" name={props.name} defaultValue={state.filename} />
+            <input type="hidden" name={props.name} onChange={props.onChange} defaultValue={state.filename} />
         </Box >
     );
 }

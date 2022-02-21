@@ -8,15 +8,16 @@ import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactNode, 
 import PromptDialog from "./PromptDialog";
 import ConfirmDialog from "./ConfirmDialog";
 import { uniqueId } from 'lodash';
+import { StringSchema } from 'yup';
 
 interface MultiFieldsetProps {
-    baseName: string,
+    name: string;
+    defaultValue: Record<string, any>;
     children: ReactNode;
     legend: string;
     defaultTabLabel: string;
     activeTab?: number;
     errors?: Record<string, string>;
-    defaultValues?: Record<string, string>[];
     propsCallback?: (fieldName: string, index: number) => Record<string, any>,
 };
 
@@ -78,15 +79,17 @@ export function TabPanel(props: TabPanelProps) {
 export default function MultiFieldset(props: MultiFieldsetProps) {
 
     const [state, setState] = useState<MultiFieldsetState>(() => {
-        const tabValues = props?.defaultValues ?? [];
+        const tabValues = props?.defaultValue ?? [];
         if (!tabValues.length) {
             tabValues.push({});
         }
-        tabValues.forEach((values, index) => {
+        console.log("TABVALUES", props.defaultValue);
+        
+        tabValues.forEach((values: Record<string, any>, index: number) => {
             if (!values.label) {
                 values.label = (!index) ? props.defaultTabLabel : 'Other';
             }
-            values.key = values?.id || uniqueId(`new_${props.baseName}_`);
+            values.key = values?.id || uniqueId(`new_${props.name}_`);
             return values;
         });
 

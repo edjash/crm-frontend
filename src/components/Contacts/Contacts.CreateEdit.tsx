@@ -52,14 +52,16 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     const formId = useRef(uniqueId('contactForm'));
 
     const onSubmit = (data: any) => {
-
-
         setState({ ...state, loading: true });
 
-        const formData: FormData = new FormData();
-        for (let key in data) {
-            formData.append(key, data[key]);
-        }
+        data.address = data.address.map((item: Record<string, any>) => {
+            if (typeof item.country == 'object'
+                && item.country
+                && item.country?.code) {
+                item.country = item.country.code;
+            }
+            return item;
+        });
 
         let url = '/contacts';
         if (props.type === 'edit' && props.data?.contactId) {
@@ -167,8 +169,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                         <ProfileAvatar
                                             sx={{ justifySelf: "center" }}
                                             postEndPoint={avatarPostUrl}
-                                            name="avatar"
-                                            defaultValue={state.values.avatar}
+                                            {...formMethods.register('avatar')}
                                         />
                                         <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
                                             <RemoteSelectEx
