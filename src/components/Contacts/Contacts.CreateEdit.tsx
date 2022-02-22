@@ -1,4 +1,3 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, IconButton } from '@mui/material';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
@@ -7,16 +6,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { uniqueId } from 'lodash';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
 import { SocialIcon } from 'react-social-icons';
-import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
-import { CountrySelectEx } from '../CountrySelect';
 import DialogButton from '../DialogButton';
 import Fieldset from '../Fieldset';
-import MultiFieldset from '../MultiFieldset';
+import Form from '../Form/Form';
+import ProfileAvatar from '../Form/ProfileAvatar';
 import Overlay from '../Overlay';
-import ProfileAvatar from '../ProfileAvatar';
 import { RemoteSelectEx } from '../RemoteSelect';
 import TextFieldEx from '../TextFieldEx';
 
@@ -29,7 +25,7 @@ interface CreateEditState {
     loading: boolean;
     ready: boolean;
     open: boolean;
-    values: Record<string, any>;
+    defaultValues: Record<string, any>;
 }
 
 type CreateEditProps = DialogProps & {
@@ -45,29 +41,34 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         loading: false,
         ready: (props.type === 'new'),
         open: (props.type === 'new'),
-        values: {},
+        defaultValues: {},
     });
 
-    const formMethods = useForm({ resolver: yupResolver(contactSchema) });
     const formId = useRef(uniqueId('contactForm'));
 
     const onSubmit = (data: any) => {
+        console.log("FORM DATA", data);
+
+        data = {
+            'avatar': data.avatar,
+            'firstname': data.firstname,
+        };
+
         setState({ ...state, loading: true });
 
-        data.address = data.address.map((item: Record<string, any>) => {
-            if (typeof item.country == 'object'
-                && item.country
-                && item.country?.code) {
-                item.country = item.country.code;
-            }
-            return item;
-        });
+        // data.address = data.address.map((item: Record<string, any>) => {
+        //     if (typeof item.country == 'object'
+        //         && item.country
+        //         && item.country?.code) {
+        //         item.country = item.country.code;
+        //     }
+        //     return item;
+        // });
 
         let url = '/contacts';
         if (props.type === 'edit' && props.data?.contactId) {
             url = `${url}/${props.data.contactId}`;
         }
-
 
         apiClient.post(url, data).then((response) => {
             setState({ ...state, loading: false });
@@ -83,7 +84,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             }
         }).catch((response) => {
             setState({ ...state, loading: false });
-            apiClient.showErrors(response, formMethods.setError);
+            // apiClient.showErrors(response, formMethods.setError);
         });
     }
 
@@ -114,14 +115,11 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     useEffect(() => {
         apiClient.get(`/contacts/${props.data?.contactId}`).then((response) => {
             const values = prepareFieldValues(response.data);
-            for (let k in values) {
-                formMethods.setValue(k, values[k]);
 
-            }
             setState((state) => ({
                 ...state,
                 open: true,
-                // values: prepareFieldValues(response.data),
+                defaultValues: values,
                 ready: true,
             }));
         }).catch((error) => {
@@ -160,82 +158,81 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                 </IconButton>
             </DialogTitle>
             <DialogContent>
-                <FormProvider {...formMethods}>
-                    <form onSubmit={formMethods.handleSubmit(onSubmit)} id={formId.current}>
-                        <Box display="grid" gridTemplateColumns="auto auto auto" alignItems="start" gap={2}>
-                            <Box display="grid" gap={2}>
-                                <Fieldset label="Personal">
-                                    <Box display="grid" gap={1}>
-                                        <ProfileAvatar
-                                            sx={{ justifySelf: "center" }}
-                                            postEndPoint={avatarPostUrl}
-                                            {...formMethods.register('avatar')}
+                <Form onSubmit={onSubmit} id={formId.current} defaultValues={state.defaultValues}>
+                    <Box display="grid" gridTemplateColumns="auto auto auto" alignItems="start" gap={2}>
+                        <Box display="grid" gap={2}>
+                            <Fieldset label="Personal">
+                                <Box display="grid" gap={1}>
+                                    <ProfileAvatar
+                                        name="avatar"
+                                        sx={{ justifySelf: "center" }}
+                                        postEndPoint={avatarPostUrl}
+                                    />
+                                    <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
+                                        <RemoteSelectEx
+                                            name="title"
+                                            label="Title"
+                                            options={[
+                                                { value: 'Mr', label: 'Mr' },
+                                                { value: 'Mrs', label: 'Mrs' },
+                                                { value: 'Miss', label: 'Miss' },
+                                                { value: 'Ms', label: 'Ms' },
+                                                { value: 'Mx', label: 'Mx' },
+                                            ]}
                                         />
-                                        <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
-                                            <RemoteSelectEx
-                                                name="title"
-                                                label="Title"
-                                                options={[
-                                                    { value: 'Mr', label: 'Mr' },
-                                                    { value: 'Mrs', label: 'Mrs' },
-                                                    { value: 'Miss', label: 'Miss' },
-                                                    { value: 'Ms', label: 'Ms' },
-                                                    { value: 'Mx', label: 'Mx' },
-                                                ]}
-                                            />
-                                            <RemoteSelectEx
-                                                label="Pronouns"
-                                                name="pronouns"
-                                                options={[
-                                                    { value: 'She/Her', label: 'She/Her' },
-                                                    { value: 'He/Him', label: 'He/Him' },
-                                                    { value: 'They/Them', label: 'They/Them' },
-                                                ]}
-                                            />
-                                        </Box>
-                                    </Box>
-                                    <Box sx={{ display: 'grid' }}>
-                                        <TextFieldEx
-                                            name="firstname"
-                                            label="First Name"
-                                            required
-                                        />
-                                        <TextFieldEx
-                                            name="lastname"
-                                            label="Last Name"
+                                        <RemoteSelectEx
+                                            label="Pronouns"
+                                            name="pronouns"
+                                            options={[
+                                                { value: 'She/Her', label: 'She/Her' },
+                                                { value: 'He/Him', label: 'He/Him' },
+                                                { value: 'They/Them', label: 'They/Them' },
+                                            ]}
                                         />
                                     </Box>
-                                </Fieldset>
-                                <MultiFieldset
-                                    legend="Email Address"
-                                    defaultTabLabel="Primary"
-                                    baseName="email_address"
-                                >
+                                </Box>
+                                <Box sx={{ display: 'grid' }}>
                                     <TextFieldEx
-                                        name="address"
-                                        label="Email Address"
+                                        name="firstname"
+                                        label="First Name"
+                                        required
                                     />
-                                </MultiFieldset>
-                            </Box>
-                            <Box sx={{ overflowX: 'hidden', minWidth: 0 }}>
-                                <MultiFieldset
-                                    baseName="address"
-                                    legend="Address"
-                                    defaultTabLabel="Home"
-                                >
-                                    <TextFieldEx name="street" label="Street" />
-                                    <TextFieldEx name="town" label="Town / City" />
-                                    <TextFieldEx name="county" label="County / State" />
-                                    <TextFieldEx name="postcode" label="Zip / Postal Code" />
-                                    <CountrySelectEx
-                                        label="Country"
-                                        name="country"
-                                        url="/countries"
+                                    <TextFieldEx
+                                        name="lastname"
+                                        label="Last Name"
                                     />
-                                </MultiFieldset>
-                            </Box>
-                            <Box display="grid" gap={2}>
-                                {/* <MultiFieldset
+                                </Box>
+                            </Fieldset>
+                            {/* <MultiFieldset
+                                legend="Email Address"
+                                defaultTabLabel="Primary"
+                                baseName="email_address"
+                            >
+                                <TextFieldEx
+                                    name="address"
+                                    label="Email Address"
+                                />
+                            </MultiFieldset> */}
+                        </Box>
+                        <Box sx={{ overflowX: 'hidden', minWidth: 0 }}>
+                            {/* <MultiFieldset
+                                baseName="address"
+                                legend="Address"
+                                defaultTabLabel="Home"
+                            >
+                                <TextFieldEx name="street" label="Street" />
+                                <TextFieldEx name="town" label="Town / City" />
+                                <TextFieldEx name="county" label="County / State" />
+                                <TextFieldEx name="postcode" label="Zip / Postal Code" />
+                                <CountrySelectEx
+                                    label="Country"
+                                    name="country"
+                                    url="/countries"
+                                />
+                            </MultiFieldset> */}
+                        </Box>
+                        <Box display="grid" gap={2}>
+                            {/* <MultiFieldset
                                     legend="Phone Number"
                                     defaultTabLabel="Primary"
                                     baseName="phone"
@@ -243,23 +240,22 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                 >
                                     <TextFieldEx name="number" type="text" label="Phone Number" />
                                 </MultiFieldset> */}
-                                <Fieldset label="Social Media">
-                                    {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>
-                                            <Box>
-                                                <SocialIcon network={network.toLowerCase()} fgColor="white" style={{ height: 25, width: 25 }} />
-                                            </Box>
-                                            <TextFieldEx
-                                                name={`socialmedia[${network.toLowerCase()}]`}
-                                                label={network}
-                                            />
+                            <Fieldset label="Social Media">
+                                {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>
+                                        <Box>
+                                            <SocialIcon network={network.toLowerCase()} fgColor="white" style={{ height: 25, width: 25 }} />
                                         </Box>
-                                    ))}
-                                </Fieldset>
-                            </Box>
+                                        <TextFieldEx
+                                            name={`socialmedia[${network.toLowerCase()}]`}
+                                            label={network}
+                                        />
+                                    </Box>
+                                ))}
+                            </Fieldset>
                         </Box>
-                    </form>
-                </FormProvider>
+                    </Box>
+                </Form>
             </DialogContent>
             <DialogActions>
                 <DialogButton onClick={props.onCancel}>Cancel</DialogButton>

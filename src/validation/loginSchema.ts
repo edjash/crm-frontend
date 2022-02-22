@@ -7,10 +7,10 @@ const loginSchema = object({
             .email()
             .max(255)
             .required(),
-    // password:
-    //     string()
-    //         .max(255)
-    //         .required(),
+    password:
+        string()
+            .max(255)
+            .required(),
 });
 
 
