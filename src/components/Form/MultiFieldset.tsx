@@ -3,16 +3,17 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton, Menu, MenuItem, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from '@mui/material/Tab';
-import { useModal } from "mui-modal-provider";
-import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactNode, ReactElement, useState } from "react";
-import PromptDialog from "../PromptDialog";
-import ConfirmDialog from "../ConfirmDialog";
 import { uniqueId } from 'lodash';
-import { StringSchema } from 'yup';
+import { useModal } from "mui-modal-provider";
+import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useEffect, useState } from "react";
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import ConfirmDialog from "../ConfirmDialog";
+import PromptDialog from "../PromptDialog";
+
 
 interface MultiFieldsetProps {
-    name: string;
-    defaultValue: Record<string, any>;
+    baseName: string;
+    defaultValue?: Record<string, any>;
     children: ReactNode;
     legend: string;
     defaultTabLabel: string;
@@ -24,7 +25,6 @@ interface MultiFieldsetProps {
 interface MultiFieldsetState {
     menuAnchorEl: null | HTMLElement;
     activeTab: number;
-    values: Record<string, string>[];
     deletedIds: number[];
 };
 
@@ -76,30 +76,49 @@ export function TabPanel(props: TabPanelProps) {
     );
 }
 
-export default function MultiFieldset(props: MultiFieldsetProps) {
+
+export default function MultiFieldSet(props: MultiFieldsetProps) {
+    return (
+        <Controller
+            render={({ ...controlProps }) => {
+                const errorMessage = controlProps.fieldState.error?.message ?? '';
+                const onChange = (selValue: string | null) => {
+                    controlProps.field.onChange(selValue);
+                }
+
+                return (
+                    <MultiFieldsetBase
+                        {...props}
+                        defaultValue={controlProps.field.value}
+                    />
+                );
+            }}
+            name={props.baseName}
+        />
+    );
+}
+
+
+function MultiFieldsetBase(props: MultiFieldsetProps) {
+
+    const { register } = useFormContext();
+    const { fields, append, update, remove } = useFieldArray({
+        name: props.baseName
+    });
+
+    fields.map((item: Record<string, string>, index) => {
+        if (!item?.label) {
+            item.label = (index > 0) ? 'Other' : 'Primary';
+            update(index, item);
+        }
+    });
 
     const [state, setState] = useState<MultiFieldsetState>(() => {
-        const tabValues = props?.defaultValue ?? [];
-        if (!tabValues.length) {
-            tabValues.push({});
-        }
-        console.log("TABVALUES", props.defaultValue);
-        
-        tabValues.forEach((values: Record<string, any>, index: number) => {
-            if (!values.label) {
-                values.label = (!index) ? props.defaultTabLabel : 'Other';
-            }
-            values.key = values?.id || uniqueId(`new_${props.name}_`);
-            return values;
-        });
-
-        const initialState = {
+        return {
             menuAnchorEl: null,
             activeTab: props?.activeTab ?? 0,
-            values: tabValues,
             deletedIds: [],
         };
-        return initialState;
     });
 
     const { showModal } = useModal();
@@ -114,25 +133,25 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
     const onMenuItemClick = (event: React.MouseEvent<HTMLLIElement>, key: string) => {
         switch (key) {
             case 'edit':
-                const values = [...state.values];
+                // //const values = [...state.values];
 
-                const confirm = showModal(PromptDialog, {
-                    title: 'Enter a label',
-                    onCancel: () => {
-                        confirm.hide();
-                    },
-                    inputValue: values[state.activeTab].label,
-                    onConfirm: (value: string) => {
-                        confirm.hide();
-                        if (value.length) {
-                            values[state.activeTab].label = value;
-                            setState((state) => ({
-                                ...state,
-                                values: values,
-                            }));
-                        }
-                    }
-                });
+                // const confirm = showModal(PromptDialog, {
+                //     title: 'Enter a label',
+                //     onCancel: () => {
+                //         confirm.hide();
+                //     },
+                //     inputValue: values[state.activeTab].label,
+                //     onConfirm: (value: string) => {
+                //         confirm.hide();
+                //         if (value.length) {
+                //             values[state.activeTab].label = value;
+                //             setState((state) => ({
+                //                 ...state,
+                //                 values: values,
+                //             }));
+                //         }
+                //     }
+                // });
                 break;
             case 'delete':
                 break;
@@ -158,60 +177,36 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
     };
 
     const onAddClick = () => {
-        const values = [...state.values];
-        values.push({
-            label: 'Other',
-        });
+
+        append({ label: 'Other' });
 
         setState((prevState) => ({
             ...prevState,
-            values: values,
-            activeTab: values.length - 1,
+            activeTab: fields.length,
         }));
     };
 
     const onDeleteClick = () => {
-        const label = state.values[state.activeTab].label;
+        const field: Record<string, string> = fields[state.activeTab];
 
         const confirm = showModal(ConfirmDialog, {
             title: 'Confirm Delete',
-            content: `The entry '${label}' will be deleted`,
+            content: `The entry '${field.label}' will be deleted`,
             onCancel: () => {
                 confirm.hide();
             },
             onConfirm: () => {
                 confirm.hide();
-                let newValues: Record<string, string>[] = [];
-                let deletedId;
-
-                state.values.forEach((value, index) => {
-                    if (index != state.activeTab) {
-                        newValues.push(value);
-                    } else {
-                        if (value?.id) {
-                            deletedId = value.id;
-                        }
-                    }
-                });
-
-                if (newValues.length == 0) {
-                    let value = state.values[0];
-                    for (let k in value) {
-                        if (k != 'label') {
-                            value[k] = '';
-                        }
-                    }
-                    newValues.push(value);
-                }
 
                 let deletedIds = [...state.deletedIds];
-                if (deletedId) {
-                    deletedIds.push(deletedId);
+                if (field.dbid) {
+                    deletedIds.push(parseInt(field.dbid));
                 }
+
+                remove(state.activeTab);
 
                 setState((state) => ({
                     ...state,
-                    values: newValues,
                     deletedIds: deletedIds,
                     activeTab: 0
                 }));
@@ -223,6 +218,11 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
             menuAnchorEl: null
         }));
     }
+
+    useEffect(() => {
+        console.log("ACTIVE TAB", state.activeTab);
+        console.table(fields);
+    }, [fields]);
 
     return (
         <fieldset style={{ borderRadius: '6px' }}>
@@ -250,8 +250,8 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
                         }}
                         value={state.activeTab}
                     >
-                        {state.values.map((values, index) => (
-                            <Tab label={values?.label ?? ':-('} value={index} key={index} />
+                        {fields.map((item: Record<string, string>, index) => (
+                            <Tab label={item.label} value={index} key={index} />
                         ))}
                     </Tabs>
                     <Box sx={{ flexShrink: 0 }}>
@@ -283,20 +283,13 @@ export default function MultiFieldset(props: MultiFieldsetProps) {
                         </Menu>
                     </Box>
                 </Box>
-                {state.values.map((values, index) => (
-                    <TabPanel active={state.activeTab == index} key={index}>
+                {fields.map((item: Record<string, string>, index) => (
+                    <TabPanel active={state.activeTab == index} key={item.id}>
                         {cloneChildren(props.children, (fieldName) => {
-                            const name: string = `${props.baseName}[${index}][${fieldName}]`;
-                            const value: string | object = values?.[fieldName] ?? '';
                             return {
-                                name: name,
-                                //defaultValue: value
+                                name: `${props.baseName}.${index}.${fieldName}`
                             };
                         })}
-                        <input type="hidden" name={`${props.baseName}[${index}][label]`} defaultValue={values?.label} />
-                        {values?.id &&
-                            <input type="hidden" name={`${props.baseName}[${index}][id]`} defaultValue={values?.id} />
-                        }
                     </TabPanel>
                 ))}
                 <input type="hidden" name={`${props.baseName}_deleted`} defaultValue={state.deletedIds.join(',')} />

@@ -33,6 +33,31 @@ interface RemoteSelectState {
 };
 
 export default function RemoteSelect(props: RemoteSelectProps) {
+    return (
+        <Controller
+            render={({ ...controlProps }) => {
+                const errorMessage = controlProps.fieldState.error?.message ?? '';
+                const onChange = (selValue: string | null) => {
+                    controlProps.field.onChange(selValue);
+                }
+
+                return (
+                    <RemoteSelectBase
+                        {...props}
+                        errors={controlProps.fieldState.error}
+                        helperText={errorMessage || props?.helperText}
+                        inputRef={controlProps.field.ref}
+                        onChange={onChange}
+                        defaultValue={controlProps.field.value}
+                    />
+                );
+            }}
+            name={props.name}
+        />
+    );
+}
+
+function RemoteSelectBase(props: RemoteSelectProps) {
 
     let defaultValue = props?.defaultValue ?? null;
     const valueField: string = props.valueField ?? 'value';
@@ -192,27 +217,3 @@ export default function RemoteSelect(props: RemoteSelectProps) {
     );
 }
 
-export function RemoteSelectEx(props: RemoteSelectProps) {
-    return (
-        <Controller
-            render={({ ...controlProps }) => {
-                const errorMessage = controlProps.fieldState.error?.message ?? '';
-                const onChange = (selValue: string | null) => {
-                    controlProps.field.onChange(selValue);
-                }
-
-                return (
-                    <RemoteSelect
-                        {...props}
-                        errors={controlProps.fieldState.error}
-                        helperText={errorMessage || props?.helperText}
-                        inputRef={controlProps.field.ref}
-                        onChange={onChange}
-                        defaultValue={controlProps.field.value}
-                    />
-                );
-            }}
-            name={props.name}
-        />
-    );
-}

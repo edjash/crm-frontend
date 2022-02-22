@@ -5,16 +5,18 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { uniqueId } from 'lodash';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SocialIcon } from 'react-social-icons';
+import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
 import DialogButton from '../DialogButton';
-import Fieldset from '../Fieldset';
+import Fieldset from '../Form/Fieldset';
 import Form from '../Form/Form';
+import MultiFieldset from '../Form/MultiFieldset';
 import ProfileAvatar from '../Form/ProfileAvatar';
+import RemoteSelect from '../Form/RemoteSelect';
+import TextFieldEx from '../Form/TextFieldEx';
 import Overlay from '../Overlay';
-import { RemoteSelectEx } from '../RemoteSelect';
-import TextFieldEx from '../TextFieldEx';
 
 export interface ShowCreateEditProps {
     contactId: number;
@@ -49,13 +51,10 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     const onSubmit = (data: any) => {
         console.log("FORM DATA", data);
 
-        data = {
-            'avatar': data.avatar,
-            'firstname': data.firstname,
-        };
-
+        return;
         setState({ ...state, loading: true });
 
+        data.address = [];
         // data.address = data.address.map((item: Record<string, any>) => {
         //     if (typeof item.country == 'object'
         //         && item.country
@@ -127,10 +126,6 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         });
     }, []);
 
-    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setState((state) => ({ ...state, [e.target.name]: e.target.value }));
-    }
-
     let title = "New Contact";
     let avatarPostUrl = '/contacts/avatar';
 
@@ -158,7 +153,12 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                 </IconButton>
             </DialogTitle>
             <DialogContent>
-                <Form onSubmit={onSubmit} id={formId.current} defaultValues={state.defaultValues}>
+                <Form
+                    onSubmit={onSubmit}
+                    id={formId.current}
+                    defaultValues={state.defaultValues}
+                    validationSchema={contactSchema}
+                >
                     <Box display="grid" gridTemplateColumns="auto auto auto" alignItems="start" gap={2}>
                         <Box display="grid" gap={2}>
                             <Fieldset label="Personal">
@@ -169,7 +169,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                         postEndPoint={avatarPostUrl}
                                     />
                                     <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
-                                        <RemoteSelectEx
+                                        <RemoteSelect
                                             name="title"
                                             label="Title"
                                             options={[
@@ -180,7 +180,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                                 { value: 'Mx', label: 'Mx' },
                                             ]}
                                         />
-                                        <RemoteSelectEx
+                                        <RemoteSelect
                                             label="Pronouns"
                                             name="pronouns"
                                             options={[
@@ -203,7 +203,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                     />
                                 </Box>
                             </Fieldset>
-                            {/* <MultiFieldset
+                            <MultiFieldset
                                 legend="Email Address"
                                 defaultTabLabel="Primary"
                                 baseName="email_address"
@@ -212,7 +212,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                     name="address"
                                     label="Email Address"
                                 />
-                            </MultiFieldset> */}
+                            </MultiFieldset>
                         </Box>
                         <Box sx={{ overflowX: 'hidden', minWidth: 0 }}>
                             {/* <MultiFieldset

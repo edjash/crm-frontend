@@ -4,6 +4,7 @@ import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import apiClient from '../apiClient';
 import Overlay from '../Overlay';
+import { uniqueId } from 'lodash';
 
 interface ProfileAvatarProps extends BoxProps {
     name: string;
@@ -22,6 +23,7 @@ interface ProfileAvatarState {
     fileObject: File | null;
     src: string | null;
     filename: string;
+    fieldId: string;
 }
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
@@ -38,7 +40,6 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             src = `${SERVER_URL}/storage/avatars/${filename}`;
         }
 
-        console.log("SRC", src);
         return {
             showMask: false,
             progressPercent: 0,
@@ -46,6 +47,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             fileObject: null,
             src: src,
             filename: filename,
+            fieldId: uniqueId('avatarUlpoad_'),
         };
     });
 
@@ -164,7 +166,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                 }}
             >
                 {!state.uploading ?
-                    <label htmlFor="fileElem" style={{
+                    <label htmlFor={state.fieldId} style={{
                         cursor: 'pointer',
                         width: '100%',
                         height: '100%',
@@ -204,7 +206,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             </Overlay >
             <input
                 type="file"
-                id="fileElem"
+                id={state.fieldId}
                 accept="image/*"
                 style={{ display: "none" }}
                 onChange={onFileInputChange}
