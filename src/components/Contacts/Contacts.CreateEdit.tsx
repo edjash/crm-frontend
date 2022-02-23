@@ -50,21 +50,10 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     const formId = useRef(uniqueId('contactForm'));
 
     const onSubmit = (data: any) => {
-        //console.log("FORM DATA", data);
 
         setState({ ...state, loading: true });
 
-        // data.address = data.address.map((item: Record<string, any>) => {
-        //     if (typeof item.country == 'object'
-        //         && item.country
-        //         && item.country?.code) {
-        //         item.country = item.country.code;
-        //     }
-        //     return item;
-        // });
-
-        // data.address = [];
-
+        data = prepareOutgoingValues(data);
 
         let url = '/contacts';
         if (props.type === 'edit' && props.data?.contactId) {
@@ -93,35 +82,44 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         console.log("Validation Error", data);
     };
 
-    const prepareFieldValues = (fieldValues: Record<string, any>) => {
-        const addresses: Record<string, any>[] = fieldValues.address;
-        const socialmedia: Record<string, string>[] = fieldValues.social_media_url;
-        delete fieldValues['social_media_url'];
+    const prepareOutgoingValues = (values: Record<string, any>) => {
+        if (values.address) {
+            values.address =
+                values.address.map((item: Record<string, any>) => {
+                    if (item.country && typeof item.country == 'object') {
+                        item.country = item.country.code;
+                    }
+                    return item;
+                });
+        }
+        return values;
+    }
 
-        socialmedia.map((item, index) => {
-            fieldValues[`socialmedia[${item.ident}]`] = item.url;
+    const prepareIncomingValues = (values: Record<string, any>) => {
+        values.social_media_url.map((item: Record<string, string>) => {
+            values[`socialmedia[${item.ident}]`] = item.url;
         });
+        delete values['social_media_url'];
 
+        values.address =
+            values.address.map((addr: Record<string, any>) => {
+                if (addr?.country_code && addr?.country_name) {
+                    addr.country = {
+                        code: addr?.country_code,
+                        name: addr?.country_name,
+                    };
+                } else {
+                    addr.country = null;
+                }
+                return addr;
+            });
 
-
-        // fieldValues.address = addresses.map((addr, index) => {
-        //     if (addr.country && addr.country_name) {
-        //         addr.country = {
-        //             value: addr?.country,
-        //             label: addr?.country_name,
-        //         };
-        //     } else {
-        //         addr.country = null;
-        //     }
-        //     return addr;
-        // });
-
-        return fieldValues;
+        return values;
     }
 
     useEffect(() => {
         apiClient.get(`/contacts/${props.data?.contactId}`).then((response) => {
-            const values = prepareFieldValues(response.data);
+            const values = prepareIncomingValues(response.data);
 
             setState((state) => ({
                 ...state,
