@@ -7,9 +7,10 @@ import {
     GridSelectionModel,
     useGridApiContext
 } from '@mui/x-data-grid';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, MouseEvent, useEffect } from 'react';
+import Avatar from '../Avatar';
 
-
+//potentially memoise these functions
 const GridHeaderCheckbox = () => {
     const apiRef = useGridApiContext();
     const [checked, setChecked] = useState(false);
@@ -31,6 +32,19 @@ const GridHeaderCheckbox = () => {
 }
 
 const GridCellCheckbox = (params: GridRenderCellParams) => {
+    const selected = params.api.isRowSelected(params.id);
+    const [state, setState] = useState({
+        showCheckbox: selected,
+        checked: selected,
+    });
+
+    useEffect(() => {
+        setState({
+            showCheckbox: selected,
+            checked: selected,
+        });
+    }, [selected]);
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const checked = e.target.checked;
         const selModel: GridSelectionModel = [];
@@ -44,11 +58,37 @@ const GridCellCheckbox = (params: GridRenderCellParams) => {
             selModel.push(params.id);
         }
         params.api.setSelectionModel(selModel);
+        setState({
+            ...state,
+            checked: checked,
+            showCheckbox: checked,
+        });
     };
 
-    const checked = params.api.isRowSelected(params.id);
+    const onMouseOver = (e: MouseEvent<HTMLDivElement>) => {
+        setState({
+            ...state,
+            showCheckbox: true,
+        })
+    }
+
+    const onMouseLeave = (e: MouseEvent<HTMLDivElement>) => {
+        setState({
+            ...state,
+            showCheckbox: state.checked || false,
+        })
+    }
+
     return (
-        <Checkbox onChange={handleChange} checked={checked} />
+        <div
+            onMouseOver={onMouseOver}
+            onMouseLeave={onMouseLeave}
+        >
+            {state.showCheckbox
+                ? <Checkbox onChange={handleChange} checked={state.checked} />
+                : <Avatar name={params.row.fullname} avatar={params.row.avatar} />
+            }
+        </div>
     );
 };
 
@@ -57,7 +97,7 @@ const AvatarCheckBox: GridColDef = {
     sortable: false,
     align: 'center',
     headerAlign: 'center',
-    width:70,
+    width: 60,
     renderHeader: (params: GridColumnHeaderParams) => {
         return <GridHeaderCheckbox />;
     },
