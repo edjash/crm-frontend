@@ -207,8 +207,25 @@ export default function Contacts() {
             field: 'address',
             headerName: 'Address',
             width: 410,
+            cellClassName: 'allowWrap',
             valueGetter: (params: any) => {
-                return params.row.address[0]?.full_address;
+                return params.row?.address?.[0]?.full_address ?? '';
+            }
+        },
+        {
+            field: 'phone_number',
+            headerName: 'Phone Number',
+            width: 130,
+            valueGetter: (params: any) => {
+                return params.row?.phone_number?.[0]?.number ?? '';
+            }
+        },
+        {
+            field: 'email_address',
+            headerName: 'Email Address',
+            width: 220,
+            valueGetter: (params: any) => {
+                return params.row?.email_address?.[0]?.address ?? '';
             }
         }
     ];

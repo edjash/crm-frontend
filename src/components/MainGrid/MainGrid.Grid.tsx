@@ -149,57 +149,59 @@ export default function MainGrid(props: GridProps) {
     }
 
     return (
-        <>
-            {state.displaySelectionToolbar ?
-                <SelectionToolbar
-                    selRows={state.selectedGridRows}
-                    onDelete={props.onDelete}
-                />
-                :
-                <GridToolbar
-                    onSearch={props.onSearch}
-                    onCreateClick={props.onCreateClick}
-                    title={props.title}
-                    titlePlural={props.titlePlural}
-                    onPageChange={props.onPageChange}
-                    pageCount={props.pageCount}
-                    page={props.page}
+        <div style={{ display: 'flex', height: '100%' }}>
+            <div style={{ flexGrow: 1 }}>
+                {state.displaySelectionToolbar ?
+                    <SelectionToolbar
+                        selRows={state.selectedGridRows}
+                        onDelete={props.onDelete}
+                    />
+                    :
+                    <GridToolbar
+                        onSearch={props.onSearch}
+                        onCreateClick={props.onCreateClick}
+                        title={props.title}
+                        titlePlural={props.titlePlural}
+                        onPageChange={props.onPageChange}
+                        pageCount={props.pageCount}
+                        page={props.page}
+                        loading={props.loading}
+                        searchChanged={props.searchChanged}
+                    />
+                }
+                <DataGrid
+                    columns={columns}
+                    rows={props.rows}
                     loading={props.loading}
-                    searchChanged={props.searchChanged}
+                    pagination
+                    paginationMode="server"
+                    className="contactList"
+                    //checkboxSelection
+                    disableSelectionOnClick
+                    disableColumnFilter
+                    disableColumnMenu
+                    autoHeight={true}
+                    disableColumnSelector={true}
+                    onSelectionModelChange={onSelectionChange}
+                    sx={{
+                        border: 0
+                    }}
+                    components={{
+                        LoadingOverlay: LoadingOverlay,
+                        Footer: MainGridFooter,
+                    }}
+                    componentsProps={{
+                        footer: {
+                            rowCount: props.rowCount,
+                            page: props.page,
+                            pageCount: props.pageCount,
+                            onPageChange: props.onPageChange,
+                            searchChanged: props.searchChanged,
+                            onRefreshClick: props.onRefreshClick
+                        }
+                    }}
                 />
-            }
-            <DataGrid
-                columns={columns}
-                rows={props.rows}
-                loading={props.loading}
-                pagination
-                paginationMode="server"
-                className="contactList"
-                //checkboxSelection
-                disableSelectionOnClick
-                disableColumnFilter
-                disableColumnMenu
-                autoHeight={true}
-                disableColumnSelector={true}
-                onSelectionModelChange={onSelectionChange}
-                sx={{
-                    border: 0
-                }}
-                components={{
-                    LoadingOverlay: LoadingOverlay,
-                    Footer: MainGridFooter,
-                }}
-                componentsProps={{
-                    footer: {
-                        rowCount: props.rowCount,
-                        page: props.page,
-                        pageCount: props.pageCount,
-                        onPageChange: props.onPageChange,
-                        searchChanged: props.searchChanged,
-                        onRefreshClick: props.onRefreshClick
-                    }
-                }}
-            />
-        </>
+            </div>
+        </div>
     );
 }

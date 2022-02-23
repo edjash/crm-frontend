@@ -33,7 +33,10 @@ const theme = createTheme({
         .MuiDataGrid-cell:focus-within,
         .MuiDataGrid-cell:focus {
           outline: none !important;
-      }
+        },
+        .allowWrap.MuiDataGrid-cell {
+            white-space:normal !important;
+        }
       `,
         },
     },
