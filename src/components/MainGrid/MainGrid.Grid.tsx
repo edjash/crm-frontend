@@ -13,8 +13,8 @@ import uniqueId from 'lodash/uniqueId';
 import { ReactChild, useState } from 'react';
 import ActionButton from './MainGrid.ActionButton';
 import MainGridFooter from './MainGrid.Footer';
-import SelectionToolbar from './MainGrid.SelectionToolbar';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
+import SelectionToolbar from './MainGrid.SelectionToolbar';
 import GridToolbar from './MainGrid.Toolbar';
 
 export interface GridProps {
@@ -175,7 +175,7 @@ export default function MainGrid(props: GridProps) {
                 pagination
                 paginationMode="server"
                 className="contactList"
-                checkboxSelection
+                //checkboxSelection
                 disableSelectionOnClick
                 disableColumnFilter
                 disableColumnMenu
@@ -187,7 +187,7 @@ export default function MainGrid(props: GridProps) {
                 }}
                 components={{
                     LoadingOverlay: LoadingOverlay,
-                    Footer: MainGridFooter
+                    Footer: MainGridFooter,
                 }}
                 componentsProps={{
                     footer: {
