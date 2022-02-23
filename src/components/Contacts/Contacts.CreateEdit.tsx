@@ -51,7 +51,6 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     const onSubmit = (data: any) => {
         console.log("FORM DATA", data);
 
-        return;
         setState({ ...state, loading: true });
 
         data.address = [];
@@ -155,13 +154,13 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             <DialogContent>
                 <Form
                     onSubmit={onSubmit}
-                    id={formId.current}
                     defaultValues={state.defaultValues}
                     validationSchema={contactSchema}
+                    id={formId.current}
                 >
                     <Box display="grid" gridTemplateColumns="auto auto auto" alignItems="start" gap={2}>
                         <Box display="grid" gap={2}>
-                            <Fieldset label="Personal">
+                            <Fieldset legend="Personal">
                                 <Box display="grid" gap={1}>
                                     <ProfileAvatar
                                         name="avatar"
@@ -240,7 +239,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                 >
                                     <TextFieldEx name="number" type="text" label="Phone Number" />
                                 </MultiFieldset> */}
-                            <Fieldset label="Social Media">
+                            <Fieldset legend="Social Media">
                                 {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
                                     <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>
                                         <Box>

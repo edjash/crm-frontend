@@ -3,10 +3,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton, Menu, MenuItem, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from '@mui/material/Tab';
-import { uniqueId } from 'lodash';
 import { useModal } from "mui-modal-provider";
 import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useEffect, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import Fieldset from './Fieldset';
 import ConfirmDialog from "../ConfirmDialog";
 import PromptDialog from "../PromptDialog";
 
@@ -25,12 +25,7 @@ interface MultiFieldsetProps {
 interface MultiFieldsetState {
     menuAnchorEl: null | HTMLElement;
     activeTab: number;
-    deletedIds: number[];
-};
-
-interface TabPanelProps {
-    children?: ReactNode;
-    active: boolean;
+    emptyField: Record<string, any>;
 };
 
 interface ClonedChild {
@@ -64,32 +59,14 @@ const cloneChildren = (
     });
 }
 
-export function TabPanel(props: TabPanelProps) {
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={!props.active}
-        >
-            {props.children}
-        </div>
-    );
-}
-
-
 export default function MultiFieldSet(props: MultiFieldsetProps) {
     return (
         <Controller
             render={({ ...controlProps }) => {
-                const errorMessage = controlProps.fieldState.error?.message ?? '';
-                const onChange = (selValue: string | null) => {
-                    controlProps.field.onChange(selValue);
-                }
-
                 return (
                     <MultiFieldsetBase
                         {...props}
-                        defaultValue={controlProps.field.value}
+                    // defaultValue={controlProps.field.value}
                     />
                 );
             }}
@@ -98,30 +75,35 @@ export default function MultiFieldSet(props: MultiFieldsetProps) {
     );
 }
 
-
 function MultiFieldsetBase(props: MultiFieldsetProps) {
 
-    const { register } = useFormContext();
+    const { showModal } = useModal();
+    const { register, setValue, getValues } = useFormContext();
     const { fields, append, update, remove } = useFieldArray({
         name: props.baseName
     });
 
-    fields.map((item: Record<string, string>, index) => {
-        if (!item?.label) {
-            item.label = (index > 0) ? 'Other' : 'Primary';
-            update(index, item);
-        }
-    });
-
     const [state, setState] = useState<MultiFieldsetState>(() => {
+        const emptyField: Record<string, any> = {};
+
+        fields.map((item: Record<string, string>, index) => {
+            if (!item?.label) {
+                item.label = (index > 0) ? 'Other' : 'Primary';
+                update(index, item);
+            }
+            if (index === 0) {
+                Object.keys(item).map(k => emptyField[k] = null);
+            }
+        });
+
+        register(`${props.baseName}_deleted`);
+
         return {
+            emptyField: emptyField,
             menuAnchorEl: null,
             activeTab: props?.activeTab ?? 0,
-            deletedIds: [],
         };
     });
-
-    const { showModal } = useModal();
 
     const onMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setState((state) => ({
@@ -133,36 +115,27 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
     const onMenuItemClick = (event: React.MouseEvent<HTMLLIElement>, key: string) => {
         switch (key) {
             case 'edit':
-                // //const values = [...state.values];
+                const field: Record<string, string> = fields[state.activeTab];
 
-                // const confirm = showModal(PromptDialog, {
-                //     title: 'Enter a label',
-                //     onCancel: () => {
-                //         confirm.hide();
-                //     },
-                //     inputValue: values[state.activeTab].label,
-                //     onConfirm: (value: string) => {
-                //         confirm.hide();
-                //         if (value.length) {
-                //             values[state.activeTab].label = value;
-                //             setState((state) => ({
-                //                 ...state,
-                //                 values: values,
-                //             }));
-                //         }
-                //     }
-                // });
-                break;
-            case 'delete':
+                const confirm = showModal(PromptDialog, {
+                    title: 'Enter a label',
+                    onCancel: () => {
+                        confirm.hide();
+                    },
+                    inputValue: field.label,
+                    onConfirm: (value: string) => {
+                        confirm.hide();
+                        if (value.length) {
+                            update(state.activeTab, { ...field, label: value });
+                        }
+                    }
+                });
                 break;
         }
-        setState((state) => ({
-            ...state,
-            menuAnchorEl: null
-        }));
+        closeMenu();
     }
 
-    const onMenuClose = () => {
+    const closeMenu = () => {
         setState((state) => ({
             ...state,
             menuAnchorEl: null
@@ -177,9 +150,7 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
     };
 
     const onAddClick = () => {
-
-        append({ label: 'Other' });
-
+        append({ ...state.emptyField, label: 'Other' });
         setState((prevState) => ({
             ...prevState,
             activeTab: fields.length,
@@ -198,102 +169,88 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
             onConfirm: () => {
                 confirm.hide();
 
-                let deletedIds = [...state.deletedIds];
                 if (field.dbid) {
+                    let deletedIds = getValues(`${props.baseName}_deleted`);
+                    if (!deletedIds) {
+                        deletedIds = [];
+                    }
                     deletedIds.push(parseInt(field.dbid));
+                    setValue(`${props.baseName}_deleted`, deletedIds);
                 }
 
                 remove(state.activeTab);
-
                 setState((state) => ({
                     ...state,
-                    deletedIds: deletedIds,
                     activeTab: 0
                 }));
             }
         });
-
-        setState((state) => ({
-            ...state,
-            menuAnchorEl: null
-        }));
+        closeMenu();
     }
 
     useEffect(() => {
-        console.log("ACTIVE TAB", state.activeTab);
-        console.table(fields);
+        if (fields.length === 0) {
+            append({ ...state.emptyField, label: 'Primary' });
+        }
     }, [fields]);
 
     return (
-        <fieldset style={{ borderRadius: '6px' }}>
-            <legend className="" style={{ lineHeight: '1em' }}><span>{props.legend}</span></legend>
+        <Fieldset legend={props.legend}>
             <Box sx={{
-                width: {
-                    md: 320
-                }
+                borderBottom: 1,
+                borderColor: 'divider',
+                display: 'flex',
+                alignItems: 'center'
             }}>
-                <Box sx={{
-                    borderBottom: 1,
-                    borderColor: 'divider',
-                    display: 'flex',
-                    alignItems: 'center'
-                }}>
-                    <Tabs
-                        onChange={onTabChange}
-                        variant="scrollable"
-                        scrollButtons="auto"
-                        sx={{
-                            flexGrow: 1,
-                            width: {
-
-                            }
+                <Tabs
+                    onChange={onTabChange}
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    sx={{ flexGrow: 1 }}
+                    value={state.activeTab}
+                >
+                    {fields.map((item: Record<string, string>, index) => (
+                        <Tab label={item.label} value={index} key={item.id} />
+                    ))}
+                </Tabs>
+                <Box sx={{ flexShrink: 0 }}>
+                    <IconButton size="small" sx={{ alignSelf: 'center' }} onClick={onAddClick}>
+                        <AddIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton size="small" sx={{ alignSelf: 'center' }} onClick={onMenuClick}>
+                        <MoreVertIcon fontSize="small" />
+                    </IconButton>
+                    <Menu
+                        open={state.menuAnchorEl != null}
+                        anchorEl={state.menuAnchorEl}
+                        onClose={closeMenu}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
                         }}
-                        value={state.activeTab}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
                     >
-                        {fields.map((item: Record<string, string>, index) => (
-                            <Tab label={item.label} value={index} key={index} />
-                        ))}
-                    </Tabs>
-                    <Box sx={{ flexShrink: 0 }}>
-                        <IconButton size="small" sx={{ alignSelf: 'center' }} onClick={onAddClick}>
-                            <AddIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton size="small" sx={{ alignSelf: 'center' }} onClick={onMenuClick}>
-                            <MoreVertIcon fontSize="small" />
-                        </IconButton>
-                        <Menu
-                            open={state.menuAnchorEl != null}
-                            anchorEl={state.menuAnchorEl}
-                            onClose={onMenuClose}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right',
-                            }}
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                        >
-                            <MenuItem key="edit" onClick={(event) => onMenuItemClick(event, "edit")}>
-                                Edit Label
-                            </MenuItem>
-                            <MenuItem key="delete" onClick={onDeleteClick}>
-                                Delete Entry
-                            </MenuItem>
-                        </Menu>
-                    </Box>
+                        <MenuItem key="edit" onClick={(event) => onMenuItemClick(event, "edit")}>
+                            Edit Label
+                        </MenuItem>
+                        <MenuItem key="delete" onClick={onDeleteClick}>
+                            Delete Entry
+                        </MenuItem>
+                    </Menu>
                 </Box>
-                {fields.map((item: Record<string, string>, index) => (
-                    <TabPanel active={state.activeTab == index} key={item.id}>
-                        {cloneChildren(props.children, (fieldName) => {
-                            return {
-                                name: `${props.baseName}.${index}.${fieldName}`
-                            };
-                        })}
-                    </TabPanel>
-                ))}
-                <input type="hidden" name={`${props.baseName}_deleted`} defaultValue={state.deletedIds.join(',')} />
             </Box>
-        </fieldset>
+            {fields.map((item: Record<string, string>, index) => (
+                <div hidden={!(state.activeTab == index)} key={item.id}>
+                    {cloneChildren(props.children, (fieldName) => {
+                        return {
+                            name: `${props.baseName}.${index}.${fieldName}`,
+                        };
+                    })}
+                </div>
+            ))}
+        </Fieldset>
     );
 }
