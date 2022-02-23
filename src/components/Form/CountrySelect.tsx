@@ -1,4 +1,3 @@
-import { ConstructionOutlined } from "@mui/icons-material";
 import { Controller } from "react-hook-form";
 import RemoteSelect, { RemoteSelectProps } from './RemoteSelect';
 
@@ -14,23 +13,14 @@ interface CountrySelectProps extends RemoteSelectProps {
 export default function CountrySelect(props: CountrySelectProps) {
 
     return (
-        <RemoteSelect
-            {...props}
-            url='/countries'
-            valueField="code"
-            labelField="name"
-        />
-    );
-}
-
-export function CountrySelectEx(props: CountrySelectProps) {
-
-    return (
         <Controller
             render={({ ...controlProps }) => {
                 return (
-                    <CountrySelect
+                    <RemoteSelect
                         {...props}
+                        url='/countries'
+                        valueField="code"
+                        labelField="name"
                         errors={controlProps.formState.errors?.[props?.name]}
                         inputRef={controlProps.field.ref}
                         onChange={controlProps.field.onChange}

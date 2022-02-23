@@ -10,6 +10,7 @@ import { SocialIcon } from 'react-social-icons';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
 import DialogButton from '../DialogButton';
+import CountrySelect from '../Form/CountrySelect';
 import Fieldset from '../Form/Fieldset';
 import Form from '../Form/Form';
 import MultiFieldset from '../Form/MultiFieldset';
@@ -53,7 +54,6 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
         setState({ ...state, loading: true });
 
-        data.address = [];
         // data.address = data.address.map((item: Record<string, any>) => {
         //     if (typeof item.country == 'object'
         //         && item.country
@@ -62,6 +62,9 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         //     }
         //     return item;
         // });
+
+        // data.address = [];
+
 
         let url = '/contacts';
         if (props.type === 'edit' && props.data?.contactId) {
@@ -98,6 +101,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         socialmedia.map((item, index) => {
             fieldValues[`socialmedia[${item.ident}]`] = item.url;
         });
+
+
 
         // fieldValues.address = addresses.map((addr, index) => {
         //     if (addr.country && addr.country_name) {
@@ -209,7 +214,6 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                             </Fieldset>
                             <MultiFieldset
                                 legend="Email Address"
-                                defaultTabLabel="Primary"
                                 baseName="email_address"
                             >
                                 <TextFieldEx
@@ -219,32 +223,29 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                             </MultiFieldset>
                         </Box>
                         <Box sx={{ overflowX: 'hidden', minWidth: 0 }}>
-                            {/* <MultiFieldset
+                            <MultiFieldset
                                 baseName="address"
                                 legend="Address"
-                                defaultTabLabel="Home"
                             >
                                 <TextFieldEx name="street" label="Street" />
                                 <TextFieldEx name="town" label="Town / City" />
                                 <TextFieldEx name="county" label="County / State" />
                                 <TextFieldEx name="postcode" label="Zip / Postal Code" />
-                                <CountrySelectEx
+                                <CountrySelect
                                     label="Country"
                                     name="country"
-                                    url="/countries"
                                 />
-                            </MultiFieldset> */}
+                            </MultiFieldset>
                         </Box>
                         <Box display="grid" gap={2}>
                             {/* <MultiFieldset
                                     legend="Phone Number"
-                                    defaultTabLabel="Primary"
                                     baseName="phone"
                                     defaultValues={state.values.phone_number}
                                 >
                                     <TextFieldEx name="number" type="text" label="Phone Number" />
                                 </MultiFieldset> */}
-                            <Fieldset legend="Social Media">
+                            {/* <Fieldset legend="Social Media">
                                 {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
                                     <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>
                                         <Box>
@@ -256,7 +257,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                         />
                                     </Box>
                                 ))}
-                            </Fieldset>
+                            </Fieldset> */}
                         </Box>
                     </Box>
                 </Form>

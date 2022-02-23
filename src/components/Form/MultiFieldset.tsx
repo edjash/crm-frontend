@@ -16,10 +16,7 @@ interface MultiFieldsetProps {
     defaultValue?: Record<string, any>;
     children: ReactNode;
     legend: string;
-    defaultTabLabel: string;
     activeTab?: number;
-    errors?: Record<string, string>;
-    propsCallback?: (fieldName: string, index: number) => Record<string, any>,
 };
 
 interface MultiFieldsetState {
@@ -80,7 +77,8 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
     const { showModal } = useModal();
     const { register, setValue, getValues, getFieldState } = useFormContext();
     const { fields, append, update, remove } = useFieldArray({
-        name: props.baseName
+        name: props.baseName,
+        keyName: 'key'
     });
 
     const [state, setState] = useState<MultiFieldsetState>(() => {
@@ -169,12 +167,12 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
             onConfirm: () => {
                 confirm.hide();
 
-                if (field.dbid) {
+                if (field.id) {
                     let deletedIds = getValues(`${props.baseName}_deleted`);
                     if (!deletedIds) {
                         deletedIds = [];
                     }
-                    deletedIds.push(parseInt(field.dbid));
+                    deletedIds.push(parseInt(field.id));
                     setValue(`${props.baseName}_deleted`, deletedIds);
                 }
 
@@ -210,7 +208,7 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
                     value={state.activeTab}
                 >
                     {fields.map((item: Record<string, string>, index) => (
-                        <Tab label={item.label} value={index} key={item.id} />
+                        <Tab label={item.label} value={index} key={item.key} />
                     ))}
                 </Tabs>
                 <Box sx={{ flexShrink: 0 }}>
@@ -243,7 +241,7 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
                 </Box>
             </Box>
             {fields.map((item: Record<string, string>, index) => (
-                <div hidden={!(state.activeTab == index)} key={item.id}>
+                <div hidden={!(state.activeTab == index)} key={item.key}>
                     {cloneChildren(props.children, (cProps) => {
                         const name = `${props.baseName}.${index}.${cProps.name}`;
                         const fstate = getFieldState(name);
