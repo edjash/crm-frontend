@@ -22,7 +22,7 @@ export default function Form(props: FormProps) {
 
     return (
         <FormProvider {...formMethods}>
-            <form onSubmit={formMethods.handleSubmit(props.onSubmit)} id={props?.id}>
+            <form onSubmit={formMethods.handleSubmit(props.onSubmit, props.onError)} id={props?.id}>
                 {props.children}
             </form>
             <DevTool control={formMethods.control} />

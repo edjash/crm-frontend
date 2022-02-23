@@ -39,7 +39,7 @@ interface ClonedChild {
 
 const cloneChildren = (
     children: ReactNode,
-    propsCallback: (fieldName: string) => Record<string, any>,
+    propsCallback: (props: Record<string, any>) => Record<string, any>,
 ) => {
 
     const arrayChildren = Children.toArray(children);
@@ -54,7 +54,7 @@ const cloneChildren = (
                 children: cloneChildren(inputElement.props.children, propsCallback),
             })
         }
-        const childProps = propsCallback(inputElement.props.name);
+        const childProps = propsCallback(inputElement.props);
         return cloneElement(inputElement, childProps);
     });
 }
@@ -78,7 +78,7 @@ export default function MultiFieldSet(props: MultiFieldsetProps) {
 function MultiFieldsetBase(props: MultiFieldsetProps) {
 
     const { showModal } = useModal();
-    const { register, setValue, getValues } = useFormContext();
+    const { register, setValue, getValues, getFieldState } = useFormContext();
     const { fields, append, update, remove } = useFieldArray({
         name: props.baseName
     });
@@ -244,9 +244,14 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
             </Box>
             {fields.map((item: Record<string, string>, index) => (
                 <div hidden={!(state.activeTab == index)} key={item.id}>
-                    {cloneChildren(props.children, (fieldName) => {
+                    {cloneChildren(props.children, (cProps) => {
+                        const name = `${props.baseName}.${index}.${cProps.name}`;
+                        const fstate = getFieldState(name);
                         return {
-                            name: `${props.baseName}.${index}.${fieldName}`,
+                            ...cProps,
+                            name: name,
+                            error: (!!fstate.error || !!cProps?.error),
+                            helperText: fstate?.error?.message || cProps?.helperText,
                         };
                     })}
                 </div>

@@ -49,7 +49,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     const formId = useRef(uniqueId('contactForm'));
 
     const onSubmit = (data: any) => {
-        console.log("FORM DATA", data);
+        //console.log("FORM DATA", data);
 
         setState({ ...state, loading: true });
 
@@ -85,6 +85,10 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             // apiClient.showErrors(response, formMethods.setError);
         });
     }
+
+    const onError = (data: any) => {
+        console.log("Validation Error", data);
+    };
 
     const prepareFieldValues = (fieldValues: Record<string, any>) => {
         const addresses: Record<string, any>[] = fieldValues.address;
@@ -154,6 +158,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             <DialogContent>
                 <Form
                     onSubmit={onSubmit}
+                    onError={onError}
                     defaultValues={state.defaultValues}
                     validationSchema={contactSchema}
                     id={formId.current}
