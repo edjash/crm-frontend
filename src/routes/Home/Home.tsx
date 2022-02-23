@@ -205,7 +205,7 @@ export default function Home() {
                         <ListItemIcon><ContactsIcon /></ListItemIcon>
                         <ListItemText primary="Contacts" />
                     </ListItem>
-                    <ListItem button key="companies"
+                    <ListItem disabled button key="companies"
                         onClick={() => { onNavClick('companies'); }}
                         selected={state.selected === 'companies'}
                     >

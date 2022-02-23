@@ -2,7 +2,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ReactNode } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { AnyObjectSchema } from "yup";
-import { DevTool } from "@hookform/devtools";
 
 export interface FormProps {
     id?: string;
@@ -25,7 +24,6 @@ export default function Form(props: FormProps) {
             <form onSubmit={formMethods.handleSubmit(props.onSubmit, props.onError)} id={props?.id}>
                 {props.children}
             </form>
-            <DevTool control={formMethods.control} />
         </FormProvider>
     );
 }

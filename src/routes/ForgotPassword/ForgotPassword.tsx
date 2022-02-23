@@ -7,7 +7,6 @@ import {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
-import { errorResponse, showError } from '../../components/FormError';
 import AuthPage from '../../components/AuthPage';
 import ForgotPasswordStep1, {
     title as step1Title,

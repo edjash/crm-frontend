@@ -236,26 +236,25 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                             </MultiFieldset>
                         </Box>
                         <Box display="grid" gap={2}>
-                            {/* <MultiFieldset
-                                    legend="Phone Number"
-                                    baseName="phone"
-                                    defaultValues={state.values.phone_number}
-                                >
-                                    <TextFieldEx name="number" type="text" label="Phone Number" />
-                                </MultiFieldset> */}
-                            {/* <Fieldset legend="Social Media">
+                            <MultiFieldset
+                                legend="Phone Number"
+                                baseName="phone_number"
+                            >
+                                <TextFieldEx name="number" label="Phone Number" />
+                            </MultiFieldset>
+                            <Fieldset legend="Social Media">
                                 {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
                                     <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>
                                         <Box>
                                             <SocialIcon network={network.toLowerCase()} fgColor="white" style={{ height: 25, width: 25 }} />
                                         </Box>
                                         <TextFieldEx
-                                            name={`socialmedia[${network.toLowerCase()}]`}
+                                            name={`socialmedia.${network.toLowerCase()}`}
                                             label={network}
                                         />
                                     </Box>
                                 ))}
-                            </Fieldset> */}
+                            </Fieldset>
                         </Box>
                     </Box>
                 </Form>

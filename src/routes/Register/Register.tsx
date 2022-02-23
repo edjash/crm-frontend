@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
 import AuthPage from '../../components/AuthPage';
 import Link from '../../components/Link';
-import TextFieldEx from '../../components/TextFieldEx';
+import TextFieldEx from '../../components/Form/TextFieldEx';
 import registerSchema from '../../validation/registerSchema';
 
 
