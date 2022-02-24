@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { Companies } from '../../components/Companies';
 import { Contacts } from '../../components/Contacts';
 import TopBar from '../../components/TopBar';
+import Footer from '../../components/Footer';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -214,7 +215,18 @@ export default function Home() {
                     </ListItem>
                 </List>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, position: 'relative', marginLeft: margin, marginRight: margin }}>
+            <Box
+                component="main"
+                sx={{
+                    flexGrow: 1,
+                    position: 'relative',
+                    marginLeft: margin,
+                    marginRight: margin,
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}
+            >
                 <DrawerHeader />
                 <TabPanel value={state.selected} ident="contacts">
                     <Contacts />
@@ -222,6 +234,7 @@ export default function Home() {
                 <TabPanel value={state.selected} ident="companies">
                     <Companies />
                 </TabPanel>
+                <Footer />
             </Box>
         </Box>
     );
