@@ -31,6 +31,7 @@ export default function ForgotPassword() {
         isLoading: false,
         currentStep: 1,
         fieldValues: {} as FieldValues,
+        disabled: (import.meta.env.VITE_MODE == 'Production'),
     });
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +52,7 @@ export default function ForgotPassword() {
             if (
                 state.fieldValues['password'] !== state.fieldValues['confirmPassword']
             ) {
-                return showError(["Passwords don't match."]);
+                // return showError(["Passwords don't match."]);
             }
         }
 
@@ -92,7 +93,7 @@ export default function ForgotPassword() {
             })
             .catch((error) => {
                 setState({ ...state, isLoading: false });
-                errorResponse(error);
+                //errorResponse(error);
 
                 if (error?.data?.errorType == 'code_sent') {
                     alert('OK');
@@ -117,7 +118,7 @@ export default function ForgotPassword() {
         case 1:
         default:
             title = step1Title;
-            form = <ForgotPasswordStep1 onChange={onChange} onSubmit={onSubmit} />;
+            form = <ForgotPasswordStep1 onChange={onChange} onSubmit={onSubmit} disabled={state.disabled} />;
             break;
         case 2:
             title = step2Title;
@@ -131,6 +132,9 @@ export default function ForgotPassword() {
 
     return (
         <AuthPage title={title} isLoading={state.isLoading}>
+            {state.disabled &&
+                <h2>Password reset is disabled for this demo</h2>
+            }
             <Box sx={{ display: 'grid', rowGap: 1 }}>
                 {form}
             </Box>

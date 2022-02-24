@@ -1,12 +1,11 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button } from '@mui/material';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
 import AuthPage from '../../components/AuthPage';
-import Link from '../../components/Link';
+import Form from '../../components/Form/Form';
 import TextFieldEx from '../../components/Form/TextFieldEx';
+import Link from '../../components/Link';
 import registerSchema from '../../validation/registerSchema';
 
 
@@ -19,11 +18,7 @@ export default function Register() {
         disabled: (import.meta.env.VITE_MODE == 'Production'),
     });
 
-    const { register, handleSubmit, setError, formState: { errors } } = useForm({
-        resolver: yupResolver(registerSchema)
-    });
-
-    const onSubmit = (data: object) => {
+    const onSubmit = (data: any) => {
 
         setState({ ...state, isLoading: true });
         localStorage.removeItem('token');
@@ -40,35 +35,32 @@ export default function Register() {
             })
             .catch((response) => {
                 setState({ ...state, isLoading: false });
-                apiClient.showErrors(response, setError);
+                //apiClient.showErrors(response, setError);
             });
     };
 
     return (
         <AuthPage title="Register" isLoading={state.isLoading}>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <Form onSubmit={onSubmit} validationSchema={registerSchema}>
                 {state.disabled &&
                     <h2>Registration is disabled for this demo</h2>
                 }
                 <Box sx={{ display: 'grid', rowGap: 1 }}>
                     <TextFieldEx
                         label="Email Address"
-                        {...register('email')}
-                        errors={errors?.email}
+                        name="email"
                         required
                         autoComplete="username"
                     />
                     <TextFieldEx
                         label="Password"
-                        {...register('password')}
-                        errors={errors?.password}
+                        name="password"
                         required
                         autoComplete="new-password"
                     />
                     <TextFieldEx
                         label="Confirm Password"
-                        {...register('confirmPassword')}
-                        errors={errors?.confirmPassword}
+                        name="confirmPassword"
                         required
                         autoComplete="new-password"
                     />
@@ -79,7 +71,7 @@ export default function Register() {
                         Already have an account? Sign in
                     </Link>
                 </Box>
-            </form>
+            </Form>
         </AuthPage>
     );
 }

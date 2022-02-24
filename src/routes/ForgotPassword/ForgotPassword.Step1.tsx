@@ -7,6 +7,7 @@ import { Box } from '@mui/system';
 interface FormProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: SyntheticEvent) => void;
+  disabled?: boolean;
 }
 
 export const title = 'Forgot Password';
@@ -26,7 +27,7 @@ export default function ForgotPasswordStep1(props: FormProps) {
           autoFocus
           onChange={props.onChange}
         />
-        <Button type="submit" fullWidth variant="contained" color="primary">
+        <Button type="submit" fullWidth variant="contained" color="primary" disabled={props.disabled}>
           Send Password Reset Email
         </Button>
         <Link to="/login">
