@@ -19,7 +19,13 @@ export type ErrorMessages = {
     [index: string]: string;
 };
 
-export function request(method: HTTPVerb, endpoint: string, data: object, sendToken = true, config: AxiosRequestConfig = {}) {
+export function request(
+    method: HTTPVerb,
+    endpoint: string,
+    data: object,
+    sendToken = true,
+    axiosConfig: AxiosRequestConfig = {}
+) {
 
     const options: AxiosRequestConfig = {
         method: method,
@@ -27,11 +33,12 @@ export function request(method: HTTPVerb, endpoint: string, data: object, sendTo
         baseURL: SERVER_URL + '/api',
         headers: {
             Accept: 'application/json',
-            ...config?.headers
+            ...axiosConfig?.headers
         },
         data: {},
         params: {},
-        ...config,
+        withCredentials: true,
+        ...axiosConfig,
     };
 
     switch (options.method) {
@@ -44,11 +51,11 @@ export function request(method: HTTPVerb, endpoint: string, data: object, sendTo
             options.params = data;
     }
 
-    const token = localStorage.getItem('token');
-    if (token && sendToken) {
-        options.headers.Authorization = `Bearer ${token}`;
-        options.withCredentials = true;
-    }
+    // const token = localStorage.getItem('token');
+    // if (token && sendToken) {
+    //     options.headers.Authorization = `Bearer ${token}`;
+    //     options.withCredentials = true;
+    // }
 
     return axios.request(options).catch(handleError);
 }

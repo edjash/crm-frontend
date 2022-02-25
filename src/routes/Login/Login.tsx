@@ -1,7 +1,8 @@
 import { Box, Button } from '@mui/material';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import apiClient from '../../components/apiClient';
+import axios from 'axios';
+import apiClient, { SERVER_URL } from '../../components/apiClient';
 import AuthPage from '../AuthPage';
 import Form from '../../components/Form/Form';
 import TextFieldEx from '../../components/Form/TextFieldEx';
@@ -20,21 +21,27 @@ export default function Login() {
     const onSubmit = (data: any) => {
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
-
         setState({ ...state, isLoading: true });
-        apiClient.post('/login', data, false)
-            .then((response) => {
-                setState({ ...state, isLoading: false });
-                PubSub.publishSync('AUTH.LOGIN', {
-                    accessToken: response.data.access_token,
-                    userInfo: response.data.user,
+
+        axios.defaults.withCredentials = true;
+        axios.get(SERVER_URL + '/sanctum/csrf-cookie').then(() => {
+            axios.post(SERVER_URL + '/api/login', data, {withCredentials:true})
+                .then((response) => {
+                    setState({ ...state, isLoading: false });
+                    PubSub.publishSync('AUTH.LOGIN', {
+                        accessToken: response.data.access_token,
+                        userInfo: response.data.user,
+                    });
+                    history.push('/');
+                })
+                .catch((response) => {
+                    setState({ ...state, isLoading: false })
+                    //apiClient.showErrors(response, formMethods.setError);
                 });
-                history.push('/');
-            })
-            .catch((response) => {
-                setState({ ...state, isLoading: false })
-                //apiClient.showErrors(response, formMethods.setError);
-            });
+        }).catch((error) => {
+            setState({ ...state, isLoading: false });
+            console.log(error);
+        });
     };
 
     const onSubmitError = (data: any) => {
