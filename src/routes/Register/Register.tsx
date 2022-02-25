@@ -2,7 +2,7 @@ import { Box, Button } from '@mui/material';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
-import AuthPage from '../../components/AuthPage';
+import AuthPage from '../AuthPage';
 import Form from '../../components/Form/Form';
 import TextFieldEx from '../../components/Form/TextFieldEx';
 import Link from '../../components/Link';

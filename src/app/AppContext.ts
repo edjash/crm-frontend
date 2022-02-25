@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react';
 
 interface AppContext {
     loggedIn: boolean;
+    userInfo: Record<string, string> | null;
 }
 
 const appCtx = createContext({} as AppContext);

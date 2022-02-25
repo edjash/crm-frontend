@@ -87,6 +87,11 @@ function _delete(endpoint: string, params: object = {}, sendToken = true) {
 
 //utility
 function handleError(error: AxiosError) {
+
+    if (error.response?.status === 401) {
+        PubSub.publish('AUTH.TIMEOUT');
+    }
+
     return Promise.reject(error.response);
 }
 

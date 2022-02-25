@@ -3,57 +3,67 @@ import { ThemeProvider } from '@mui/material/styles';
 import ModalProvider from 'mui-modal-provider';
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import PrivateRoute from '../components/PrivateRoute';
+import SessionExpiredDialog from '../components/Dialogs/SessionExpiredDialog';
+import Toast from '../components/Toast';
 import { ForgotPassword } from '../routes/ForgotPassword';
 import { Home } from '../routes/Home';
 import { Login } from '../routes/Login';
+import PrivateRoute from '../routes/PrivateRoute';
 import { Register } from '../routes/Register';
 import theme from '../theme';
 import { AppContextProvider } from './AppContext';
-import Toast from '../components/Toast';
+
+interface AppState {
+    loggedIn: boolean;
+    userInfo: Record<string, string> | null;
+    sessionExpired: boolean;
+}
 
 interface LoginData {
     accessToken: string;
+    userInfo: Record<string, string>;
 }
 
 export default function App() {
 
-    const [state, setState] = useState({
-        loggedIn: localStorage.getItem('token') ? true : false,
+    const [state, setState] = useState<AppState>(() => {
+        const user = localStorage.getItem('userInfo');
+        const token = localStorage.getItem('token');
+        const loggedIn = !!(user && token);
+
+        return {
+            loggedIn: loggedIn,
+            userInfo: (loggedIn) ? JSON.parse(user) : null,
+            sessionExpired: false,
+        };
     });
 
     useEffect(() => {
         document.title = import.meta.env.VITE_APP_TITLE;
-    }, []);
 
-    useEffect(() => {
         PubSub.subscribe('AUTH.LOGIN', (msg: string, data: LoginData) => {
-            if (!data?.accessToken) {
-                return false;
-            }
+            if (data?.accessToken && data?.userInfo) { }
             localStorage.setItem('token', data.accessToken);
+            localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
             setState(state => ({
                 ...state,
                 loggedIn: true,
+                userInfo: data.userInfo,
+                sessionExpired: false,
             }));
-
-            PubSub.publish('TOAST.SHOW', {
-                show: true,
-                message: 'Logged In',
-                type: 'info',
-                autoHide: true,
-            });
-
-            return true;
         });
 
         PubSub.subscribe('AUTH.LOGOUT', () => {
             localStorage.removeItem('token');
+            localStorage.removeItem('userInfo');
             setState(state => ({ ...state, loggedIn: false }));
         })
 
+        PubSub.subscribe('AUTH.TIMEOUT', () => {
+            setState(state => ({ ...state, sessionExpired: true }));
+        });
+
         return () => {
-            localStorage.removeItem('token');
             PubSub.unsubscribe('AUTH');
         }
     }, [])
@@ -77,6 +87,10 @@ export default function App() {
                     </Router>
                 </AppContextProvider>
                 <Toast />
+                <SessionExpiredDialog
+                    open={state.sessionExpired}
+                    userInfo={state.userInfo}
+                />
             </ModalProvider>
         </ThemeProvider>
     );

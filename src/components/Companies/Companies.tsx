@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { request, HTTPVerb } from '../apiClient';
 import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
 import { GridRowId, GridColDef } from '@mui/x-data-grid';
-import ConfirmDialog from '../ConfirmDialog';
+import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import { useModal } from 'mui-modal-provider';
 import CreateEditDlg from './Companies.CreateEdit';
 import PubSub from 'pubsub-js'

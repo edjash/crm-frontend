@@ -15,6 +15,7 @@ import { Companies } from '../../components/Companies';
 import { Contacts } from '../../components/Contacts';
 import TopBar from '../../components/TopBar';
 import Footer from '../../components/Footer';
+import SessionManager from '../../components/SessionManager';
 
 interface TabPanelProps {
     children?: React.ReactNode;

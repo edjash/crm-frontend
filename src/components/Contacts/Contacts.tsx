@@ -4,7 +4,7 @@ import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { request, HTTPVerb } from '../apiClient';
-import ConfirmDialog from '../ConfirmDialog';
+import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
 import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';

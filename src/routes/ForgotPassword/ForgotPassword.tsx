@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
-import AuthPage from '../../components/AuthPage';
+import AuthPage from '../AuthPage';
 import ForgotPasswordStep1, {
     title as step1Title,
 } from './ForgotPassword.Step1';

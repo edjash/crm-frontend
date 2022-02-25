@@ -7,8 +7,8 @@ import { useModal } from "mui-modal-provider";
 import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useEffect, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import Fieldset from './Fieldset';
-import ConfirmDialog from "../ConfirmDialog";
-import PromptDialog from "../PromptDialog";
+import ConfirmDialog from "../Dialogs/ConfirmDialog";
+import PromptDialog from "../Dialogs/PromptDialog";
 
 
 interface MultiFieldsetProps {
