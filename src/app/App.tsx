@@ -20,7 +20,6 @@ interface AppState {
 }
 
 interface LoginData {
-    accessToken: string;
     userInfo: Record<string, string>;
 }
 
@@ -28,12 +27,9 @@ export default function App() {
 
     const [state, setState] = useState<AppState>(() => {
         const user = localStorage.getItem('userInfo');
-        const token = localStorage.getItem('token');
-        const loggedIn = !!(user && token);
-
         return {
-            loggedIn: loggedIn,
-            userInfo: (loggedIn) ? JSON.parse(user) : null,
+            loggedIn: !!(user),
+            userInfo: (user) ? JSON.parse(user) : null,
             sessionExpired: false,
         };
     });
@@ -42,19 +38,18 @@ export default function App() {
         document.title = import.meta.env.VITE_APP_TITLE;
 
         PubSub.subscribe('AUTH.LOGIN', (msg: string, data: LoginData) => {
-            if (data?.accessToken && data?.userInfo) { }
-            localStorage.setItem('token', data.accessToken);
-            localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
-            setState(state => ({
-                ...state,
-                loggedIn: true,
-                userInfo: data.userInfo,
-                sessionExpired: false,
-            }));
+            if (data?.userInfo) {
+                localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
+                setState(state => ({
+                    ...state,
+                    loggedIn: true,
+                    userInfo: data.userInfo,
+                    sessionExpired: false,
+                }));
+            }
         });
 
         PubSub.subscribe('AUTH.LOGOUT', () => {
-            localStorage.removeItem('token');
             localStorage.removeItem('userInfo');
             setState(state => ({ ...state, loggedIn: false }));
         })

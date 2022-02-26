@@ -19,12 +19,11 @@ export default function SesssionExpiredDialog(props: SessionExpiredProps) {
     }
 
     const onSubmit = (data: any) => {
-        localStorage.removeItem('token');
+        localStorage.removeItem('userInfo');
 
         apiClient.post('/login', data, false)
             .then((response) => {
                 PubSub.publishSync('AUTH.LOGIN', {
-                    accessToken: response.data.access_token,
                     userInfo: response.data.user,
                 });
             })

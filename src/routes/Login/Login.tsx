@@ -1,13 +1,13 @@
 import { Box, Button } from '@mui/material';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import axios from 'axios';
-import apiClient, { SERVER_URL } from '../../components/apiClient';
+import apiClient, { csrfCookieExists } from '../../components/apiClient';
 import AuthPage from '../AuthPage';
 import Form from '../../components/Form/Form';
 import TextFieldEx from '../../components/Form/TextFieldEx';
 import Link from '../../components/Link';
 import loginSchema from '../../validation/loginSchema';
+import axios from 'axios';
 
 export default function Login() {
 
@@ -18,31 +18,42 @@ export default function Login() {
         isLoading: false,
     });
 
+    // document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+  
     const onSubmit = (data: any) => {
-        localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
         setState({ ...state, isLoading: true });
 
-        axios.defaults.withCredentials = true;
-        axios.get(SERVER_URL + '/sanctum/csrf-cookie').then(() => {
-            axios.post(SERVER_URL + '/api/login', data, {withCredentials:true})
-                .then((response) => {
-                    setState({ ...state, isLoading: false });
-                    PubSub.publishSync('AUTH.LOGIN', {
-                        accessToken: response.data.access_token,
-                        userInfo: response.data.user,
+        apiClient.post('/login', data, { url: '/login' })
+            .then((response) => {
+                setState({ ...state, isLoading: false });
+
+                if (!csrfCookieExists()) {
+                    console.error("Auth Error: CSRF Cookie not set.");
+                    PubSub.publishSync('TOAST.SHOW', {
+                        message: "An unexpected error occurred logging you in. Please retry later.",
+                        type: 'error',
+                        autoHide: false,
                     });
-                    history.push('/');
-                })
-                .catch((response) => {
-                    setState({ ...state, isLoading: false })
-                    //apiClient.showErrors(response, formMethods.setError);
+                    return;
+                }
+
+                PubSub.publishSync('AUTH.LOGIN', {
+                    userInfo: response.data.user,
                 });
-        }).catch((error) => {
-            setState({ ...state, isLoading: false });
-            console.log(error);
-        });
+                history.push('/');
+            })
+            .catch((response) => {
+                setState({ ...state, isLoading: false });
+                PubSub.publishSync('TOAST.SHOW', {
+                    message: "An error occurred logging you in. Code: " + response.status,
+                    type: 'error',
+                    autoHide: false,
+                });
+                //apiClient.showErrors(response, formMethods.setError);
+            });
     };
+
 
     const onSubmitError = (data: any) => {
         console.log(data);

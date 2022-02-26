@@ -4,36 +4,38 @@ import { ErrorOption } from 'react-hook-form';
 export const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 export type HTTPVerb = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
+axios.defaults.withCredentials = true;
+axios.interceptors.request.use((config: AxiosRequestConfig) => {
+    // Request csrf cookie if not exists.
+    if (!csrfCookieExists() && config.method != 'get') {
+        return axios.get(SERVER_URL + '/sanctum/csrf-cookie').then(response => config);
+    }
+    return config;
+});
+
+
 const apiClient = {
     get,
     post,
     postForm,
     put,
     delete: _delete,
-    showErrors: showErrors,
 };
 
 export default apiClient;
 
-export type ErrorMessages = {
-    [index: string]: string;
-};
-
 export function request(
     method: HTTPVerb,
     endpoint: string,
-    data: object,
-    sendToken = true,
-    axiosConfig: AxiosRequestConfig = {}
+    data: object = {},
+    axiosConfig: AxiosRequestConfig = {},
 ) {
-
-    const options: AxiosRequestConfig = {
+    const config: AxiosRequestConfig = {
         method: method,
-        url: endpoint,
-        baseURL: SERVER_URL + '/api',
+        url: '/api' + endpoint,
+        baseURL: SERVER_URL,
         headers: {
             Accept: 'application/json',
-            ...axiosConfig?.headers
         },
         data: {},
         params: {},
@@ -41,37 +43,30 @@ export function request(
         ...axiosConfig,
     };
 
-    switch (options.method) {
+    switch (config.method) {
         case 'POST':
         case 'PUT':
-            options.data = data;
+            config.data = data;
             break;
         case 'GET':
         default:
-            options.params = data;
+            config.params = data;
     }
 
-    // const token = localStorage.getItem('token');
-    // if (token && sendToken) {
-    //     options.headers.Authorization = `Bearer ${token}`;
-    //     options.withCredentials = true;
-    // }
-
-    return axios.request(options).catch(handleError);
+    return axios.request(config).catch(handleError);
 }
 
-export function get(endpoint: string, params: object = {}, sendToken = true) {
-    return request('GET', endpoint, params, sendToken);
+export function get(endpoint: string, params: object = {}) {
+    return request('GET', endpoint, params);
 }
 
-function post(endpoint: string, data: object, sendToken = true) {
-    return request('POST', endpoint, data, sendToken);
+export function post(endpoint: string, data: object, config: AxiosRequestConfig = {}) {
+    return request('POST', endpoint, data, config);
 }
 
 export function postForm(
     endpoint: string,
     formData: FormData,
-    sendToken: boolean = true,
     config: AxiosRequestConfig = {},
 ) {
     config = {
@@ -80,23 +75,30 @@ export function postForm(
             "Content-Type": "multipart/form-data"
         }
     };
-    return request('POST', endpoint, formData, sendToken, config);
+    return request('POST', endpoint, formData, config);
 }
 
-function put(endpoint: string, data: object, sendToken = true) {
-    return request('PUT', endpoint, data, sendToken);
+export function put(endpoint: string, data: object) {
+    return request('PUT', endpoint, data);
 }
 
 // prefixed with underscored because delete is a reserved word in javascript
-function _delete(endpoint: string, params: object = {}, sendToken = true) {
-    return request('DELETE', endpoint, params, sendToken);
+export function _delete(endpoint: string, params: object = {}) {
+    return request('DELETE', endpoint, params);
 }
 
 //utility
+export function csrfCookieExists() {
+    if (document.cookie.split(';').some((item) => item.trim().startsWith('XSRF-TOKEN='))) {
+        return true;
+    }
+    return false;
+}
+
 function handleError(error: AxiosError) {
 
     if (error.response?.status === 401) {
-        PubSub.publish('AUTH.TIMEOUT');
+       // PubSub.publish('AUTH.TIMEOUT');
     }
 
     return Promise.reject(error.response);

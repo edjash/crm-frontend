@@ -82,7 +82,7 @@ export default function Companies() {
                 limit: gridState.rowsPerPage,
                 search: gridState.searchQuery,
                 page: gridState.page,
-            }, true)
+            })
             .then((res) => {
                 if (res.data.last_page < res.data.current_page) {
                     setGridState({
@@ -161,7 +161,7 @@ export default function Companies() {
 
     useEffect(() => {
         if (gridState.loading) {
-            loadCompanies();
+            //loadCompanies();
         }
     }, [gridState.loading]);
 

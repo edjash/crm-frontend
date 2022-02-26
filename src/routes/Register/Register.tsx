@@ -21,14 +21,14 @@ export default function Register() {
     const onSubmit = (data: any) => {
 
         setState({ ...state, isLoading: true });
-        localStorage.removeItem('token');
+        localStorage.removeItem('userInfo');
 
         apiClient.post('/register', data, false)
             .then((response) => {
                 setState({ ...state, isLoading: false });
                 if (response.statusText === 'OK') {
                     PubSub.publishSync('AUTH.LOGIN', {
-                        accessToken: response.data.access_token
+                        userInfo: response.data.user,
                     });
                     history.push('/');
                 }
