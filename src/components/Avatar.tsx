@@ -55,6 +55,7 @@ export default function Avatar(props: AvatarProps) {
             src={src}
             sx={{ color: '#666666', background: '#2c2c2c', fontSize: '95%', }}
         >
+            {str}
         </MuiAvatar>
     );
 }
