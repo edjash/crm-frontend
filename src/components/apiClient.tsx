@@ -8,7 +8,7 @@ axios.defaults.withCredentials = true;
 axios.interceptors.request.use((config: AxiosRequestConfig) => {
     // Request csrf cookie if not exists.
     if (!csrfCookieExists() && config.method != 'get') {
-        return axios.get(SERVER_URL + '/sanctum/csrf-cookie').then(response => config);
+        return axios.get(SERVER_URL + '/sanctum/csrf-cookie').then(rsp => config);
     }
     return config;
 });
@@ -17,7 +17,6 @@ axios.interceptors.request.use((config: AxiosRequestConfig) => {
 const apiClient = {
     get,
     post,
-    postForm,
     put,
     delete: _delete,
 };
@@ -62,20 +61,6 @@ export function get(endpoint: string, params: object = {}) {
 
 export function post(endpoint: string, data: object, config: AxiosRequestConfig = {}) {
     return request('POST', endpoint, data, config);
-}
-
-export function postForm(
-    endpoint: string,
-    formData: FormData,
-    config: AxiosRequestConfig = {},
-) {
-    config = {
-        ...config,
-        headers: {
-            "Content-Type": "multipart/form-data"
-        }
-    };
-    return request('POST', endpoint, formData, config);
 }
 
 export function put(endpoint: string, data: object) {
