@@ -1,21 +1,20 @@
-import ContactsIcon from '@mui/icons-material/AccountBox';
-import CompaniesIcon from '@mui/icons-material/Business';
-import { Typography, useMediaQuery } from '@mui/material';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { styled, Theme, useTheme } from '@mui/material/styles';
+import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
+import {
+    Box, Drawer as MuiDrawer, List,
+    ListItem,
+    ListItemIcon,
+    ListItemText, styled, Theme, Typography,
+    useMediaQuery, useTheme
+} from '@mui/material';
 import { CSSObject, SystemProps } from '@mui/system';
+import Cookies from 'js-cookie';
 import PubSub from 'pubsub-js';
 import { useEffect, useState } from 'react';
 import { Companies } from '../../components/Companies';
 import { Contacts } from '../../components/Contacts';
-import TopBar from '../../components/TopBar';
+import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
-import SessionManager from '../../components/SessionManager';
+import TopBar from '../../components/TopBar';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -189,9 +188,9 @@ export default function Home() {
     }
 
     useEffect(() => {
-        PubSub.subscribe('NAV.BURGERCLICK', toggleNav);
+        const navToken = PubSub.subscribe('NAV.TOGGLE', toggleNav);
         return () => {
-            PubSub.unsubscribe('NAV.BURGERCLICK');
+            PubSub.unsubscribe(navToken);
         }
     }, []);
 
@@ -237,6 +236,7 @@ export default function Home() {
                 </TabPanel>
                 <Footer />
             </Box>
+            <SessionExpiredDialog />
         </Box>
     );
 }

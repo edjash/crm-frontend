@@ -1,28 +1,44 @@
-import { Box, DialogContentText, Typography } from '@mui/material';
+import { Box, DialogContentText } from '@mui/material';
 import Dialog, { DialogProps as DialogProps } from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useEffect, useState } from 'react';
+import { useAppContext } from '../../app/AppContext';
+import Link from '../../components/Link';
 import EnterPassword from '../../routes/Login/EnterPassword';
 import apiClient from '../apiClient';
 
-type SessionExpiredProps = Omit<DialogProps, 'onExited'> & {
-    open: boolean;
-    userInfo: Record<string, string> | null;
-};
+export default function SesssionExpiredDialog() {
 
-export default function SesssionExpiredDialog(props: SessionExpiredProps) {
+    const [sessionExpired, setSessionExpired] = useState(false);
+    const appContext = useAppContext();
 
-    if (!props.userInfo) {
-        console.warn("userInfo prop of SessionExpiredDialog was null");
-        // PubSub.publish('AUTH.LOGOUT');
+    useEffect(() => {
+        const sessionTimer = setInterval(() => {
+            if (!document.cookie.split(';').some(
+                item => item.trim().startsWith('XSRF-TOKEN=')
+            )) {
+                setSessionExpired(true);
+            }
+        }, 1000);
+
+        return () => {
+            clearInterval(sessionTimer);
+        }
+    }, []);
+
+    if (!sessionExpired || !appContext.userInfo) {
         return <></>;
     }
+
+    const email = appContext.userInfo.email;
 
     const onSubmit = (data: any) => {
         localStorage.removeItem('userInfo');
 
-        apiClient.post('/login', data, false)
+        apiClient.post('/login', data, { url: '/login' })
             .then((response) => {
+                setSessionExpired(false);
                 PubSub.publishSync('AUTH.LOGIN', {
                     userInfo: response.data.user,
                 });
@@ -34,7 +50,7 @@ export default function SesssionExpiredDialog(props: SessionExpiredProps) {
 
     return (
         <Dialog
-            open={props.open}
+            open={true}
             disableRestoreFocus={true}
             BackdropProps={{
                 sx: { backdropFilter: 'blur(5px)' }
@@ -46,9 +62,14 @@ export default function SesssionExpiredDialog(props: SessionExpiredProps) {
                 <DialogContentText mb={2}>
                     Your session has expired due to inactivity, please enter your password to login.
                 </DialogContentText>
-                <EnterPassword email={props.userInfo.email} onSubmit={onSubmit} />
+                <EnterPassword email={email} onSubmit={onSubmit} />
             </DialogContent>
-        </ Dialog>
+            <Box display="flex" justifyContent="right" m={1}>
+                <Link to="/login">
+                    Go to main login screen
+                </Link>
+            </Box>
+        </Dialog>
     );
 }
 

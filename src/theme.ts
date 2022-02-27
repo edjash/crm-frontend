@@ -37,6 +37,9 @@ const theme = createTheme({
         .allowWrap.MuiDataGrid-cell {
             white-space:normal !important;
         }
+        a.MuiLink-root {
+            font-size: 0.875rem;
+        }
       `,
         },
     },

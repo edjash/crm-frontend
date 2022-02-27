@@ -28,7 +28,7 @@ export default function TopBar() {
   };
 
   const onNavBurgerClick = () => {
-    PubSub.publishSync('NAV.BURGERCLICK');
+    PubSub.publishSync('NAV.TOGGLE');
   }
 
   return (

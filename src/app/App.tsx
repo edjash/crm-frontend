@@ -3,7 +3,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import ModalProvider from 'mui-modal-provider';
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import SessionExpiredDialog from '../components/Dialogs/SessionExpiredDialog';
 import Toast from '../components/Toast';
 import { ForgotPassword } from '../routes/ForgotPassword';
 import { Home } from '../routes/Home';
@@ -16,7 +15,6 @@ import { AppContextProvider } from './AppContext';
 interface AppState {
     loggedIn: boolean;
     userInfo: Record<string, string> | null;
-    sessionExpired: boolean;
 }
 
 interface LoginData {
@@ -30,7 +28,6 @@ export default function App() {
         return {
             loggedIn: !!(user),
             userInfo: (user) ? JSON.parse(user) : null,
-            sessionExpired: false,
         };
     });
 
@@ -44,7 +41,6 @@ export default function App() {
                     ...state,
                     loggedIn: true,
                     userInfo: data.userInfo,
-                    sessionExpired: false,
                 }));
             }
         });
@@ -61,7 +57,7 @@ export default function App() {
         return () => {
             PubSub.unsubscribe('AUTH');
         }
-    }, [])
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
@@ -77,15 +73,12 @@ export default function App() {
                                 path="/"
                                 component={Home}
                                 loggedIn={state.loggedIn}
-                            />
+                            >
+                            </PrivateRoute>
                         </Switch>
                     </Router>
                 </AppContextProvider>
                 <Toast />
-                <SessionExpiredDialog
-                    open={state.sessionExpired}
-                    userInfo={state.userInfo}
-                />
             </ModalProvider>
         </ThemeProvider>
     );
