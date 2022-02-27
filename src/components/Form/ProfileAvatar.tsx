@@ -5,6 +5,7 @@ import { useFormContext } from "react-hook-form";
 import apiClient from '../apiClient';
 import Overlay from '../Overlay';
 import { uniqueId } from 'lodash';
+import { SERVER_URL } from '../../app/constants';
 
 interface ProfileAvatarProps extends BoxProps {
     name: string;
@@ -23,8 +24,6 @@ interface ProfileAvatarState {
     filename: string;
     fieldId: string;
 }
-
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 

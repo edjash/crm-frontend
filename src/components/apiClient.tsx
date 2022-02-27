@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ErrorOption } from 'react-hook-form';
+import { SERVER_URL } from '../app/constants';
 
-export const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 export type HTTPVerb = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 axios.defaults.withCredentials = true;
@@ -13,6 +13,7 @@ axios.interceptors.request.use((config: AxiosRequestConfig) => {
     return config;
 });
 
+console.log("SERVA", SERVER_URL);
 
 const apiClient = {
     get,

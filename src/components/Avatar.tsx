@@ -1,4 +1,5 @@
 import MuiAvatar from '@mui/material/Avatar';
+import { SERVER_URL } from '../app/constants';
 
 function stringToColor(string: string) {
     let hash = 0;
@@ -45,7 +46,6 @@ export default function Avatar(props: AvatarProps) {
 
     let src = '';
     if (props.avatar) {
-        const SERVER_URL = import.meta.env.VITE_SERVER_URL;
         src = `${SERVER_URL}/storage/avatars/${props.avatar}`;
     }
 

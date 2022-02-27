@@ -2,12 +2,11 @@ import { Box, Button } from '@mui/material';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient, { csrfCookieExists } from '../../components/apiClient';
-import AuthPage from '../AuthPage';
 import Form from '../../components/Form/Form';
 import TextFieldEx from '../../components/Form/TextFieldEx';
 import Link from '../../components/Link';
 import loginSchema from '../../validation/loginSchema';
-import axios from 'axios';
+import AuthPage from '../AuthPage';
 
 export default function Login() {
 
@@ -18,8 +17,6 @@ export default function Login() {
         isLoading: false,
     });
 
-    // document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-  
     const onSubmit = (data: any) => {
         localStorage.removeItem('userInfo');
         setState({ ...state, isLoading: true });
@@ -46,7 +43,7 @@ export default function Login() {
             .catch((response) => {
                 setState({ ...state, isLoading: false });
                 PubSub.publishSync('TOAST.SHOW', {
-                    message: "An error occurred logging you in. Code: " + response.status,
+                    message: "An unexpected error occurred logging you in.",
                     type: 'error',
                     autoHide: false,
                 });
