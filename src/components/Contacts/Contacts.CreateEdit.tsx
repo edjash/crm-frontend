@@ -135,14 +135,12 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     }, []);
 
     let title = "New Contact";
-    let avatarPostUrl = '/contacts/avatar';
 
     if (props.type == 'edit') {
         if (!state.ready) {
             return (<Overlay open={true} />);
         }
         title = props?.data?.fullname ?? 'Unnamed';
-        avatarPostUrl = `${avatarPostUrl}/${props?.data?.contactId}`;
     }
 
     return (
@@ -175,7 +173,6 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                     <ProfileAvatar
                                         name="avatar"
                                         sx={{ justifySelf: "center" }}
-                                        postEndPoint={avatarPostUrl}
                                     />
                                     <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
                                         <RemoteSelect

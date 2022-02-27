@@ -10,8 +10,6 @@ interface ProfileAvatarProps extends BoxProps {
     name: string;
     alt?: string;
     src?: string;
-    postEndPoint?: string;
-    postData?: Record<string, string>;
     defaultValue?: string;
     onChange?: (event: any) => void;
 }
@@ -76,10 +74,6 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             return;
         }
 
-        if (!props.postEndPoint) {
-            return;
-        }
-
         setState((state) => ({
             ...state,
             progressPercent: 0,
@@ -89,7 +83,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
     }
 
     useEffect(() => {
-        if (!state.uploading || !state.fileObject || !props.postEndPoint) {
+        if (!state.uploading || !state.fileObject) {
             return;
         }
 
@@ -105,7 +99,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
         setState(state => ({ ...state, uploading: true, progressPercent: 0 }));
 
-        apiClient.post(props.postEndPoint, formData, config).then((response) => {
+        apiClient.post('/contacts/avatar', formData, config).then((response) => {
             if (response.data.filename) {
                 const src = `${SERVER_URL}/storage/tmp_avatars/${response.data.filename}`;
                 setState(state => ({
