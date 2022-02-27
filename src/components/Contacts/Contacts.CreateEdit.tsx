@@ -97,7 +97,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
     const prepareIncomingValues = (values: Record<string, any>) => {
         values.social_media_url.map((item: Record<string, string>) => {
-            values[`socialmedia[${item.ident}]`] = item.url;
+            values[`socialmedia.${item.ident}`] = item.url;
         });
         delete values['social_media_url'];
 
@@ -113,7 +113,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                 }
                 return addr;
             });
-
+            
         return values;
     }
 
