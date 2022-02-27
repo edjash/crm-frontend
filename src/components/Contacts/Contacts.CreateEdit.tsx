@@ -113,23 +113,25 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                 }
                 return addr;
             });
-            
+
         return values;
     }
 
     useEffect(() => {
-        apiClient.get(`/contacts/${props.data?.contactId}`).then((response) => {
-            const values = prepareIncomingValues(response.data);
+        if (props.type == 'edit') {
+            apiClient.get(`/contacts/${props.data?.contactId}`).then((response) => {
+                const values = prepareIncomingValues(response.data);
 
-            setState((state) => ({
-                ...state,
-                open: true,
-                defaultValues: values,
-                ready: true,
-            }));
-        }).catch((error) => {
+                setState((state) => ({
+                    ...state,
+                    open: true,
+                    defaultValues: values,
+                    ready: true,
+                }));
+            }).catch((error) => {
 
-        });
+            });
+        }
     }, []);
 
     let title = "New Contact";
