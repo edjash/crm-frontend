@@ -97,12 +97,15 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         formData.append(props.name, state.fileObject);
 
         const config: AxiosRequestConfig = {
-            onUploadProgress: onUploadProgress
-        }
+            onUploadProgress: onUploadProgress,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        };
 
         setState(state => ({ ...state, uploading: true, progressPercent: 0 }));
 
-        apiClient.postForm(props.postEndPoint, formData, true, config).then((response) => {
+        apiClient.post(props.postEndPoint, formData, config).then((response) => {
             if (response.data.filename) {
                 const src = `${SERVER_URL}/storage/tmp_avatars/${response.data.filename}`;
                 setState(state => ({
