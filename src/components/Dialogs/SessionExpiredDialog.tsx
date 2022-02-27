@@ -22,6 +22,10 @@ export default function SesssionExpiredDialog() {
             }
         }, 1000);
 
+        PubSub.subscribe('AUTH.TIMEOUT', () => {
+            setSessionExpired(true);
+        });
+
         return () => {
             clearInterval(sessionTimer);
         }

@@ -96,9 +96,9 @@ export default function Contacts() {
 
                 setGridState({
                     ...gridState,
-                    page: res.data.current_page,
-                    rowCount: res.data.total,
-                    rows: res.data.data,
+                    page: res.data.current_page ?? 1,
+                    rowCount: res.data.total ?? 0,
+                    rows: res.data.data ?? [],
                     pageCount: Math.ceil(res.data.total / gridState.rowsPerPage),
                     loading: false,
                     deleteIds: [],
@@ -106,12 +106,10 @@ export default function Contacts() {
                 });
             })
             .catch((error) => {
-                if (error) {
-                    error = 4;
-                }
                 setGridState({
                     ...gridState,
                     deleteIds: [],
+                    rows: [],
                     loading: false
                 });
             });

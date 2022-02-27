@@ -56,10 +56,6 @@ export default function App() {
             setState(state => ({ ...state, loggedIn: false }));
         })
 
-        PubSub.subscribe('AUTH.TIMEOUT', () => {
-            setState(state => ({ ...state, sessionExpired: true }));
-        });
-
         return () => {
             PubSub.unsubscribe('AUTH');
         }
