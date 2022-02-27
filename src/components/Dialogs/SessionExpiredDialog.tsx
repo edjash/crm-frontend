@@ -60,7 +60,8 @@ export default function SesssionExpiredDialog() {
             <DialogTitle>Enter Password</DialogTitle>
             <DialogContent>
                 <DialogContentText mb={2}>
-                    Your session has expired due to inactivity, please enter your password to login.
+                    Your session has expired due to inactivity.
+                    <br />Please enter your password to resume your session.
                 </DialogContentText>
                 <EnterPassword email={email} onSubmit={onSubmit} />
             </DialogContent>

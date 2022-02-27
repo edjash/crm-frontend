@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import ModalProvider from 'mui-modal-provider';
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Toast from '../components/Toast';
+import Toaster from '../components/Toaster';
 import { ForgotPassword } from '../routes/ForgotPassword';
 import { Home } from '../routes/Home';
 import { Login } from '../routes/Login';
@@ -24,7 +24,13 @@ interface LoginData {
 export default function App() {
 
     const [state, setState] = useState<AppState>(() => {
-        const user = localStorage.getItem('userInfo');
+        let user = localStorage.getItem('userInfo');
+        if (!document.cookie.split(';').some(
+            item => item.trim().startsWith('XSRF-TOKEN='))) {
+            user = null;
+            localStorage.setItem('userInfo', '');
+        }
+
         return {
             loggedIn: !!(user),
             userInfo: (user) ? JSON.parse(user) : null,
@@ -78,7 +84,7 @@ export default function App() {
                         </Switch>
                     </Router>
                 </AppContextProvider>
-                <Toast />
+                <Toaster />
             </ModalProvider>
         </ThemeProvider>
     );
