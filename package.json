@@ -2,9 +2,9 @@
     "name": "edcrm.local",
     "version": "0.0.0",
     "scripts": {
-        "dev": "vite",
+        "dev": "vite --mode development",
         "build": "tsc && vite build --mode production",
-        "staging": "tsc && vite build --mode staging",
+        "mobile": "vite --mode mobile",
         "preview": "vite preview",
         "test": "jest"
     },

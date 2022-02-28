@@ -15,7 +15,7 @@ export default function Register() {
 
     const [state, setState] = useState({
         isLoading: false,
-        disabled: (import.meta.env.VITE_MODE == 'Production'),
+        disabled: (import.meta.env.VITE_MODE == 'production'),
     });
 
     const onSubmit = (data: any) => {
@@ -23,7 +23,7 @@ export default function Register() {
         setState({ ...state, isLoading: true });
         localStorage.removeItem('userInfo');
 
-        apiClient.post('/register', data, false)
+        apiClient.post('/register', data)
             .then((response) => {
                 setState({ ...state, isLoading: false });
                 if (response.statusText === 'OK') {

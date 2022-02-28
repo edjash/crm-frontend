@@ -1,7 +1,7 @@
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import CountrySelect from '../components/CountrySelect';
+import CountrySelect from '../components/Form/CountrySelect';
 
 
 test('sets default value', async () => {
@@ -11,7 +11,6 @@ test('sets default value', async () => {
     render(
         <CountrySelect
             name="country"
-            defaultValue={defaultValue}
         />
     );
 

@@ -31,7 +31,7 @@ export default function ForgotPassword() {
         isLoading: false,
         currentStep: 1,
         fieldValues: {} as FieldValues,
-        disabled: (import.meta.env.VITE_MODE == 'Production'),
+        disabled: (import.meta.env.VITE_MODE == 'production'),
     });
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +65,6 @@ export default function ForgotPassword() {
                     ...state.fieldValues,
                     step: state.currentStep,
                 },
-                false
             )
             .then((response) => {
                 setState({ ...state, isLoading: false });
