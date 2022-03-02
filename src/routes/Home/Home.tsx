@@ -7,10 +7,6 @@ import {
     useMediaQuery, useTheme
 } from '@mui/material';
 import { CSSObject, SystemProps } from '@mui/system';
-<<<<<<< HEAD
-import Cookies from 'js-cookie';
-=======
->>>>>>> frontend/main
 import PubSub from 'pubsub-js';
 import { useEffect, useState } from 'react';
 import { Companies } from '../../components/Companies';
