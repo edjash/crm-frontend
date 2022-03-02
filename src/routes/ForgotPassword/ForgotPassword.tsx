@@ -18,6 +18,10 @@ import ForgotPasswordStep3, {
     title as step3Title,
 } from './ForgotPassword.Step3';
 import { Box } from '@mui/system';
+<<<<<<< HEAD
+=======
+import { APP_MODE } from '../../app/constants';
+>>>>>>> frontend/main
 
 export default function ForgotPassword() {
     const history = useHistory();
@@ -31,7 +35,11 @@ export default function ForgotPassword() {
         isLoading: false,
         currentStep: 1,
         fieldValues: {} as FieldValues,
+<<<<<<< HEAD
         disabled: (import.meta.env.VITE_MODE == 'production'),
+=======
+        disabled: (APP_MODE === 'production'),
+>>>>>>> frontend/main
     });
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +102,11 @@ export default function ForgotPassword() {
                 setState({ ...state, isLoading: false });
                 //errorResponse(error);
 
+<<<<<<< HEAD
                 if (error?.data?.errorType == 'code_sent') {
+=======
+                if (error?.data?.errorType === 'code_sent') {
+>>>>>>> frontend/main
                     alert('OK');
                 }
             });

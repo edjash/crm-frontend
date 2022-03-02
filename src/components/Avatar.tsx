@@ -1,6 +1,7 @@
 import MuiAvatar from '@mui/material/Avatar';
 import { SERVER_URL } from '../app/constants';
 
+<<<<<<< HEAD
 function stringToColor(string: string) {
     let hash = 0;
     let i;
@@ -30,6 +31,8 @@ function stringAvatar(name: string) {
     };
 }
 
+=======
+>>>>>>> frontend/main
 interface AvatarProps {
     name: string;
     avatar: string;
@@ -38,7 +41,11 @@ interface AvatarProps {
 export default function Avatar(props: AvatarProps) {
     const nameA = props.name.split(' ');
     let str = '';
+<<<<<<< HEAD
     nameA.map((s, index) => {
+=======
+    nameA.forEach((s, index) => {
+>>>>>>> frontend/main
         if (index < 2) {
             str += s[0];
         }

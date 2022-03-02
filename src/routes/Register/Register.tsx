@@ -7,7 +7,11 @@ import Form from '../../components/Form/Form';
 import TextFieldEx from '../../components/Form/TextFieldEx';
 import Link from '../../components/Link';
 import registerSchema from '../../validation/registerSchema';
+<<<<<<< HEAD
 
+=======
+import { APP_MODE } from '../../app/constants';
+>>>>>>> frontend/main
 
 export default function Register() {
 
@@ -15,7 +19,11 @@ export default function Register() {
 
     const [state, setState] = useState({
         isLoading: false,
+<<<<<<< HEAD
         disabled: (import.meta.env.VITE_MODE == 'production'),
+=======
+        disabled: (APP_MODE === 'production'),
+>>>>>>> frontend/main
     });
 
     const onSubmit = (data: any) => {
