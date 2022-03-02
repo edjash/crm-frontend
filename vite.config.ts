@@ -25,7 +25,7 @@ export default defineConfig(({ command, mode }) => {
           port: 9000,
           host: '0.0.0.0',
           hmr: {
-            port: 9002
+            port: 9003
           }
         },
       }

@@ -13,8 +13,6 @@ axios.interceptors.request.use((config: AxiosRequestConfig) => {
     return config;
 });
 
-console.log("SERVA", SERVER_URL);
-
 const apiClient = {
     get,
     post,
@@ -84,7 +82,7 @@ export function csrfCookieExists() {
 function handleError(error: AxiosError) {
 
     if (error.response?.status === 401) {
-        PubSub.publish('AUTH.TIMEOUT');
+        //PubSub.publish('AUTH.TIMEOUT');
     }
 
     return Promise.reject(error.response);
