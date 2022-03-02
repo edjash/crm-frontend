@@ -11,10 +11,7 @@ import PrivateRoute from '../routes/PrivateRoute';
 import { Register } from '../routes/Register';
 import theme from '../theme';
 import { AppContextProvider } from './AppContext';
-<<<<<<< HEAD
-=======
 import { APP_TITLE } from './constants';
->>>>>>> frontend/main
 
 interface AppState {
     loggedIn: boolean;
@@ -42,11 +39,7 @@ export default function App() {
     });
 
     useEffect(() => {
-<<<<<<< HEAD
-        document.title = import.meta.env.VITE_APP_TITLE;
-=======
         document.title = APP_TITLE;
->>>>>>> frontend/main
 
         PubSub.subscribe('AUTH.LOGIN', (msg: string, data: LoginData) => {
             if (data?.userInfo) {

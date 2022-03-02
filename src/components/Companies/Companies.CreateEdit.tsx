@@ -52,10 +52,6 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
             })
             .catch((error) => {
                 setState({ ...state, loading: false });
-<<<<<<< HEAD
-                errorResponse(error);
-=======
->>>>>>> frontend/main
             });
     };
 
@@ -99,17 +95,10 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                     display: 'flex',
                     flexDirection: 'column',
                 }}>
-<<<<<<< HEAD
-                    <Fieldset label="Name">
-                        <TextFieldEx fullWidth name="name" label="Company Name" required onChange={onChange} />
-                    </Fieldset>
-                    <Fieldset label="Address">
-=======
                     <Fieldset legend="Name">
                         <TextFieldEx fullWidth name="name" label="Company Name" required onChange={onChange} />
                     </Fieldset>
                     <Fieldset legend="Address">
->>>>>>> frontend/main
                         <Box sx={{ display: 'grid' }}>
                             <TextFieldEx name="street" label="Street" onChange={onChange} />
                             <TextFieldEx name="town" label="Town / City" onChange={onChange} />
@@ -121,10 +110,6 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                                 valueField="code"
                                 labelField="name"
                                 name="country"
-<<<<<<< HEAD
-                                clearable
-=======
->>>>>>> frontend/main
                             />
                         </Box>
                     </Fieldset>
