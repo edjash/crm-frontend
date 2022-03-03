@@ -157,8 +157,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             >
                 <Box
                     sx={{
-                        display: (isDesktop) ? 'grid' : 'block',
-                        gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : '',
+                        display: 'grid',
+                        gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : 'auto',
                         alignItems: 'start',
                         gap: 2,
                     }}
