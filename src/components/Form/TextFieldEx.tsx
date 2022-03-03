@@ -10,7 +10,7 @@ export default function TextFieldEx(props: TextFieldExProps) {
     const { register, formState, control } = useFormContext();
 
     let errorMsg = formState.errors?.[props.name]?.message;
-    
+
     return (
         <Controller
             render={({ field }) => (
@@ -21,7 +21,6 @@ export default function TextFieldEx(props: TextFieldExProps) {
                         display: props.hidden ? 'none' : 'block',
                         ...props.sx
                     }}
-                    //{...register(props.name)}
                     value={field.value ?? ''}
                     error={!!props?.error || !!errorMsg}
                     helperText={errorMsg || props?.helperText}
