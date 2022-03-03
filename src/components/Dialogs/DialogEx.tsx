@@ -55,8 +55,7 @@ export default function DialogEx(props: DialogExProps) {
             disableRestoreFocus={config.disableRestoreFocus}
             fullScreen={config.fullScreen}
             scroll="paper"
-            maxWidth="md"
-            fullWidth={true}
+            maxWidth="xl"
         >
             {mode === 'normal' && (config.title || config.closeIcon) &&
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>

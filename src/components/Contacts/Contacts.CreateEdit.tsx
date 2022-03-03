@@ -144,7 +144,11 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         title = props?.data?.fullname ?? 'Unnamed';
     }
 
-    let mode = 'normal';
+    let mode = 'mobile';
+    let columnWidth = {};
+    if (mode === 'normal') {
+        columnWidth = { sx: { width: { md: 320 } } };
+    }
 
     return (
         <DialogEx
@@ -162,11 +166,11 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             >
                 <Box
                     sx={{
-                        display: (mode === 'normal') ? 'grid' : 'block'
+                        display: (mode === 'normal') ? 'grid' : 'block',
+                        gridTemplateColumns: (mode === 'normal') ? '320px 320px 320px' : '',
+                        alignItems: 'start',
+                        gap: 2,
                     }}
-                    gridTemplateColumns="auto auto auto"
-                    alignItems="start"
-                    gap={2}
                 >
                     <Box display="grid" gap={2}>
                         <Fieldset legend="Personal">
