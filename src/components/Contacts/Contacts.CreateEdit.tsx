@@ -1,15 +1,11 @@
-import CloseIcon from '@mui/icons-material/Close';
-import { Box, IconButton } from '@mui/material';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import { Box, Theme, useMediaQuery } from '@mui/material';
+import { DialogProps } from '@mui/material/Dialog';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { SocialIcon } from 'react-social-icons';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
-import DialogButton from '../DialogButton';
+import DialogEx from '../Dialogs/DialogEx';
 import CountrySelect from '../Form/CountrySelect';
 import Fieldset from '../Form/Fieldset';
 import Form from '../Form/Form';
@@ -18,7 +14,6 @@ import ProfileAvatar from '../Form/ProfileAvatar';
 import RemoteSelect from '../Form/RemoteSelect';
 import TextFieldEx from '../Form/TextFieldEx';
 import Overlay from '../Overlay';
-import DialogEx from '../Dialogs/DialogEx';
 
 export interface ShowCreateEditProps {
     contactId: number;
@@ -47,6 +42,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         open: (props.type === 'new'),
         defaultValues: {},
     });
+
+    const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
     const formId = useRef(uniqueId('contactForm'));
 
@@ -144,18 +141,12 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         title = props?.data?.fullname ?? 'Unnamed';
     }
 
-    let mode = 'mobile';
-    let columnWidth = {};
-    if (mode === 'normal') {
-        columnWidth = { sx: { width: { md: 320 } } };
-    }
-
     return (
         <DialogEx
             open={state.open}
             onClose={props.onClose}
             title={title}
-            displayMode={mode}
+            displayMode={isDesktop ? 'normal' : 'mobile'}
         >
             <Form
                 onSubmit={onSubmit}
@@ -166,8 +157,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             >
                 <Box
                     sx={{
-                        display: (mode === 'normal') ? 'grid' : 'block',
-                        gridTemplateColumns: (mode === 'normal') ? '320px 320px 320px' : '',
+                        display: (isDesktop) ? 'grid' : 'block',
+                        gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : '',
                         alignItems: 'start',
                         gap: 2,
                     }}
