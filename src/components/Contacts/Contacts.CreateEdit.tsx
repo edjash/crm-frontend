@@ -60,16 +60,17 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
         apiClient.post(url, data).then((response) => {
             setState({ ...state, loading: false });
-
-            if (response.statusText === 'OK') {
-                props.onSave();
-
+            props.onSave();
+            if (props.type === 'edit') {
                 PubSub.publish('CONTACTS.REFRESH');
+            } else {
                 PubSub.publish('TOAST.SHOW', {
                     message: 'Contact Added',
                     autoHide: true,
                 });
+                PubSub.publish('CONTACTS.REFRESH');
             }
+
         }).catch((response) => {
             setState({ ...state, loading: false });
             // apiClient.showErrors(response, formMethods.setError);
@@ -116,7 +117,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     }
 
     useEffect(() => {
-        if (props.type == 'edit') {
+        if (props.type === 'edit') {
             apiClient.get(`/contacts/${props.data?.contactId}`).then((response) => {
                 const values = prepareIncomingValues(response.data);
 
@@ -257,12 +258,6 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                     </Box>
                 </Box>
             </Form>
-            {/* <DialogActions>
-                <DialogButton onClick={props.onCancel}>Cancel</DialogButton>
-                <DialogButton type="submit" form={formId.current}>
-                    Save
-                </DialogButton>
-            </DialogActions> */}
             <Overlay open={state.loading} />
         </DialogEx>
     );
