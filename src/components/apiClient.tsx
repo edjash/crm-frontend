@@ -7,7 +7,7 @@ export type HTTPVerb = 'GET' | 'POST' | 'PUT' | 'DELETE';
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use((config: AxiosRequestConfig) => {
     // Request csrf cookie if not exists.
-    if (!csrfCookieExists() && config.method != 'get') {
+    if (!csrfCookieExists() && config.method !== 'get') {
         return axios.get(SERVER_URL + '/sanctum/csrf-cookie').then(rsp => config);
     }
     return config;
