@@ -7,7 +7,7 @@ type TextFieldExProps = TextFieldProps & {
 }
 
 export default function TextFieldEx(props: TextFieldExProps) {
-    const { register, formState, control } = useFormContext();
+    const { formState, control } = useFormContext();
 
     let errorMsg = formState.errors?.[props.name]?.message;
 
