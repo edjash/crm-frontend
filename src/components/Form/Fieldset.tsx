@@ -3,19 +3,16 @@ import { Box } from "@mui/material";
 
 type FieldsetProps = {
     children: React.ReactNode;
-    legend: string
+    legend: string;
+    width?: string;
 };
 
 export default function Fieldset(props: FieldsetProps) {
 
     return (
-        <fieldset style={{ borderRadius: '6px' }}>
+        <fieldset style={{ borderRadius: '6px', width: props.width ?? 'auto' }}>
             <legend><span>{props.legend}</span></legend>
-            <Box m={0} width={{
-                md: 320
-            }}>
-                {props.children}
-            </Box>
+            {props.children}
         </fieldset>
     );
 }
