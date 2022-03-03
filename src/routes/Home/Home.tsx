@@ -4,7 +4,7 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText, styled, Theme, Typography,
-    useMediaQuery, useTheme
+    useMediaQuery
 } from '@mui/material';
 import { CSSObject, SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
@@ -148,8 +148,7 @@ const Drawer = (props: DrawerProps) => {
 
 export default function Home() {
 
-    const theme = useTheme();
-    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+    const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
     const margin = (isDesktop) ? 1 : 0;
 
     const [state, setState] = useState({
