@@ -49,13 +49,13 @@ export default function MainGridToolbar(props: ToolbarProps) {
             disableGutters
             sx={{ display: 'flex', justifyContent: 'left' }}
         >
-            <Box sx={{ gap: 30 }}>
+            <Box sx={{ gap: 30, flexGrow: 0 }}>
                 {isDesktop ?
                     <Button
                         size="large"
                         startIcon={<AddIcon fontSize="inherit" htmlColor="white" />}
                         onClick={props.onCreateClick}
-                        sx={{color:'text.primary'}}
+                        sx={{ color: 'text.primary' }}
                     >
                         Create {props.title}
                     </Button>
@@ -66,7 +66,7 @@ export default function MainGridToolbar(props: ToolbarProps) {
                 }
             </Box>
             <Divider orientation="vertical" flexItem sx={{ height: 30, mr: '10px', ml: '10px', alignSelf: 'center' }} />
-            <Box sx={{ flexGrow: 0.2 }}>
+            <Box sx={{ flexGrow: 1, mr: 1}}>
                 <TextField
                     type="search"
                     size="small"
