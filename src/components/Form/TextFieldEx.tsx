@@ -10,8 +10,7 @@ export default function TextFieldEx(props: TextFieldExProps) {
     const { register, formState, control } = useFormContext();
 
     let errorMsg = formState.errors?.[props.name]?.message;
-
-    //console.log(props.name, props);
+    
     return (
         <Controller
             render={({ field }) => (
