@@ -147,6 +147,10 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             onClose={props.onClose}
             title={title}
             displayMode={isDesktop ? 'normal' : 'mobile'}
+            saveButtonProps={{
+                type: 'submit',
+                form: formId.current
+            }}
         >
             <Form
                 onSubmit={onSubmit}

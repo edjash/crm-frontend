@@ -14,6 +14,7 @@ export type DialogExProps = Omit<DialogProps, 'onExited'> & {
     onCancel?: () => void;
     onSave?: () => void;
     displayMode?: 'mobile' | 'normal' | string;
+    saveButtonProps?: Record<string, any>;
 };
 
 
@@ -82,7 +83,7 @@ export default function DialogEx(props: DialogExProps) {
                     <DialogTitle sx={{ flexGrow: 1 }}>
                         {config.title}
                     </DialogTitle>
-                    <DialogButton onClick={onSave}>
+                    <DialogButton onClick={onSave} {...props.saveButtonProps}>
                         Save
                     </DialogButton>
                 </Box>
@@ -95,7 +96,7 @@ export default function DialogEx(props: DialogExProps) {
                     <DialogButton onClick={onCancel}>
                         Cancel
                     </DialogButton>
-                    <DialogButton onClick={onSave}>
+                    <DialogButton onClick={onSave} {...props.saveButtonProps}>
                         Save
                     </DialogButton>
                 </DialogActions>
