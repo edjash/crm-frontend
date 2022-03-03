@@ -4,11 +4,12 @@ import { IconButton, Menu, MenuItem, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from '@mui/material/Tab';
 import { useModal } from "mui-modal-provider";
-import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useEffect, useState } from "react";
+import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
-import Fieldset from './Fieldset';
+import useOnce from '../../hooks/useOnce';
 import ConfirmDialog from "../Dialogs/ConfirmDialog";
 import PromptDialog from "../Dialogs/PromptDialog";
+import Fieldset from './Fieldset';
 
 
 interface MultiFieldsetProps {
@@ -84,7 +85,7 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
     const [state, setState] = useState<MultiFieldsetState>(() => {
         const emptyField: Record<string, any> = {};
 
-        fields.map((item: Record<string, string>, index) => {
+        fields.forEach((item: Record<string, string>, index) => {
             if (!item?.label) {
                 item.label = (index > 0) ? 'Other' : 'Primary';
                 update(index, item);
@@ -101,6 +102,12 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
             menuAnchorEl: null,
             activeTab: props?.activeTab ?? 0,
         };
+    });
+
+    useOnce(() => {
+        if (fields.length === 0) {
+            append({ ...state.emptyField, label: 'Primary' });
+        }
     });
 
     const onMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -186,12 +193,6 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
         closeMenu();
     }
 
-    useEffect(() => {
-        if (fields.length === 0) {
-            append({ ...state.emptyField, label: 'Primary' });
-        }
-    }, [fields]);
-
     return (
         <Fieldset legend={props.legend}>
             <Box sx={{
@@ -241,7 +242,7 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
                 </Box>
             </Box>
             {fields.map((item: Record<string, string>, index) => (
-                <div hidden={!(state.activeTab == index)} key={item.key}>
+                <div hidden={!(state.activeTab === index)} key={item.key}>
                     {cloneChildren(props.children, (cProps) => {
                         const name = `${props.baseName}.${index}.${cProps.name}`;
                         const fstate = getFieldState(name);

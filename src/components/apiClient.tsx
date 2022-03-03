@@ -92,16 +92,6 @@ type setErrorFn = (name: string, error: ErrorOption, options?: {
     shouldFocus: boolean;
 } | undefined) => void;
 
-function showErrors(errorResponse: AxiosResponse, setError: setErrorFn) {
-    if (!setValidationErrors(errorResponse, setError)) {
-        PubSub.publish('TOAST.SHOW', {
-            autoHide: false,
-            message: "An unexpected error was encountered submitting the form.",
-            type: 'error',
-        });
-    }
-}
-
 export function setValidationErrors(errorResponse: AxiosResponse, setError: setErrorFn): boolean {
     if (!isValidationError(errorResponse)) {
         return false;

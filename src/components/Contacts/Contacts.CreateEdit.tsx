@@ -1,8 +1,9 @@
 import { Box, Theme, useMediaQuery } from '@mui/material';
 import { DialogProps } from '@mui/material/Dialog';
 import { uniqueId } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { SocialIcon } from 'react-social-icons';
+import useOnce from '../../hooks/useOnce';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
 import DialogEx from '../Dialogs/DialogEx';
@@ -41,6 +42,23 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         ready: (props.type === 'new'),
         open: (props.type === 'new'),
         defaultValues: {},
+    });
+
+    useOnce(() => {
+        if (props.type === 'edit') {
+            apiClient.get(`/contacts/${props.data?.contactId}`).then((response) => {
+                const values = prepareIncomingValues(response.data);
+
+                setState((state) => ({
+                    ...state,
+                    open: true,
+                    defaultValues: values,
+                    ready: true,
+                }));
+            }).catch((error) => {
+
+            });
+        }
     });
 
     const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
@@ -95,7 +113,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     }
 
     const prepareIncomingValues = (values: Record<string, any>) => {
-        values.social_media_url.map((item: Record<string, string>) => {
+        values.social_media_url.forEach((item: Record<string, string>) => {
             values[`socialmedia.${item.ident}`] = item.url;
         });
         delete values['social_media_url'];
@@ -116,26 +134,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         return values;
     }
 
-    useEffect(() => {
-        if (props.type === 'edit') {
-            apiClient.get(`/contacts/${props.data?.contactId}`).then((response) => {
-                const values = prepareIncomingValues(response.data);
-
-                setState((state) => ({
-                    ...state,
-                    open: true,
-                    defaultValues: values,
-                    ready: true,
-                }));
-            }).catch((error) => {
-
-            });
-        }
-    }, []);
-
     let title = "New Contact";
-
-    if (props.type == 'edit') {
+    if (props.type === 'edit') {
         if (!state.ready) {
             return (<Overlay open={true} />);
         }
