@@ -40,6 +40,9 @@ const theme = createTheme({
         a.MuiLink-root {
             font-size: 0.875rem;
         }
+        .MuiDataGrid-iconSeparator:last-child {
+            display:none !important;
+        },
       `,
         },
     },

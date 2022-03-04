@@ -126,13 +126,13 @@ export default function MainGrid(props: GridProps) {
         headerClassName: 'no-header',
         disableColumnMenu: true,
         filterable: false,
-        renderCell: (params) => {
-            return (
-                <ActionButton rowData={params.row} onClick={props.onDelete}>
-                    <Delete />
-                </ActionButton>
-            );
-        },
+        // renderCell: (params) => {
+        //     return (
+        //         <ActionButton rowData={params.row} onClick={props.onDelete}>
+        //             <Delete />
+        //         </ActionButton>
+        //     );
+        // },
     }];
 
     //const columns = props.columns.map(v => ({ ...v, renderCell: cellRenderer }));

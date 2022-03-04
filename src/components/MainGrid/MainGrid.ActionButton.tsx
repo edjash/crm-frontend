@@ -1,26 +1,28 @@
 import IconButton from '@mui/material/IconButton';
-import { GridRowModel, GridRowId } from '@mui/x-data-grid';
+import { GridRowModel } from '@mui/x-data-grid';
+import { ReactNode } from 'react';
 
 export interface IGridActionButton {
-    onClick?: (rowIds: GridRowId[]) => void;
+    onClick?: (action: string, data: GridRowModel) => void;
+    name: string;
     rowData: GridRowModel;
-    children: JSX.Element;
+    children: ReactNode;
 }
 
-export default function ActionButton(cfg: IGridActionButton) {
+export default function ActionButton(props: IGridActionButton) {
     const onClick = () => {
-        cfg?.onClick?.call(undefined, [cfg.rowData.id]);
+        if (props.onClick) {
+            props.onClick(props.name, props.rowData);
+        }
     };
 
     return (
         <IconButton
             edge="start"
             color="inherit"
-            aria-label="delete"
             onClick={onClick}
-            focusRipple={false}
         >
-            {cfg.children}
+            {props.children}
         </IconButton>
     );
 }

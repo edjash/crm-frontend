@@ -1,14 +1,15 @@
-import { Link, Theme, useMediaQuery } from '@mui/material';
+import { Box, IconButton, Link, Theme, useMediaQuery } from '@mui/material';
 import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
 import { useEffect, useState } from 'react';
-import { isMinusToken } from 'typescript';
+import { PhoneEnabled as Phone, Mail } from '@mui/icons-material/';
 import { HTTPVerb, request } from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
 import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
 import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
+import ActionButton from '../MainGrid/MainGrid.ActionButton';
 
 export default function Contacts() {
 
@@ -216,8 +217,45 @@ export default function Contacts() {
     ];
 
     if (isMobile) {
-        columns = [columns[0], columns[1], columns[3]];
+
+        const onClick = (action: string, rowData: GridRowModel) => {
+            console.log(rowData);
+        }
+
+        columns = [
+            columns[0],
+            {
+                ...columns[1],
+                flex: 1,
+            },
+            {
+                field: 'action',
+                headerName: '',
+                renderCell: (params) => {
+                    return (
+                        <Box display="flex" gap={2}>
+                            <ActionButton
+                                name="phone"
+                                rowData={params.row}
+                                onClick={onClick}
+                            >
+                                <Phone sx={{ color: '#009688' }} />
+                            </ActionButton>
+                            <ActionButton
+                                name="mail"
+                                rowData={params.row}
+                                onClick={onClick}
+                            >
+                                <Mail sx={{ color: '#2196f3' }} />
+                            </ActionButton>
+                        </Box>
+                    );
+                }
+            }
+        ]
     }
+
+
 
     return (
         <MainGrid
