@@ -1,7 +1,7 @@
 import { Box, Button } from '@mui/material';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import apiClient, { csrfCookieExists } from '../../components/apiClient';
+import apiClient, { csrfCookieExists, clearSession } from '../../components/apiClient';
 import Form from '../../components/Form/Form';
 import TextFieldEx from '../../components/Form/TextFieldEx';
 import Link from '../../components/Link';
@@ -20,9 +20,7 @@ export default function Login() {
     });
 
     useOnce(() => {
-        localStorage.removeItem('userInfo');
-        document.cookie = 'XSRF-TOKEN=; Max-Age=0; path=/; domain='
-            + window.location.hostname;
+        clearSession();
         if (APP_MODE === 'development') {
             if (new URL(APP_URL).host !== window.location.host) {
                 window.location.href = APP_URL;

@@ -1,12 +1,12 @@
 import { Box, DialogContentText } from '@mui/material';
-import Dialog, { DialogProps as DialogProps } from '@mui/material/Dialog';
+import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
 import { useAppContext } from '../../app/AppContext';
 import Link from '../../components/Link';
 import EnterPassword from '../../routes/Login/EnterPassword';
-import apiClient from '../apiClient';
+import apiClient, { clearSession, csrfCookieExists } from '../apiClient';
 
 export default function SesssionExpiredDialog() {
 
@@ -14,10 +14,10 @@ export default function SesssionExpiredDialog() {
     const appContext = useAppContext();
 
     useEffect(() => {
+        clearSession();
+
         const sessionTimer = setInterval(() => {
-            if (!document.cookie.split(';').some(
-                item => item.trim().startsWith('XSRF-TOKEN=')
-            )) {
+            if (!csrfCookieExists()) {
                 setSessionExpired(true);
             }
         }, 1000);
@@ -38,8 +38,6 @@ export default function SesssionExpiredDialog() {
     const email = appContext.userInfo.email;
 
     const onSubmit = (data: any) => {
-        localStorage.removeItem('userInfo');
-
         apiClient.post('/login', data, { url: '/login' })
             .then((response) => {
                 setSessionExpired(false);

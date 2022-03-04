@@ -79,6 +79,13 @@ export function csrfCookieExists() {
     return false;
 }
 
+export function clearSession() {
+    localStorage.removeItem('userInfo');
+    document.cookie = 'XSRF-TOKEN=; Max-Age=0; path=/; domain='
+        + window.location.hostname;
+}
+
+
 function handleError(error: AxiosError) {
 
     if (error.response?.status === 401) {
