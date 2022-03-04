@@ -1,17 +1,20 @@
-import { Checkbox, Link } from '@mui/material';
-import { GridColDef, GridEvents, GridRenderCellParams, GridRowId, GridRowModel, GridRowSelectionCheckboxParams, GridSelectionModel } from '@mui/x-data-grid';
+import { Link, Theme, useMediaQuery } from '@mui/material';
+import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
-import { ChangeEvent, useEffect, useState } from 'react';
-import { request, HTTPVerb } from '../apiClient';
+import { useEffect, useState } from 'react';
+import { isMinusToken } from 'typescript';
+import { HTTPVerb, request } from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
+import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
 import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
 import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
-import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
 
 export default function Contacts() {
 
     const { showModal } = useModal();
+
+    const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
     const [gridState, setGridState] = useState<GridProps>({
         title: 'Contact',
@@ -20,55 +23,18 @@ export default function Contacts() {
         searchChanged: false,
         rows: [],
         columns: [],
-        loading: false,
+        loading: true,
         deleteIds: [],
         page: 1,
         rowCount: 10,
-        rowsPerPage: 10,
+        rowsPerPage: isMobile ? 20 : 10,
         pageCount: 10,
     });
 
-    const onDelete = (rowIds: GridRowId[]) => {
-
-        const dialogContent: JSX.Element[] = [
-            <span key="0">
-                The following Contacts will be deleted:
-                <br />
-            </span>
-        ];
-        const dialogData: GridRowId[] = [];
-
-        for (const row of gridState.rows) {
-            if (rowIds.indexOf(row.id) > -1) {
-                dialogData.push(row.id);
-                dialogContent.push(
-                    <span key={row.id}>
-                        <br />
-                        {row.firstname + ' ' + row.lastname}
-                    </span>
-                );
-            }
+    useEffect(() => {
+        if (!gridState.loading) {
+            return;
         }
-
-        const confirm = showModal(ConfirmDialog, {
-            title: 'Confirm Delete',
-            content: dialogContent,
-            onCancel: () => {
-                confirm.hide();
-            },
-            onConfirm: () => {
-                confirm.hide();
-
-                setGridState({
-                    ...gridState,
-                    deleteIds: dialogData,
-                    loading: true
-                });
-            },
-        });
-    };
-
-    const loadContacts = () => {
         let method: HTTPVerb = 'GET';
         let endpoint = '/contacts';
 
@@ -113,6 +79,46 @@ export default function Contacts() {
                     loading: false
                 });
             });
+    }, [gridState]);
+
+    const onDelete = (rowIds: GridRowId[]) => {
+
+        const dialogContent: JSX.Element[] = [
+            <span key="0">
+                The following Contacts will be deleted:
+                <br />
+            </span>
+        ];
+        const dialogData: GridRowId[] = [];
+
+        for (const row of gridState.rows) {
+            if (rowIds.indexOf(row.id) > -1) {
+                dialogData.push(row.id);
+                dialogContent.push(
+                    <span key={row.id}>
+                        <br />
+                        {row.firstname + ' ' + row.lastname}
+                    </span>
+                );
+            }
+        }
+
+        const confirm = showModal(ConfirmDialog, {
+            title: 'Confirm Delete',
+            content: dialogContent,
+            onCancel: () => {
+                confirm.hide();
+            },
+            onConfirm: () => {
+                confirm.hide();
+
+                setGridState({
+                    ...gridState,
+                    deleteIds: dialogData,
+                    loading: true
+                });
+            },
+        });
     };
 
     const onSearch = (query: string) => {
@@ -126,7 +132,7 @@ export default function Contacts() {
     };
 
     const onPageChange = (newPage: number) => {
-        if (newPage != gridState.page) {
+        if (newPage !== gridState.page) {
             setGridState({
                 ...gridState,
                 page: newPage,
@@ -168,31 +174,12 @@ export default function Contacts() {
         });
     };
 
-    useEffect(() => {
-        if (gridState.loading) {
-            loadContacts();
-        }
-    }, [gridState.loading]);
-
-    useEffect(() => {
-        PubSub.subscribe('CONTACTS.REFRESH', onRefreshClick);
-
-        setGridState({
-            ...gridState,
-            loading: true
-        });
-
-        return () => {
-            PubSub.unsubscribe('CONTACTS');
-        }
-    }, []);
-
-    const columns: GridColDef[] = [
+    let columns: GridColDef[] = [
         AvatarCheckBox,
         {
             field: 'fullname',
             headerName: 'Name',
-            width: 250,
+            width: 180,
             renderCell: (params: GridRenderCellParams<string>) => {
                 return (
                     <Link href="" onClick={(e) => { onClickContact(e, params.row) }}>
@@ -228,6 +215,10 @@ export default function Contacts() {
         }
     ];
 
+    if (isMobile) {
+        columns = [columns[0], columns[1], columns[3]];
+    }
+
     return (
         <MainGrid
             {...gridState}
@@ -237,6 +228,7 @@ export default function Contacts() {
             onPageChange={onPageChange}
             onDelete={onDelete}
             onRefreshClick={onRefreshClick}
+            showPagination={!isMobile}
         />
     );
 }
