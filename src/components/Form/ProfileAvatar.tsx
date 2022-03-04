@@ -1,4 +1,4 @@
-import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
+import { Avatar, Box, BoxProps, CircularProgress, popoverClasses, Typography } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -28,6 +28,8 @@ interface ProfileAvatarState {
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     const { setValue, getValues } = useFormContext();
+
+    const acceptType = ['.jpg', '.jpeg', '.png', '.gif'];
 
     const [state, setState] = useState<ProfileAvatarState>(() => {
         let filename = getValues(props.name) ?? '';
@@ -72,13 +74,25 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         if (!files || !files.length) {
             return;
         }
+        const file: File = files[0];
+        const ext = '.'+(file.name ?? '').toLowerCase().split('.').pop();
+        if (acceptType.indexOf(ext ?? '') < 0) {
+            PubSub.publish('TOAST.SHOW', {
+                type: 'error',
+                autoHide: false,
+                message: 'Only images of the following type are allowed: ' +
+                    acceptType.join(', ')
+            });
+            return;
+        }
 
         setState((state) => ({
             ...state,
             progressPercent: 0,
-            fileObject: files[0],
+            fileObject: file,
             uploading: true,
         }));
+
     }
 
     useEffect(() => {
@@ -135,7 +149,12 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             }));
         });
 
-    }, [state.uploading]);
+    }, [
+        state.uploading,
+        state.fileObject,
+        props.name,
+        setValue
+    ]);
 
     return (
         <Box
@@ -203,7 +222,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             <input
                 type="file"
                 id={state.fieldId}
-                accept="image/*"
+                accept={acceptType.join(',')}
                 style={{ display: "none" }}
                 onChange={onFileInputChange}
             />
