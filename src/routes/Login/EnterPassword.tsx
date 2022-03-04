@@ -18,7 +18,7 @@ export default function EnterPassword(props: EnterPasswordProps) {
                     label="Email Address"
                     required
                     autoComplete="username"
-                    defaultValue={props.email}
+                    value={props.email}
                     hidden
                 />
                 <TextFieldEx
@@ -27,7 +27,6 @@ export default function EnterPassword(props: EnterPasswordProps) {
                     type="password"
                     required
                     autoComplete="current-password"
-                    defaultValue=''
                     autoFocus
                 />
                 <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 1 }}>

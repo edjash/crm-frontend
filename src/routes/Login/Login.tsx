@@ -12,13 +12,17 @@ export default function Login() {
 
     const history = useHistory();
 
-    const [state, setState] = useState({
-        fieldValues: {},
-        isLoading: false,
+    const [state, setState] = useState(() => {
+        localStorage.removeItem('userInfo');
+        document.cookie = 'XSRF-TOKEN=; Max-Age=0; path=/; domain='
+            + window.location.hostname;
+        return {
+            fieldValues: {},
+            isLoading: false,
+        };
     });
 
     const onSubmit = (data: any) => {
-        localStorage.removeItem('userInfo');
         setState({ ...state, isLoading: true });
 
         apiClient.post('/login', data, { url: '/login' })
@@ -50,11 +54,6 @@ export default function Login() {
                 //apiClient.showErrors(response, formMethods.setError);
             });
     };
-
-
-    const onSubmitError = (data: any) => {
-        console.log(data);
-    }
 
     return (
         <AuthPage title="Sign In" isLoading={state.isLoading}>

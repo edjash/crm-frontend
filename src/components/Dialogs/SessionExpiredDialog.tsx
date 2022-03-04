@@ -59,7 +59,7 @@ export default function SesssionExpiredDialog() {
             BackdropProps={{
                 sx: { backdropFilter: 'blur(5px)' }
             }}
-            sx={{ width: 500, margin: '0 auto' }}
+            sx={{ margin: '0 auto' }}
         >
             <DialogTitle>Enter Password</DialogTitle>
             <DialogContent>
