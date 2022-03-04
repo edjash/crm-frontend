@@ -5,21 +5,30 @@ import apiClient, { csrfCookieExists } from '../../components/apiClient';
 import Form from '../../components/Form/Form';
 import TextFieldEx from '../../components/Form/TextFieldEx';
 import Link from '../../components/Link';
+import useOnce from '../../hooks/useOnce';
 import loginSchema from '../../validation/loginSchema';
 import AuthPage from '../AuthPage';
+import { APP_URL, APP_MODE } from '../../app/constants';
 
 export default function Login() {
 
     const history = useHistory();
 
-    const [state, setState] = useState(() => {
+    const [state, setState] = useState({
+        fieldValues: {},
+        isLoading: false,
+    });
+
+    useOnce(() => {
         localStorage.removeItem('userInfo');
         document.cookie = 'XSRF-TOKEN=; Max-Age=0; path=/; domain='
             + window.location.hostname;
-        return {
-            fieldValues: {},
-            isLoading: false,
-        };
+        if (APP_MODE === 'development') {
+            if (new URL(APP_URL).host !== window.location.host) {
+                window.location.href = APP_URL;
+                return;
+            }
+        }
     });
 
     const onSubmit = (data: any) => {
