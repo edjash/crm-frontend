@@ -8,23 +8,35 @@ import {
     useGridApiContext
 } from '@mui/x-data-grid';
 import { ChangeEvent, useState, MouseEvent, useEffect } from 'react';
+import useOnce from '../../hooks/useOnce';
 import Avatar from '../Avatar';
 
 //potentially memoise these functions
-const GridHeaderCheckbox = () => {
+export const GridHeaderCheckbox = () => {
     const apiRef = useGridApiContext();
     const [checked, setChecked] = useState(false);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const checked = e.target.checked;
+    useOnce(() => {
+        const token = PubSub.subscribe('GRID.CHECKALL', (c, checked) => {
+            toggleSelection(checked);
+        });
+        return () => {
+            PubSub.unsubscribe(token);
+        }
+    });
 
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        toggleSelection(e.target.checked);
+    };
+
+    const toggleSelection = (checked: boolean) => {
         let rowIds: GridRowId[] = [];
         if (checked) {
             rowIds = apiRef.current.getAllRowIds();
         }
         apiRef.current.setSelectionModel(rowIds);
         setChecked(checked);
-    };
+    }
 
     return (
         <Checkbox onChange={handleChange} checked={checked} />

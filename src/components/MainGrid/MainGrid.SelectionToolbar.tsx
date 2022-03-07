@@ -1,7 +1,8 @@
-import { Button, Toolbar } from '@mui/material';
+import { Box, Button, Checkbox, Theme, Toolbar, useMediaQuery } from '@mui/material';
 import {
     GridRowId
 } from '@mui/x-data-grid';
+import { ChangeEvent } from 'react';
 
 type ToolbarProps = {
     selRows: GridRowId[],
@@ -10,7 +11,7 @@ type ToolbarProps = {
 
 export default function MainGridSelectionToolbar(props: ToolbarProps) {
 
-
+    const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const selectedRowCount = props.selRows.length;
 
     if (!selectedRowCount) {
@@ -18,6 +19,11 @@ export default function MainGridSelectionToolbar(props: ToolbarProps) {
     }
 
     const deleteText = 'Delete Selected';
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const checked = e.target.checked;
+        PubSub.publishSync('GRID.CHECKALL', checked);
+    };
 
     const handleDelete = () => {
         if (props.onDelete) {
@@ -27,6 +33,11 @@ export default function MainGridSelectionToolbar(props: ToolbarProps) {
 
     return (
         <Toolbar disableGutters>
+            {isMobile &&
+                <Box sx={{ width: 60, textAlign: 'center' }}>
+                    <Checkbox onChange={handleChange} />
+                </Box>
+            }
             <Button variant="outlined" onClick={handleDelete}>{deleteText}</Button>
         </Toolbar >
     );

@@ -28,7 +28,7 @@ export default function Contacts() {
         deleteIds: [],
         page: 1,
         rowCount: 10,
-        rowsPerPage: isMobile ? 20 : 10,
+        rowsPerPage: isMobile ? 20 : 20,
         pageCount: 10,
     });
 
@@ -279,15 +279,15 @@ export default function Contacts() {
             />
             {isMobile &&
                 <Fab
-                    color="primary"
                     aria-label="add"
                     onClick={onFabClick}
                     sx={{
                         position: 'fixed',
                         bottom: 16,
                         right: 16,
+                        color: 'primary.light'
                     }}>
-                    <AddIcon />
+                    <AddIcon sx={{color:'#000000'}} />
                 </Fab>
             }
         </>

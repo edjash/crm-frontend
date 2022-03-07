@@ -1,22 +1,18 @@
-import { Box } from '@mui/system';
+import { Theme, useMediaQuery } from '@mui/material';
 import {
-    DataGrid,
-    GridCallbackDetails,
-    GridColDef,
-    GridRowData,
+    DataGrid, GridColDef,
+    GridRowModel,
     GridRowId,
-    GridSelectionModel,
-    GridValueFormatterParams
+    GridSelectionModel
 } from '@mui/x-data-grid';
-import uniqueId from 'lodash/uniqueId';
-import { ReactChild, useState } from 'react';
+import { useState } from 'react';
 import MainGridFooter from './MainGrid.Footer';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
 import SelectionToolbar from './MainGrid.SelectionToolbar';
 import GridToolbar from './MainGrid.Toolbar';
 
 export interface GridProps {
-    rows: GridRowData[];
+    rows: GridRowModel[];
     columns: GridColDef[];
     title: string;
     titlePlural: string;
@@ -37,109 +33,18 @@ export interface GridProps {
     showPagination?: boolean;
 }
 
-const queryWrapped = (query: string): ReactChild => {
-
-    return (
-        <Box sx={{ color: 'primary.main' }} key={uniqueId()}>
-            {query}
-        </Box>
-    );
-};
-
 export default function MainGrid(props: GridProps) {
-    const actionWidth = 42;
 
     const [state, setState] = useState({
         displaySelectionToolbar: false,
         selectedGridRows: [] as GridRowId[],
     });
 
-    const cellRenderer = (params: GridValueFormatterParams) => {
+    const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-        //Add a span wrap to highlight any search query
-        if (typeof params.value === 'string' && props.searchQuery.length) {
-
-            const regex = new RegExp(props.searchQuery, 'ig');
-
-            const matches: string[] = [];
-            params.value.replace(regex, function (match) {
-                matches.push(match);
-                return match;
-            });
-
-            if (matches.length) {
-                const result: ReactChild[] = [];
-                const parts = params.value.split(regex);
-
-                parts.map((part, index) => {
-                    const spaces = part.split(' ');
-                    spaces.map((str, index) => {
-                        result.push(str);
-                        if (index < spaces.length - 1) {
-                            //JSX requires special handling of spaces..
-                            const space = <Box key={uniqueId()}>&nbsp;</Box>;
-                            result.push(space);
-                        }
-                    });
-
-                    if (index < parts.length - 1) {
-                        const match = matches.shift();
-                        result.push(queryWrapped(match ?? ""));
-                    }
-                });
-
-                return result;
-            }
-        }
-        return params.value;
-    };
-
-    const columnActions: GridColDef[] = [{
-        field: 'edit',
-        headerName: 'Edit',
-        width: actionWidth,
-        align: 'center',
-        minWidth: 1,
-        headerClassName: 'no-header',
-        renderHeader: () => <></>,
-        hideSortIcons: true,
-        disableColumnMenu: true,
-        filterable: false,
-        /*renderCell: (params) => {
-                  return (
-                      <GridActionButton rowData={params.row} onClick={props.onEdit}>
-                          <Edit />
-                      </GridActionButton>
-                  );
-              },*/
-    },
-    {
-        field: 'delete',
-        headerName: 'Delete',
-        minWidth: 1,
-        width: actionWidth,
-        align: 'center',
-        renderHeader: () => <></>,
-        hideSortIcons: true,
-        headerClassName: 'no-header',
-        disableColumnMenu: true,
-        filterable: false,
-        // renderCell: (params) => {
-        //     return (
-        //         <ActionButton rowData={params.row} onClick={props.onDelete}>
-        //             <Delete />
-        //         </ActionButton>
-        //     );
-        // },
-    }];
-
-    //const columns = props.columns.map(v => ({ ...v, renderCell: cellRenderer }));
     const columns = props.columns;
 
-    const onSelectionChange = (
-        selRows: GridSelectionModel,
-        details: GridCallbackDetails) => {
-
+    const onSelectionChange = (selRows: GridSelectionModel) => {
         setState({
             ...state,
             displaySelectionToolbar: (selRows.length > 0),
@@ -148,7 +53,7 @@ export default function MainGrid(props: GridProps) {
     }
 
     return (
-        <div style={{ display: 'flex', height: '100%' }}>
+        <div style={{ display: 'grid' }}>
             <div style={{ flexGrow: 1 }}>
                 {state.displaySelectionToolbar ?
                     <SelectionToolbar
@@ -168,22 +73,24 @@ export default function MainGrid(props: GridProps) {
                         searchChanged={props.searchChanged}
                     />
                 }
+            </div>
+            <div style={{ background: 'red', height: 200 }}>
                 <DataGrid
                     columns={columns}
                     rows={props.rows}
                     loading={props.loading}
                     pagination
                     paginationMode="server"
-                    className="contactList"
-                    //checkboxSelection
+                    headerHeight={isMobile ? 0 : 42}
                     disableSelectionOnClick
                     disableColumnFilter
                     disableColumnMenu
-                    autoHeight={true}
+
+
                     disableColumnSelector={true}
                     onSelectionModelChange={onSelectionChange}
                     sx={{
-                        border: 0
+                        border: 0,
                     }}
                     components={{
                         LoadingOverlay: LoadingOverlay,
