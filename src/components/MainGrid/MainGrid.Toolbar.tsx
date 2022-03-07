@@ -3,8 +3,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Box, Button, Divider, IconButton, InputAdornment, useMediaQuery, useTheme } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
-import debounce from 'lodash/debounce';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useRef } from 'react';
 
 interface ToolbarProps {
     onSearch?: (value: string) => void;
@@ -19,28 +18,27 @@ interface ToolbarProps {
 };
 
 export default function MainGridToolbar(props: ToolbarProps) {
-    const [inputValue, setInputValue] = useState('');
+
     const theme = useTheme();
     const isDesktop = useMediaQuery(theme.breakpoints.up('md'), { noSsr: true });
+    const timer = useRef<NodeJS.Timeout>();
 
     const handleSearch = (value: string) => {
         if (props.onSearch) {
-            handleSearchDelayed.cancel();
+            if (timer.current) {
+                clearInterval(timer.current);
+            }
             props.onSearch(value);
         }
     };
 
-    const handleSearchDelayed = useMemo(
-        () => debounce(handleSearch, 1000, { trailing: true }),
-        []
-    );
-
     const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.currentTarget.value;
+
         if (!value) {
             handleSearch('');
         } else {
-            handleSearchDelayed(value);
+            timer.current = setInterval(() => handleSearch(value), 1000);
         }
     };
 
@@ -66,7 +64,7 @@ export default function MainGridToolbar(props: ToolbarProps) {
                 }
             </Box>
             <Divider orientation="vertical" flexItem sx={{ height: 30, mr: '10px', ml: '10px', alignSelf: 'center' }} />
-            <Box sx={{ flexGrow: 1, mr: 1}}>
+            <Box sx={{ flexGrow: 1, mr: 1 }}>
                 <TextField
                     type="search"
                     size="small"
