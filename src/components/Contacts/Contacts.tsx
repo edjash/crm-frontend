@@ -1,5 +1,5 @@
 import { Mail, PhoneEnabled as Phone } from '@mui/icons-material/';
-import { Box, Link, Theme, useMediaQuery } from '@mui/material';
+import { Box, Fab, Link, Theme, useMediaQuery } from '@mui/material';
 import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
@@ -9,6 +9,7 @@ import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
 import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
 import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function Contacts() {
 
@@ -166,6 +167,10 @@ export default function Contacts() {
         });
     };
 
+    const onFabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        showCreateEditDlg();
+    }
+
     const onClickContact = (e: React.MouseEvent, rowData: GridRowModel) => {
         e.preventDefault();
         showCreateEditDlg({
@@ -261,15 +266,30 @@ export default function Contacts() {
 
 
     return (
-        <MainGrid
-            {...gridState}
-            columns={columns}
-            onSearch={onSearch}
-            onCreateClick={showCreateEditDlg}
-            onPageChange={onPageChange}
-            onDelete={onDelete}
-            onRefreshClick={onRefreshClick}
-            showPagination={!isMobile}
-        />
+        <>
+            <MainGrid
+                {...gridState}
+                columns={columns}
+                onSearch={onSearch}
+                onCreateClick={showCreateEditDlg}
+                onPageChange={onPageChange}
+                onDelete={onDelete}
+                onRefreshClick={onRefreshClick}
+                showPagination={!isMobile}
+            />
+            {isMobile &&
+                <Fab
+                    color="primary"
+                    aria-label="add"
+                    onClick={onFabClick}
+                    sx={{
+                        position: 'fixed',
+                        bottom: 16,
+                        right: 16,
+                    }}>
+                    <AddIcon />
+                </Fab>
+            }
+        </>
     );
 }
