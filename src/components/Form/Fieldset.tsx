@@ -1,6 +1,3 @@
-import { Box } from "@mui/material";
-
-
 type FieldsetProps = {
     children: React.ReactNode;
     legend: string;

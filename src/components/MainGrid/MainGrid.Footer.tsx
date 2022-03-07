@@ -1,6 +1,5 @@
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, IconButton, TablePagination } from '@mui/material';
-import { useGridApiContext } from '@mui/x-data-grid';
 
 interface FooterProps {
     onPageChange: (page: number) => void;
@@ -14,7 +13,6 @@ interface FooterProps {
 }
 
 export default function MainGridFooter(props: FooterProps) {
-    const apiRef = useGridApiContext();
 
     const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
         props.onPageChange(page + 1);

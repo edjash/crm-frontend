@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/AddCircleOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Button, Divider, IconButton, InputAdornment, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Divider, InputAdornment, Theme, Typography, useMediaQuery } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
 import { ChangeEvent, useRef } from 'react';

@@ -1,11 +1,11 @@
-import { Avatar, Box, BoxProps, CircularProgress, popoverClasses, Typography } from "@mui/material";
+import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
+import { uniqueId } from 'lodash';
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { SERVER_URL } from '../../app/constants';
 import apiClient from '../apiClient';
 import Overlay from '../Overlay';
-import { uniqueId } from 'lodash';
-import { SERVER_URL } from '../../app/constants';
 
 interface ProfileAvatarProps extends BoxProps {
     name: string;

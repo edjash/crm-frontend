@@ -9,7 +9,6 @@ import {
 import { CSSObject, SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
 import { useEffect, useState } from 'react';
-import { Companies } from '../../components/Companies';
 import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
@@ -230,7 +229,7 @@ export default function Home() {
                     <Contacts />
                 </TabPanel>
                 <TabPanel value={state.selected} ident="companies">
-                    <Companies />
+ 
                 </TabPanel>
                 <Footer />
             </Box>

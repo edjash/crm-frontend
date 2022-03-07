@@ -61,7 +61,7 @@ const GridCellCheckbox = (params: GridRenderCellParams) => {
         const checked = e.target.checked;
         const selModel: GridSelectionModel = [];
         params.api.getSelectedRows().forEach((row) => {
-            if (row.id != params.id) {
+            if (row.id !== params.id) {
                 selModel.push(row.id);
             }
         });

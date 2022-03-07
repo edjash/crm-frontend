@@ -30,14 +30,10 @@ export default function Toast() {
         ul = <ul>{li}</ul>;
     }
 
-    const onShowToast = (cfg: ToastConfig) => {
-        cfg.show = true;
-        setState({ ...state, ...cfg });
-    };
-
     useEffect(() => {
         PubSub.subscribe('TOAST.SHOW', (msg, data) => {
-            onShowToast(data);
+            data.show = true;
+            setState(state => ({ ...state, ...data }));
         });
 
         return () => {

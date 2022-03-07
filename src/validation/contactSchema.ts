@@ -1,5 +1,4 @@
-import { Email } from '@mui/icons-material';
-import { object, string, array } from 'yup';
+import { object, string } from 'yup';
 import './locale.ts';
 
 const contactSchema = object({

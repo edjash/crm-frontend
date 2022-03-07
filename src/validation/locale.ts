@@ -7,6 +7,6 @@ setLocale({
     },
     string: {
         email: 'Must be a valid email address',
-        min:'At least ${min} characters are required'
+        min: `At least \${min} characters are required`
     }
 });
