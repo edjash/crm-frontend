@@ -1,10 +1,21 @@
 import { createTheme } from '@mui/material/styles';
 
+declare module "@mui/material/styles/createPalette" {
+    export interface PaletteOptions {
+        custom: {
+            disabledIcon: string;
+        };
+    }
+}
 const theme = createTheme({
+
     palette: {
         mode: 'dark',
         info: {
             main: '#CCCCCC',
+        },
+        custom: {
+            disabledIcon: '#263238'
         },
     },
     components: {
