@@ -9,7 +9,7 @@ import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
 import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
 import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
-import ActionButton from '../MainGrid/MainGrid.ActionButton';
+import { ActionLink } from '../MainGrid/MainGrid.ActionButton';
 
 export default function Contacts() {
 
@@ -218,10 +218,6 @@ export default function Contacts() {
 
     if (isMobile) {
 
-        const onClick = (action: string, rowData: GridRowModel) => {
-            console.log(rowData);
-        }
-
         columns = [
             columns[0],
             {
@@ -232,22 +228,30 @@ export default function Contacts() {
                 field: 'action',
                 headerName: '',
                 renderCell: (params) => {
+                    let number = params.row?.phone_number?.[0]?.number;
+                    if (number) {
+                        number = `tel:${number}`;
+                    }
+                    let email = params.row?.email_address?.[0]?.address;
+                    if (email) {
+                        email = `mailto:${email}`;
+                    }
                     return (
-                        <Box display="flex" gap={2}>
-                            <ActionButton
-                                name="phone"
-                                rowData={params.row}
-                                onClick={onClick}
-                            >
-                                <Phone sx={{ color: '#009688' }} />
-                            </ActionButton>
-                            <ActionButton
-                                name="mail"
-                                rowData={params.row}
-                                onClick={onClick}
-                            >
-                                <Mail sx={{ color: '#2196f3' }} />
-                            </ActionButton>
+                        <Box display="flex" gap={3}>
+                            {number ?
+                                <Link href={number}>
+                                    <Phone />
+                                </Link>
+                                :
+                                <Phone sx={{ color: 'custom.disabledIcon' }} />
+                            }
+                            {email ?
+                                <Link href={email}>
+                                    <Mail />
+                                </Link>
+                                :
+                                <Mail sx={{ color: 'custom.disabledIcon' }} />
+                            }
                         </Box>
                     );
                 }

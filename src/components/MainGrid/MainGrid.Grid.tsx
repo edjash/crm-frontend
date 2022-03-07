@@ -11,7 +11,7 @@ import {
 } from '@mui/x-data-grid';
 import uniqueId from 'lodash/uniqueId';
 import { ReactChild, useState } from 'react';
-import ActionButton from './MainGrid.ActionButton';
+import { ActionLink } from './MainGrid.ActionButton';
 import MainGridFooter from './MainGrid.Footer';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
 import SelectionToolbar from './MainGrid.SelectionToolbar';
