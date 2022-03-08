@@ -1,6 +1,6 @@
 import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
 import {
-    Box, Drawer as MuiDrawer, List,
+    Box, Drawer as MuiDrawer, IconButton, List,
     ListItem,
     ListItemIcon,
     ListItemText, styled, Theme, Typography,
@@ -13,22 +13,25 @@ import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
 import TopBar from '../../components/TopBar';
+import MenuIcon from '@mui/icons-material/Menu';
 
 interface TabPanelProps {
     children?: React.ReactNode;
     ident: any;
     value: any;
+    sx?: Record<string, any>
 }
 
 function TabPanel(props: TabPanelProps) {
-    const { children, value, ident, ...other } = props;
+    const { children, value, ident, sx, ...other } = props;
 
-    let sx = {
+    let styles = {
         zIndex: 2,
+        ...sx,
     } as SystemProps;
 
     if (value !== ident) {
-        sx = {
+        styles = {
             position: 'absolute',
             top: 0,
             left: -9000,
@@ -39,7 +42,7 @@ function TabPanel(props: TabPanelProps) {
 
     return (
         <Box
-            sx={{ ...sx }}
+            sx={{ ...styles }}
             role="tabpanel"
             id={`nav-tabpanel-${ident}`}
             aria-labelledby={`nav-tab-${ident}`}
@@ -139,7 +142,6 @@ const Drawer = (props: DrawerProps) => {
                 keepMounted: true,
             }}
         >
-            <DrawerHeader />
             {props.children}
         </DesktopDrawer>
     );
@@ -191,11 +193,27 @@ export default function Home() {
         }
     }, []);
 
+    const onNavBurgerClick = () => {
+        PubSub.publishSync('NAV.TOGGLE');
+    }
+
+
     return (
-        <Box sx={{ display: 'flex', width: '100%' }}>
-            <TopBar />
+        <Box sx={{ display: 'flex', height: '100vh' }}>
             <Drawer isDesktop={isDesktop} onClose={closeNav} open={state.navOpen}>
                 <List>
+                    <ListItem>
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={onNavBurgerClick}
+                            edge="start"
+                            sx={{ mr: 2 }}
+                            size="small"
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    </ListItem>
                     <ListItem button key="contacts"
                         onClick={() => { onNavClick('contacts'); }}
                         selected={state.selected === 'contacts'}
@@ -212,26 +230,25 @@ export default function Home() {
                     </ListItem>
                 </List>
             </Drawer>
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    position: 'relative',
-                    marginLeft: margin,
-                    marginRight: margin,
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}
-            >
-                <DrawerHeader />
-                <TabPanel value={state.selected} ident="contacts">
-                    <Contacts />
-                </TabPanel>
-                <TabPanel value={state.selected} ident="companies">
- 
-                </TabPanel>
-                <Footer />
+            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <TopBar sx={{ flexGrow: 0 }} />
+                <Box
+                    component="main"
+                    sx={{
+                        flexGrow: 1,
+                        position: 'relative',
+                        marginLeft: margin,
+                        marginRight: margin,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <TabPanel value={state.selected} ident="contacts" sx={{ display: 'grid', flexGrow: 1 }}>
+                        <Contacts />
+                    </TabPanel>
+                    <TabPanel value={state.selected} ident="companies">
+                    </TabPanel>
+                </Box>
             </Box>
             <SessionExpiredDialog />
         </Box>

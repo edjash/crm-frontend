@@ -37,7 +37,7 @@ const theme = createTheme({
         body, html, #root {
           width: 100%;
           height: 100vh;
-          overflow-x:hidden;
+          overflow:hidden;
         },
         .MuiDataGrid-columnHeader:focus,
         .MuiDataGrid-columnHeader:focus-within,

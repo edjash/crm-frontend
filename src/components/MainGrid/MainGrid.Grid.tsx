@@ -53,8 +53,8 @@ export default function MainGrid(props: GridProps) {
     }
 
     return (
-        <div style={{ display: 'grid' }}>
-            <div style={{ flexGrow: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div>
                 {state.displaySelectionToolbar ?
                     <SelectionToolbar
                         selRows={state.selectedGridRows}
@@ -74,7 +74,7 @@ export default function MainGrid(props: GridProps) {
                     />
                 }
             </div>
-            <div style={{ background: 'red', height: 200 }}>
+            <div style={{ flexGrow: 1 }}>
                 <DataGrid
                     columns={columns}
                     rows={props.rows}
@@ -85,7 +85,6 @@ export default function MainGrid(props: GridProps) {
                     disableSelectionOnClick
                     disableColumnFilter
                     disableColumnMenu
-
 
                     disableColumnSelector={true}
                     onSelectionModelChange={onSelectionChange}

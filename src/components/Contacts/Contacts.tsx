@@ -266,7 +266,7 @@ export default function Contacts() {
 
 
     return (
-        <>
+        <Box display="grid">
             <MainGrid
                 {...gridState}
                 columns={columns}
@@ -290,6 +290,6 @@ export default function Contacts() {
                     <AddIcon sx={{color:'#000000'}} />
                 </Fab>
             }
-        </>
+        </Box>
     );
 }

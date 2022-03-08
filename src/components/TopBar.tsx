@@ -1,7 +1,7 @@
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MenuIcon from '@mui/icons-material/Menu';
 import PersonIcon from '@mui/icons-material/Person';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+import { SxProps } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
@@ -15,7 +15,12 @@ import {
   bindPopover, bindTrigger, usePopupState
 } from 'material-ui-popup-state/hooks';
 
-export default function TopBar() {
+
+interface TopBarProps {
+  sx?: SxProps
+}
+
+export default function TopBar(props: TopBarProps) {
 
   const accountMenuState = usePopupState({
     variant: 'popover',
@@ -27,23 +32,9 @@ export default function TopBar() {
     PubSub.publish('AUTH.LOGOUT');
   };
 
-  const onNavBurgerClick = () => {
-    PubSub.publishSync('NAV.TOGGLE');
-  }
-
   return (
-    <AppBar position="fixed" elevation={1}>
-      <Toolbar disableGutters sx={{ml:2, mr: 2}}>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={onNavBurgerClick}
-          edge="start"
-          sx={{ mr: 2 }}
-          size="small"
-        >
-          <MenuIcon />
-        </IconButton>
+    <AppBar position="relative" elevation={1} sx={{ ...props.sx }}>
+      <Toolbar disableGutters sx={{ ml: 2, mr: 2 }}>
         <Typography variant="h5" sx={{ flexGrow: 1 }}>
           Demo Company
         </Typography>
