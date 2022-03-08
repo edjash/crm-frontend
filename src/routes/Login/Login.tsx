@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient, { csrfCookieExists, clearSession } from '../../components/apiClient';
 import Form from '../../components/Form/Form';
@@ -18,6 +18,8 @@ export default function Login() {
         fieldValues: {},
         isLoading: false,
     });
+
+    const lastError = useRef('');
 
     useOnce(() => {
         clearSession();
@@ -53,6 +55,9 @@ export default function Login() {
             })
             .catch((response) => {
                 setState({ ...state, isLoading: false });
+                lastError.current = `${response.status}: ${response.statusText} `
+                    + response.request.responseText;
+
                 PubSub.publishSync('TOAST.SHOW', {
                     message: "An unexpected error occurred logging you in.",
                     type: 'error',
@@ -62,8 +67,18 @@ export default function Login() {
             });
     };
 
+    const showError = () => {
+        if (lastError.current) {
+            return PubSub.publishSync('TOAST.SHOW', {
+                message: lastError.current,
+                type: 'error',
+                autoHide: false,
+            });
+        }
+    }
+
     return (
-        <AuthPage title="Sign In" isLoading={state.isLoading}>
+        <AuthPage title="Sign In" isLoading={state.isLoading} onIconClick={showError}>
             <Form onSubmit={onSubmit} validationSchema={loginSchema}>
                 <Box display="grid" sx={{ rowGap: 1 }}>
                     <TextFieldEx
