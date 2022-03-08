@@ -238,7 +238,7 @@ export default function Home() {
                         flexGrow: 1,
                         position: 'relative',
                         marginLeft: margin,
-                        marginRight: margin,
+                        marginRight: 0,
                         display: 'flex',
                         flexDirection: 'column',
                     }}
