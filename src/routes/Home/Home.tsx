@@ -193,7 +193,7 @@ export default function Home() {
         }
     }, []);
 
-    const onNavBurgerClick = () => {
+    const onNavToggleClick = () => {
         PubSub.publishSync('NAV.TOGGLE');
     }
 
@@ -206,7 +206,7 @@ export default function Home() {
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"
-                            onClick={onNavBurgerClick}
+                            onClick={onNavToggleClick}
                             edge="start"
                             sx={{ mr: 2 }}
                             size="small"
@@ -231,7 +231,7 @@ export default function Home() {
                 </List>
             </Drawer>
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <TopBar sx={{ flexGrow: 0 }} />
+                <TopBar sx={{ flexGrow: 0 }} onNavToggleClick={onNavToggleClick} />
                 <Box
                     component="main"
                     sx={{

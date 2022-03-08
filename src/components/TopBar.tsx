@@ -1,7 +1,7 @@
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import PersonIcon from '@mui/icons-material/Person';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
-import { SxProps } from '@mui/material';
+import { SxProps, Theme, useMediaQuery } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
@@ -14,13 +14,16 @@ import Typography from '@mui/material/Typography';
 import {
   bindPopover, bindTrigger, usePopupState
 } from 'material-ui-popup-state/hooks';
-
+import MenuIcon from '@mui/icons-material/Menu';
 
 interface TopBarProps {
-  sx?: SxProps
+  sx?: SxProps,
+  onNavToggleClick?: () => void,
 }
 
 export default function TopBar(props: TopBarProps) {
+
+  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
   const accountMenuState = usePopupState({
     variant: 'popover',
@@ -35,6 +38,18 @@ export default function TopBar(props: TopBarProps) {
   return (
     <AppBar position="relative" elevation={1} sx={{ ...props.sx }}>
       <Toolbar disableGutters sx={{ ml: 2, mr: 2 }}>
+        {isMobile &&
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={props.onNavToggleClick}
+            edge="start"
+            sx={{ mr: 2 }}
+            size="small"
+          >
+            <MenuIcon />
+          </IconButton>
+        }
         <Typography variant="h5" sx={{ flexGrow: 1 }}>
           Demo Company
         </Typography>
