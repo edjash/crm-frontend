@@ -197,23 +197,11 @@ export default function Home() {
         PubSub.publishSync('NAV.TOGGLE');
     }
 
-
     return (
         <Box sx={{ display: 'flex', height: '100vh' }}>
             <Drawer isDesktop={isDesktop} onClose={closeNav} open={state.navOpen}>
+                <DrawerHeader />
                 <List>
-                    <ListItem>
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={onNavToggleClick}
-                            edge="start"
-                            sx={{ mr: 2 }}
-                            size="small"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                    </ListItem>
                     <ListItem button key="contacts"
                         onClick={() => { onNavClick('contacts'); }}
                         selected={state.selected === 'contacts'}
@@ -232,6 +220,7 @@ export default function Home() {
             </Drawer>
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 <TopBar sx={{ flexGrow: 0 }} onNavToggleClick={onNavToggleClick} />
+                <DrawerHeader />
                 <Box
                     component="main"
                     sx={{
@@ -248,6 +237,7 @@ export default function Home() {
                     </TabPanel>
                     <TabPanel value={state.selected} ident="companies">
                     </TabPanel>
+                    <Footer />
                 </Box>
             </Box>
             <SessionExpiredDialog />

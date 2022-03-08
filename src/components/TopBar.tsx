@@ -36,20 +36,18 @@ export default function TopBar(props: TopBarProps) {
   };
 
   return (
-    <AppBar position="relative" elevation={1} sx={{ ...props.sx }}>
+    <AppBar position="fixed" elevation={1} sx={{ ...props.sx }}>
       <Toolbar disableGutters sx={{ ml: 2, mr: 2 }}>
-        {isMobile &&
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={props.onNavToggleClick}
-            edge="start"
-            sx={{ mr: 2 }}
-            size="small"
-          >
-            <MenuIcon />
-          </IconButton>
-        }
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={props.onNavToggleClick}
+          edge="start"
+          sx={{ mr: 2 }}
+          size="small"
+        >
+          <MenuIcon />
+        </IconButton>
         <Typography variant="h5" sx={{ flexGrow: 1 }}>
           Demo Company
         </Typography>
