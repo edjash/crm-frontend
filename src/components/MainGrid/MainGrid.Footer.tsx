@@ -6,6 +6,7 @@ interface FooterProps {
     pageCount: number;
     rowCount: number;
     page: number;
+    rowsPerPage: number;
     loading: boolean;
     searchChanged: boolean;
     onRefreshClick?: () => void;
@@ -30,7 +31,7 @@ export default function MainGridFooter(props: FooterProps) {
                     count={props.rowCount}
                     page={props.page - 1}
                     onPageChange={handlePageChange}
-                    rowsPerPage={10}
+                    rowsPerPage={props.rowsPerPage}
                     rowsPerPageOptions={[]}
                 />
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>

@@ -27,7 +27,7 @@ export default function Contacts() {
         loading: true,
         deleteIds: [],
         page: 1,
-        rowCount: 10,
+        rowCount: 0,
         rowsPerPage: isMobile ? 20 : 20,
         pageCount: 10,
     });

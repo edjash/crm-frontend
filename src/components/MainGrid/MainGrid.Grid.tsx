@@ -103,7 +103,8 @@ export default function MainGrid(props: GridProps) {
                             onPageChange: props.onPageChange,
                             searchChanged: props.searchChanged,
                             onRefreshClick: props.onRefreshClick,
-                            showPagination: props.showPagination
+                            showPagination: props.showPagination,
+                            rowsPerPage: props.rowsPerPage,
                         }
                     }}
                 />
