@@ -209,13 +209,13 @@ export default function Home() {
                         <ListItemIcon><ContactsIcon /></ListItemIcon>
                         <ListItemText primary="Contacts" />
                     </ListItem>
-                    <ListItem disabled button key="companies"
+                    {/* <ListItem disabled button key="companies"
                         onClick={() => { onNavClick('companies'); }}
                         selected={state.selected === 'companies'}
                     >
                         <ListItemIcon><CompaniesIcon /></ListItemIcon>
                         <ListItemText primary="Companies" />
-                    </ListItem>
+                    </ListItem> */}
                 </List>
             </Drawer>
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
@@ -234,8 +234,6 @@ export default function Home() {
                 >
                     <TabPanel value={state.selected} ident="contacts" sx={{ display: 'grid', flexGrow: 1 }}>
                         <Contacts />
-                    </TabPanel>
-                    <TabPanel value={state.selected} ident="companies">
                     </TabPanel>
                     <Footer />
                 </Box>
