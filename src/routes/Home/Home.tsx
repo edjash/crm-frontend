@@ -146,6 +146,8 @@ const MobileDrawer = (props: DrawerProps) => {
             open={open}
             onClose={toggle(false)}
             onOpen={toggle(true)}
+            disableSwipeToOpen={true}
+            disableDiscovery={true}
             ModalProps={{
                 keepMounted: true,
             }}
