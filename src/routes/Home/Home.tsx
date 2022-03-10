@@ -1,6 +1,6 @@
-import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
+import { AccountBox as ContactsIcon } from '@mui/icons-material/';
 import {
-    Box, Drawer as MuiDrawer, IconButton, List,
+    Box, Divider, Drawer as MuiDrawer, List,
     ListItem,
     ListItemIcon,
     ListItemText, styled, Theme, Typography,
@@ -13,7 +13,7 @@ import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
 import TopBar from '../../components/TopBar';
-import MenuIcon from '@mui/icons-material/Menu';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -55,7 +55,7 @@ function TabPanel(props: TabPanelProps) {
 
 const drawerWidth = 240;
 
-const openedMixin = (theme: Theme): CSSObject => ({
+const openNavAnimation = (theme: Theme): CSSObject => ({
     width: drawerWidth,
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
@@ -64,7 +64,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
     overflowX: 'hidden',
 });
 
-const closedMixin = (theme: Theme): CSSObject => ({
+const closeNavAnimation = (theme: Theme): CSSObject => ({
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -83,12 +83,12 @@ const DesktopDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 
         whiteSpace: 'nowrap',
         boxSizing: 'border-box',
         ...(open && {
-            ...openedMixin(theme),
-            '& .MuiDrawer-paper': openedMixin(theme),
+            ...openNavAnimation(theme),
+            '& .MuiDrawer-paper': openNavAnimation(theme),
         }),
         ...(!open && {
-            ...closedMixin(theme),
-            '& .MuiDrawer-paper': closedMixin(theme),
+            ...closeNavAnimation(theme),
+            '& .MuiDrawer-paper': closeNavAnimation(theme),
         }),
     }),
 );
@@ -102,15 +102,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
 }));
 
-type DrawerProps = {
+interface DrawerProps {
     open: boolean;
-    isDesktop: boolean;
+    isMobile: boolean;
     children: React.ReactNode;
     onClose: () => void;
 };
 
 const Drawer = (props: DrawerProps) => {
-    if (!props.isDesktop) {
+    if (props.isMobile) {
         return (
             <MuiDrawer
                 anchor="left"
@@ -128,7 +128,9 @@ const Drawer = (props: DrawerProps) => {
                 }}>
                     <i>CRMdemo</i>
                 </Typography>
-                {props.children}
+                <div style={{ width: '80vw' }}>
+                    {props.children}
+                </div>
             </MuiDrawer>);
     }
     return (
@@ -149,8 +151,8 @@ const Drawer = (props: DrawerProps) => {
 
 export default function Home() {
 
-    const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
-    const margin = (isDesktop) ? 1 : 0;
+    const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const margin = (isMobile) ? 0 : 1;
 
     const [state, setState] = useState({
         navOpen: false,
@@ -158,12 +160,13 @@ export default function Home() {
     });
 
     const onNavClick = (ident: string) => {
+
         setState({
             ...state,
             selected: ident
         });
 
-        if (!isDesktop) {
+        if (isMobile) {
             toggleNav();
         }
 
@@ -199,8 +202,10 @@ export default function Home() {
 
     return (
         <Box sx={{ display: 'flex', height: '100vh' }}>
-            <Drawer isDesktop={isDesktop} onClose={closeNav} open={state.navOpen}>
-                <DrawerHeader />
+            <Drawer isMobile={isMobile} onClose={closeNav} open={state.navOpen}>
+                {!isMobile &&
+                    <DrawerHeader />
+                }
                 <List>
                     <ListItem button key="contacts"
                         onClick={() => { onNavClick('contacts'); }}
@@ -209,6 +214,15 @@ export default function Home() {
                         <ListItemIcon><ContactsIcon /></ListItemIcon>
                         <ListItemText primary="Contacts" />
                     </ListItem>
+                    <Divider sx={{ mt: 5, mb: 2 }} hidden={!isMobile} />
+                    {isMobile &&
+                        <ListItem button key="logout"
+                            onClick={() => { PubSub.publish('AUTH.LOGOUT'); }}
+                        >
+                            <ListItemIcon><LogoutIcon /></ListItemIcon>
+                            <ListItemText primary="Logout" />
+                        </ListItem>
+                    }
                     {/* <ListItem disabled button key="companies"
                         onClick={() => { onNavClick('companies'); }}
                         selected={state.selected === 'companies'}
