@@ -1,4 +1,4 @@
-import { AccountBox as ContactsIcon } from '@mui/icons-material/';
+import { AccountBox as ContactsIcon, SettingsPowerRounded } from '@mui/icons-material/';
 import {
     Box, Divider, Drawer as MuiDrawer, List,
     ListItem,
@@ -14,6 +14,7 @@ import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog'
 import Footer from '../../components/Footer';
 import TopBar from '../../components/TopBar';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -104,34 +105,70 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 interface DrawerProps {
     open: boolean;
-    isMobile: boolean;
+    isMobile?: boolean;
     children: React.ReactNode;
     onClose: () => void;
 };
 
+const MobileDrawer = (props: DrawerProps) => {
+
+    const [open, setOpen] = useState(props.open);
+
+    useEffect(() => {
+        PubSub.subscribe('NAV.TOGGLE', (msg, data) => {
+            setOpen(!open);
+        });
+    }, [open]);
+
+    const toggle = (open: boolean) =>
+        (event: React.KeyboardEvent | React.MouseEvent) => {
+            if (
+                event &&
+                event.type === 'keydown' &&
+                ((event as React.KeyboardEvent).key === 'Tab' ||
+                    (event as React.KeyboardEvent).key === 'Shift')
+            ) {
+                return;
+            }
+
+            setOpen(open);
+            if (!open && props.onClose) {
+                props.onClose();
+            }
+        };
+
+    return (
+        <SwipeableDrawer
+            anchor="left"
+            open={open}
+            onClose={toggle(false)}
+            onOpen={toggle(true)}
+            ModalProps={{
+                keepMounted: true,
+            }}
+        >
+            <Typography variant="subtitle2" sx={{
+                textAlign: 'center',
+                padding: 3,
+                overflow: 'hidden',
+                mb: 1
+            }}>
+                <i>CRMdemo</i>
+            </Typography>
+            <div style={{ width: '80vw' }}>
+                {props.children}
+            </div>
+        </SwipeableDrawer>
+    );
+}
+
 const Drawer = (props: DrawerProps) => {
     if (props.isMobile) {
         return (
-            <MuiDrawer
-                anchor="left"
-                open={props.open}
-                onClose={props.onClose}
-                ModalProps={{
-                    keepMounted: true,
-                }}
-            >
-                <Typography variant="subtitle2" sx={{
-                    textAlign: 'center',
-                    padding: 3,
-                    overflow: 'hidden',
-                    mb: 1
-                }}>
-                    <i>CRMdemo</i>
-                </Typography>
-                <div style={{ width: '80vw' }}>
-                    {props.children}
-                </div>
-            </MuiDrawer>);
+            <MobileDrawer open={props.open} onClose={props.onClose}>
+                {props.children}
+            </MobileDrawer>
+        );
     }
     return (
         <DesktopDrawer
