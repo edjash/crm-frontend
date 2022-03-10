@@ -94,10 +94,10 @@ export default function Login() {
                         required
                         autoComplete="current-password"
                     />
-                    <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 1 }}>
+                    <Button type="submit" fullWidth variant="contained" color="primary" size="large" sx={{ mt: 1, mb: 2 }}>
                         Sign In
                     </Button>
-                    <Box display="flex" justifyContent="space-between">
+                    <Box display="grid" justifyContent="space-between" gap={1}>
                         <Link to="/forgot-password">
                             Forgot password?
                         </Link>
