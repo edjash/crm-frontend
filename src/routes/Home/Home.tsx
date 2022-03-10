@@ -115,9 +115,12 @@ const MobileDrawer = (props: DrawerProps) => {
     const [open, setOpen] = useState(props.open);
 
     useEffect(() => {
-        PubSub.subscribe('NAV.TOGGLE', (msg, data) => {
+        const token = PubSub.subscribe('NAV.TOGGLE', (msg, data) => {
             setOpen(!open);
         });
+        return () => {
+            PubSub.unsubscribe(token);
+        }
     }, [open]);
 
     const toggle = (open: boolean) =>
