@@ -54,9 +54,10 @@ export default function Login() {
                 history.push('/');
             })
             .catch((response) => {
+                console.log("RRR");
                 setState({ ...state, isLoading: false });
-                lastError.current = `${response.status}: ${response.statusText} `
-                    + response.request.responseText;
+                lastError.current = `${response?.status}: ${response?.statusText} `
+                    + response?.request?.responseText;
 
                 PubSub.publishSync('TOAST.SHOW', {
                     message: "An unexpected error occurred logging you in.",
