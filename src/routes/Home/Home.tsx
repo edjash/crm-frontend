@@ -1,4 +1,5 @@
-import { AccountBox as ContactsIcon, SettingsPowerRounded } from '@mui/icons-material/';
+import { AccountBox as ContactsIcon } from '@mui/icons-material/';
+import LogoutIcon from '@mui/icons-material/Logout';
 import {
     Box, Divider, Drawer as MuiDrawer, List,
     ListItem,
@@ -6,6 +7,7 @@ import {
     ListItemText, styled, Theme, Typography,
     useMediaQuery
 } from '@mui/material';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { CSSObject, SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
 import { useEffect, useState } from 'react';
@@ -13,8 +15,6 @@ import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
 import TopBar from '../../components/TopBar';
-import LogoutIcon from '@mui/icons-material/Logout';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 
 interface TabPanelProps {
     children?: React.ReactNode;

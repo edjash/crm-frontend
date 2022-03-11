@@ -64,7 +64,7 @@ export default function App() {
 
     return (
         <ThemeProvider theme={theme}>
-            <CssBaseline />
+            <CssBaseline enableColorScheme={true} />
             <ModalProvider beta={true}>
                 <AppContextProvider value={state}>
                     <Router>

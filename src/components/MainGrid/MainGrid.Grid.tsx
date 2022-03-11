@@ -85,7 +85,7 @@ export default function MainGrid(props: GridProps) {
                     disableSelectionOnClick
                     disableColumnFilter
                     disableColumnMenu
-
+                    
                     disableColumnSelector={true}
                     onSelectionModelChange={onSelectionChange}
                     sx={{
