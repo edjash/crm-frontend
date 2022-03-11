@@ -57,9 +57,10 @@ export default function DialogEx(props: DialogExProps) {
             fullScreen={config.fullScreen}
             scroll="paper"
             maxWidth="xl"
+            sx={{ pt: 0 }}
         >
             {mode === 'normal' && (config.title || config.closeIcon) &&
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', pr: 1 }}>
                     <DialogTitle sx={{ flexGrow: 1 }}>
                         {config.title}
                     </DialogTitle>
