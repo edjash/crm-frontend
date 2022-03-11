@@ -38,9 +38,9 @@ type CreateEditProps = DialogProps & {
 export default function ContactCreateEdit(props: CreateEditProps) {
 
     const [state, setState] = useState<CreateEditState>({
-        loading: false,
+        loading: (props.type === 'edit'),
         ready: (props.type === 'new'),
-        open: (props.type === 'new'),
+        open: true,
         defaultValues: {},
     });
 
@@ -137,7 +137,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     let title = "New Contact";
     if (props.type === 'edit') {
         if (!state.ready) {
-            return (<Overlay open={true} />);
+            //return (<Overlay open={true} />);
         }
         title = props?.data?.fullname ?? 'Unnamed';
     }
