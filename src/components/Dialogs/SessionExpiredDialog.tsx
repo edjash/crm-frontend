@@ -14,8 +14,6 @@ export default function SesssionExpiredDialog() {
     const appContext = useAppContext();
 
     useEffect(() => {
-        clearSession();
-
         const sessionTimer = setInterval(() => {
             if (!csrfCookieExists()) {
                 setSessionExpired(true);
