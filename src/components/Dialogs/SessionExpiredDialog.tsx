@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useAppContext } from '../../app/AppContext';
 import Link from '../../components/Link';
 import EnterPassword from '../../routes/Login/EnterPassword';
-import apiClient, { clearSession, csrfCookieExists } from '../apiClient';
+import apiClient, { csrfCookieExists } from '../apiClient';
 
 export default function SesssionExpiredDialog() {
 
