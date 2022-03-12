@@ -2,7 +2,7 @@ import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton, Menu, MenuItem, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
-import Tab from '@mui/material/Tab';
+import Tab, { tabClasses } from '@mui/material/Tab';
 import { useModal } from "mui-modal-provider";
 import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
@@ -194,25 +194,39 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
     }
 
     return (
-        <Fieldset legend={props.legend}>
+        <Fieldset legend={props.legend} styles={{ paddingTop: 50 }}>
             <Box sx={{
                 borderBottom: 1,
                 borderColor: 'divider',
                 display: 'flex',
-                alignItems: 'center'
+                alignItems: 'center',
+                position: 'absolute',
+                top: 1,
+                left: 12,
+                right: 12,
+                height: 50
             }}>
                 <Tabs
                     onChange={onTabChange}
                     variant="scrollable"
                     scrollButtons="auto"
-                    sx={{ flexGrow: 1 }}
                     value={state.activeTab}
+                    sx={{
+                        flexGrow: 1,
+                        [`& .MuiTabScrollButton-horizontal`]: {
+                            '&.Mui-disabled': { opacity: 0.3 },
+                        },
+                    }}
                 >
                     {fields.map((item: Record<string, string>, index) => (
                         <Tab label={item.label} value={index} key={item.key} />
                     ))}
                 </Tabs>
-                <Box sx={{ flexShrink: 0 }}>
+                <Box
+                    sx={{
+                        flexShrink: 0,
+                    }}
+                >
                     <IconButton size="small" sx={{ alignSelf: 'center' }} onClick={onAddClick}>
                         <AddIcon fontSize="small" />
                     </IconButton>

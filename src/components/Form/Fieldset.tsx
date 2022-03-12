@@ -1,13 +1,17 @@
 type FieldsetProps = {
     children: React.ReactNode;
     legend: string;
-    width?: string;
+    styles?: Record<string, any>;
 };
 
 export default function Fieldset(props: FieldsetProps) {
 
     return (
-        <fieldset style={{ borderRadius: '6px', width: props.width ?? 'auto' }}>
+        <fieldset style={{
+            position: 'relative',
+            borderRadius: '6px',
+            ...props.styles
+        }}>
             <legend><span>{props.legend}</span></legend>
             {props.children}
         </fieldset>
