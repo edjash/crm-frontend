@@ -58,6 +58,9 @@ export default function DialogEx(props: DialogExProps) {
             scroll="paper"
             maxWidth="xl"
             sx={{ pt: 0 }}
+            BackdropProps={{
+                sx: { backdropFilter: 'blur(1px)' }
+            }}
         >
             {mode === 'normal' && (config.title || config.closeIcon) &&
                 <Box sx={{ display: 'flex', alignItems: 'center', pr: 1 }}>
