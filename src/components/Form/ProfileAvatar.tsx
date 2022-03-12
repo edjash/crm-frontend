@@ -1,3 +1,4 @@
+import { StarPurple500 } from "@mui/icons-material";
 import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
 import { uniqueId } from 'lodash';
@@ -65,8 +66,11 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
     }
 
     const onUploadProgress = (pe: ProgressEvent) => {
-        const percent = Math.round((pe.loaded * 100) / pe.total);
-        setState(state => ({ ...state, progressPercent: percent }));
+        let percent = Math.ceil((pe.loaded * 100) / pe.total);
+        setState(state => ({
+            ...state,
+            progressPercent: percent,
+        }));
     }
 
     const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +79,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             return;
         }
         const file: File = files[0];
-        const ext = '.'+(file.name ?? '').toLowerCase().split('.').pop();
+        const ext = '.' + (file.name ?? '').toLowerCase().split('.').pop();
         if (acceptType.indexOf(ext ?? '') < 0) {
             PubSub.publish('TOAST.SHOW', {
                 type: 'error',
@@ -114,7 +118,8 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
         apiClient.post('/contacts/avatar', formData, config).then((response) => {
             if (response.data.filename) {
-                const src = `${SERVER_URL}/storage/tmp_avatars/${response.data.filename}`;
+                //const src = `${SERVER_URL}/storage/tmp_avatars/${response.data.filename}`;
+                const src = (state.fileObject) ? URL.createObjectURL(state.fileObject) : null;
                 setState(state => ({
                     ...state,
                     showMask: false,
