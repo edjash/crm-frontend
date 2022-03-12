@@ -33,6 +33,22 @@ export default function Contacts() {
     });
 
     useEffect(() => {
+        const token = PubSub.subscribe('CONTACTS.REFRESH', () => {
+            setGridState((state) => ({
+                ...state,
+                loading: true,
+            }));
+            PubSub.publish('TOAST.SHOW', {
+                message: "Refreshed",
+                type: 'info',
+            })
+        });
+        return () => {
+            PubSub.unsubscribe(token);
+        }
+    }, []);
+
+    useEffect(() => {
         if (!gridState.loading) {
             return;
         }
@@ -143,13 +159,7 @@ export default function Contacts() {
     };
 
     const onRefreshClick = () => {
-        setGridState({
-            ...gridState,
-            loading: true,
-        });
-        PubSub.publish('TOAST.SHOW', {
-            message: "Refreshed"
-        })
+        PubSub.publish('CONTACTS.REFRESH');
     };
 
     const showCreateEditDlg = (props?: ShowCreateEditProps) => {
@@ -263,8 +273,6 @@ export default function Contacts() {
         ]
     }
 
-
-
     return (
         <Box display="grid">
             <MainGrid
@@ -287,7 +295,7 @@ export default function Contacts() {
                         right: 16,
                         color: 'primary.light'
                     }}>
-                    <AddIcon sx={{color:'#000000'}} />
+                    <AddIcon sx={{ color: '#000000' }} />
                 </Fab>
             }
         </Box>
