@@ -2,7 +2,7 @@ import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton, Menu, MenuItem, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
-import Tab, { tabClasses } from '@mui/material/Tab';
+import Tab from '@mui/material/Tab';
 import { useModal } from "mui-modal-provider";
 import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
