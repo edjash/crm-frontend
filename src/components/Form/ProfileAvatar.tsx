@@ -1,4 +1,3 @@
-import { StarPurple500 } from "@mui/icons-material";
 import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
 import { uniqueId } from 'lodash';
