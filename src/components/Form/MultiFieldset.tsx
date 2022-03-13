@@ -1,6 +1,5 @@
-import AddIcon from '@mui/icons-material/Add';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconButton, Menu, MenuItem, Tabs } from "@mui/material";
+import { Add, KeyboardArrowLeft, KeyboardArrowRight, MoreVert } from '@mui/icons-material/';
+import { ButtonBase, IconButton, Menu, MenuItem, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from '@mui/material/Tab';
 import { useModal } from "mui-modal-provider";
@@ -72,6 +71,38 @@ export default function MultiFieldSet(props: MultiFieldsetProps) {
         />
     );
 }
+
+const TabScrollButton = (props: any) => {
+
+    const onClick = () => {
+       // props.onClick();
+        props.onScrollClick(props.direction);
+    }
+
+    const buttonProps = {
+        ...props,
+        disabled: false
+    };
+    delete buttonProps.onScrollClick;
+
+    return (
+        <ButtonBase
+            component="div"
+            {...buttonProps}
+            sx={{
+                opacity: (props.disabled) ? 0.3 : 1
+            }}
+            onClick={onClick}
+        >
+            {props.direction === 'left' ? (
+                <KeyboardArrowLeft fontSize="small" />
+            ) : (
+                <KeyboardArrowRight fontSize="small" />
+            )}
+        </ButtonBase>
+    );
+};
+
 
 function MultiFieldsetBase(props: MultiFieldsetProps) {
 
@@ -154,6 +185,21 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
         }));
     };
 
+    const onTabScrollClick = (direction: string) => {
+        setState((state) => {
+            let tab = state.activeTab;
+            if (direction === 'left') {
+                tab = (tab > 0) ? tab - 1 : tab;
+            } else {
+                tab = (tab < fields.length - 1) ? tab + 1 : tab;
+            }
+            return {
+                ...state,
+                activeTab: tab,
+            };
+        });
+    }
+
     const onAddClick = () => {
         append({ ...state.emptyField, label: 'Other' });
         setState((prevState) => ({
@@ -217,6 +263,12 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
                             '&.Mui-disabled': { opacity: 0.3 },
                         },
                     }}
+                    ScrollButtonComponent={(props) =>
+                        <TabScrollButton
+                            {...props}
+                            onScrollClick={onTabScrollClick}
+                        />
+                    }
                 >
                     {fields.map((item: Record<string, string>, index) => (
                         <Tab label={item.label} value={index} key={item.key} />
@@ -228,10 +280,10 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
                     }}
                 >
                     <IconButton size="small" sx={{ alignSelf: 'center' }} onClick={onAddClick}>
-                        <AddIcon fontSize="small" />
+                        <Add fontSize="small" />
                     </IconButton>
                     <IconButton size="small" sx={{ alignSelf: 'center' }} onClick={onMenuClick}>
-                        <MoreVertIcon fontSize="small" />
+                        <MoreVert fontSize="small" />
                     </IconButton>
                     <Menu
                         open={state.menuAnchorEl != null}
