@@ -60,9 +60,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/pulltorefreshjs": "^0.1.5",
-    "pulltorefreshjs": "^0.1.22"
   }
 }
