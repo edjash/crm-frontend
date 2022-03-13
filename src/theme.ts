@@ -49,6 +49,12 @@ const theme = createTheme({
         .MuiDataGrid-iconSeparator:last-child {
             display:none !important;
         },
+        .formIconButton .MuiSvgIcon-root {
+            color: #9e9e9e;
+        }
+        .formIconButton:hover .MuiSvgIcon-root {
+            color: #ffffff;
+        }
       `,
         },
     },

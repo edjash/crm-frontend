@@ -1,4 +1,5 @@
-import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
+import { Avatar, Box, BoxProps, CircularProgress, IconButton, Typography } from "@mui/material";
+import { Delete } from '@mui/icons-material/';
 import { AxiosRequestConfig } from "axios";
 import { uniqueId } from 'lodash';
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
@@ -28,7 +29,6 @@ interface ProfileAvatarState {
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     const { setValue, getValues } = useFormContext();
-
     const acceptType = ['.jpg', '.jpeg', '.png', '.gif'];
 
     const [state, setState] = useState<ProfileAvatarState>(() => {
@@ -98,6 +98,10 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     }
 
+    const onDeleteAvatarClick = () => {
+
+    }
+
     useEffect(() => {
         if (!state.uploading || !state.fileObject) {
             return;
@@ -162,74 +166,93 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     return (
         <Box
-            position="relative"
-            width={100}
-            height={100}
-            sx={props.sx}
-        >
-            <Avatar
-                alt={props.alt}
-                src={state.src || undefined}
-                sx={{ width: 100, height: 100, color: '#e0e0e0' }}
-                onMouseOver={onMouseOver}
-                onMouseLeave={onMouseLeave}
-            />
-            <Overlay
-                open={state.showMask}
-                useAbsolute
-                sx={{ borderRadius: "50%", textAlign: "center", cursor: 'pointer' }}
-                backdropProps={{
-                    open: state?.showMask,
-                    onMouseOver: onMouseOver,
-                    onMouseLeave: onMouseLeave,
-                }}
-            >
-                {!state.uploading ?
-                    <label htmlFor={state.fieldId} style={{
-                        cursor: 'pointer',
-                        width: '100%',
-                        height: '100%',
-                        display: 'table',
-                    }}>
-                        <span style={{ display: 'table-cell', verticalAlign: 'middle' }}>
-                            Change Photo
-                        </span>
-                    </label>
-                    :
-                    <Box sx={{ position: 'relative', display: 'inline-flex' }} >
-                        <CircularProgress
-                            variant="determinate"
-                            value={state.progressPercent}
-                            size={100}
-                        />
-                        <Box sx={{
-                            top: 0,
-                            left: 0,
-                            bottom: 0,
-                            right: 0,
-                            position: 'absolute',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
-                            <Typography
-                                variant="h6"
-                                component="div"
-                                color="text.secondary"
-                            >
-                                {`${state.progressPercent}%`}
-                            </Typography>
-                        </Box>
-                    </Box>
+            display="flex"
+            justifyContent="center"
+            sx={{
+                '&:hover': {
+                    '& .AvatarControlIcons': { display: 'grid' }
                 }
-            </Overlay >
-            <input
-                type="file"
-                id={state.fieldId}
-                accept={acceptType.join(',')}
-                style={{ display: "none" }}
-                onChange={onFileInputChange}
-            />
+            }}
+        >
+            <Box
+                position="relative"
+                width={100}
+                height={100}
+            >
+                <Avatar
+                    alt={props.alt}
+                    src={state.src || undefined}
+                    sx={{ width: 100, height: 100, color: '#e0e0e0' }}
+                    onMouseOver={onMouseOver}
+                    onMouseLeave={onMouseLeave}
+                />
+                <Overlay
+                    open={state.showMask}
+                    useAbsolute
+                    sx={{ borderRadius: "50%", textAlign: "center", cursor: 'pointer' }}
+                    backdropProps={{
+                        open: state?.showMask,
+                        onMouseOver: onMouseOver,
+                        onMouseLeave: onMouseLeave,
+                    }}
+                >
+                    {!state.uploading ?
+                        <label htmlFor={state.fieldId} style={{
+                            cursor: 'pointer',
+                            width: '100%',
+                            height: '100%',
+                            display: 'table',
+                        }}>
+                            <span style={{ display: 'table-cell', verticalAlign: 'middle' }}>
+                                Change Photo
+                            </span>
+                        </label>
+                        :
+                        <Box sx={{ position: 'relative', display: 'inline-flex' }} >
+                            <CircularProgress
+                                variant="determinate"
+                                value={state.progressPercent}
+                                size={100}
+                            />
+                            <Box sx={{
+                                top: 0,
+                                left: 0,
+                                bottom: 0,
+                                right: 0,
+                                position: 'absolute',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}>
+                                <Typography
+                                    variant="h6"
+                                    component="div"
+                                    color="text.secondary"
+                                >
+                                    {`${state.progressPercent}%`}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    }
+                </Overlay >
+                <input
+                    type="file"
+                    id={state.fieldId}
+                    accept={acceptType.join(',')}
+                    style={{ display: "none" }}
+                    onChange={onFileInputChange}
+                />
+            </Box>
+            {state.src && !state.uploading &&
+                <Box
+                    className="AvatarControlIcons"
+                    sx={{ position: 'absolute', top: 0, right: 3, display: 'grid' }}
+                >
+                    <IconButton size="small" className="formIconButton" onClick={onDeleteAvatarClick}>
+                        <Delete fontSize="inherit" />
+                    </IconButton>
+                </Box>
+            }
         </Box>
     );
 }
