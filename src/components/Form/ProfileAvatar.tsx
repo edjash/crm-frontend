@@ -99,7 +99,13 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
     }
 
     const onDeleteAvatarClick = () => {
+        setValue(props.name, '');
 
+        setState((state) => ({
+            ...state,
+            src: null,
+            filename: '',
+        }));
     }
 
     useEffect(() => {
