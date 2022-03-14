@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
+import PullRefresh from '../../components/PullRefresh';
 import TopBar from '../../components/TopBar';
 
 interface TabPanelProps {
@@ -295,6 +296,7 @@ export default function Home() {
                 </Box>
             </Box>
             <SessionExpiredDialog />
+            <PullRefresh />
         </Box>
     );
 }

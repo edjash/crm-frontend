@@ -55,31 +55,6 @@ const theme = createTheme({
         .formIconButton:hover .MuiSvgIcon-root {
             color: #ffffff;
         }
-        .pullToRefreshtext {
-            display:none;
-        }
-        .pullToRefreshicon {
-            color:#FFFFFF !important;
-        },
-        .pullToRefreshptr {
-            position:absolute !important;
-            color:white;
-            z-index: 1200 !important;
-        }
-        .pullToRefreshicon: {
-            color: #FFFFFF;
-            background:#FFFFFF;
-            transform: none !important;
-            transition: none !important;
-
-        },
-        .pullToRefreshrelease .pullToRefreshicon {
-            transform: none !important;
-          }
-        "@keyframes spin": {
-            from {transform: rotate(0deg)}
-            to {transform: rotate(360deg)}
-        }
       `,
         },
     },
