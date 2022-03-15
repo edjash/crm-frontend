@@ -34,6 +34,9 @@ const theme = createTheme({
 
         MuiCssBaseline: {
             styleOverrides: `
+        body {
+            overscroll-behavior-y: none;
+        },
         .MuiDataGrid-columnHeader:focus,
         .MuiDataGrid-columnHeader:focus-within,
         .MuiDataGrid-cell:focus-within,

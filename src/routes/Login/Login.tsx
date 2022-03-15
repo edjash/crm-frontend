@@ -24,7 +24,9 @@ export default function Login() {
     useOnce(() => {
         clearSession();
         if (APP_MODE === 'development') {
-            if (new URL(APP_URL).host !== window.location.host) {
+            const url = new URL(APP_URL);
+            if (url.host !== window.location.host &&
+                url.hostname === 'localhost') {
                 window.location.href = APP_URL;
                 return;
             }

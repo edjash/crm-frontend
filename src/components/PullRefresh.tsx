@@ -8,7 +8,7 @@ const Container = styled('div')({
     top: '0px',
     left: '0px',
     zIndex: 2001,
-    background: 'green',
+    //background: 'green',
     width: '100%',
     display: 'flex',
     justifyContent: 'center',
