@@ -243,6 +243,10 @@ export default function Home() {
         PubSub.publishSync('NAV.TOGGLE');
     }
 
+    const onPullRefresh = () => {
+        window.location.reload();
+    };
+
     return (
         <Box sx={{ display: 'flex', height: '100vh' }}>
             <Drawer isMobile={isMobile} onClose={closeNav} open={state.navOpen}>
@@ -296,7 +300,7 @@ export default function Home() {
                 </Box>
             </Box>
             <SessionExpiredDialog />
-            <PullRefresh />
+            <PullRefresh onRefresh={onPullRefresh} />
         </Box>
     );
 }
