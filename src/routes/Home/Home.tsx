@@ -300,7 +300,9 @@ export default function Home() {
                 </Box>
             </Box>
             <SessionExpiredDialog />
-            <PullRefresh onRefresh={onPullRefresh} />
+            {isMobile &&
+                <PullRefresh onRefresh={onPullRefresh} />
+            }
         </Box>
     );
 }
