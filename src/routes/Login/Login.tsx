@@ -26,7 +26,7 @@ export default function Login() {
         if (APP_MODE === 'development') {
             const url = new URL(APP_URL);
             if (url.host !== window.location.host &&
-                url.hostname === 'localhost') {
+                window.location.hostname === 'localhost') {
                 window.location.href = APP_URL;
                 return;
             }
