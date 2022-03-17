@@ -38,10 +38,6 @@ export default function Contacts() {
                 ...state,
                 loading: true,
             }));
-            PubSub.publish('TOAST.SHOW', {
-                message: "Refreshed",
-                type: 'info',
-            })
         });
         return () => {
             PubSub.unsubscribe(token);
@@ -87,6 +83,8 @@ export default function Contacts() {
                     deleteIds: [],
                     searchChanged: false,
                 });
+
+                PubSub.publish('CONTACTS.REFRESHED');
             })
             .catch((error) => {
                 setGridState({
@@ -95,6 +93,8 @@ export default function Contacts() {
                     rows: [],
                     loading: false
                 });
+
+                PubSub.publish('CONTACTS.REFRESHED');
             });
     }, [gridState]);
 

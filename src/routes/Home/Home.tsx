@@ -243,9 +243,10 @@ export default function Home() {
         PubSub.publishSync('NAV.TOGGLE');
     }
 
-    const onPullRefresh = () => {
-        window.location.reload();
-    };
+    const onPullRefresh = (onRefreshed: () => void) => {
+        PubSub.subscribeOnce('CONTACTS.REFRESHED', onRefreshed);
+        PubSub.publish('CONTACTS.REFRESH');
+    }
 
     return (
         <Box sx={{ display: 'flex', height: '100vh' }}>

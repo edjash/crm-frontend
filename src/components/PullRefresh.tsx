@@ -78,7 +78,7 @@ const onTouchEnd = (e: TouchEvent): TouchData => {
 };
 
 interface PullRefreshProps {
-    onRefresh: () => void;
+    onRefresh: (refreshed: () => void) => void;
 };
 
 const INITIAL_HEIGHT = -24;
@@ -148,14 +148,12 @@ export default function PullRefresh(props: PullRefreshProps) {
     }, [handleTouchEvent]);
 
     useEffect(() => {
-        if (refreshReady) {
-            setTimeout(() => {
-                if (props.onRefresh) {
-                    props.onRefresh();
-                }
-            }, 2000);
+        if (refreshReady && props.onRefresh) {
+            props.onRefresh(() => {
+                endRefresh();
+            });
         }
-    }, [refreshReady, props]);
+    }, [refreshReady, props, endRefresh]);
 
     let styles = `
         .pullRefresh-backdrop {
