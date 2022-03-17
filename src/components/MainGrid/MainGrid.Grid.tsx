@@ -1,17 +1,15 @@
 import { Theme, useMediaQuery } from '@mui/material';
 import {
-    DataGrid, GridColDef,
-    GridRowModel,
-    GridRowId,
-    GridSelectionModel
+    DataGrid, GridApi, GridApiRef, GridColDef, GridRenderCellParams, GridRowId, GridRowModel, GridSelectionModel, useGridApiContext
 } from '@mui/x-data-grid';
-import { useState } from 'react';
+import { RefObject, useCallback, useRef, useState } from 'react';
+import useOnce from '../../hooks/useOnce';
 import MainGridFooter from './MainGrid.Footer';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
 import SelectionToolbar from './MainGrid.SelectionToolbar';
 import GridToolbar from './MainGrid.Toolbar';
 
-export interface GridProps {
+export interface MainGridProps {
     rows: GridRowModel[];
     columns: GridColDef[];
     title: string;
@@ -30,19 +28,60 @@ export interface GridProps {
     onEdit?: () => void;
     onDelete?: (rowIds: GridRowId[]) => void;
     onRefreshClick?: () => void;
+    onScroll?: (e: Event, scrollPos: number) => void;
     showPagination?: boolean;
 }
 
-export default function MainGrid(props: GridProps) {
+interface MainGridState {
+    apiRef: null | GridApiRef;
+    displaySelectionToolbar: boolean;
+    selectedGridRows: GridRowId[];
+}
 
-    const [state, setState] = useState({
+export default function MainGrid(props: MainGridProps) {
+
+    const [state, setState] = useState<MainGridState>({
+        apiRef: null,
         displaySelectionToolbar: false,
-        selectedGridRows: [] as GridRowId[],
+        selectedGridRows: [],
     });
 
+    const apiRef = useRef<GridApi>();
+    const scrollRef = useRef<HTMLDivElement>();
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-
     const columns = props.columns;
+
+    useOnce(() => {
+        PubSub.subscribeOnce('MAINGRID.APIREF', (msg, data: GridApiRef) => {
+            if (!data.current || apiRef.current) {
+                return;
+            }
+            apiRef.current = data.current;
+            console.log(data);
+            setScrollEvent();
+        });
+    });
+
+    const setScrollEvent = () => {
+        if (!apiRef.current || scrollRef.current) {
+            return;
+        }
+        console.log(123);
+        if (apiRef.current.rootElementRef?.current) {
+            const div: HTMLDivElement = apiRef.current.rootElementRef.current;
+            const scrollDiv = div.querySelector('div.MuiDataGrid-virtualScroller');
+            if (scrollDiv) {
+                scrollRef.current = scrollDiv as HTMLDivElement;
+                scrollDiv.addEventListener('scroll', onGridScroll);
+            }
+        }
+    }
+
+    const onGridScroll = useCallback((e: Event) => {
+        if (props.onScroll) {
+            props.onScroll(e, (e.currentTarget as HTMLDivElement).scrollTop);
+        }
+    }, [props]);
 
     const onSelectionChange = (selRows: GridSelectionModel) => {
         setState({
@@ -85,7 +124,6 @@ export default function MainGrid(props: GridProps) {
                     disableSelectionOnClick
                     disableColumnFilter
                     disableColumnMenu
-                    
                     disableColumnSelector={true}
                     onSelectionModelChange={onSelectionChange}
                     sx={{

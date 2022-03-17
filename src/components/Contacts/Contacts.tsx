@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { HTTPVerb, request } from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
-import MainGrid, { GridProps } from '../MainGrid/MainGrid.Grid';
+import MainGrid, { MainGridProps } from '../MainGrid/MainGrid.Grid';
 import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -17,7 +17,7 @@ export default function Contacts() {
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
-    const [gridState, setGridState] = useState<GridProps>({
+    const [gridState, setGridState] = useState<MainGridProps>({
         title: 'Contact',
         titlePlural: 'Contacts',
         searchQuery: '',
@@ -189,6 +189,10 @@ export default function Contacts() {
         });
     };
 
+    const onScroll = (e: Event, pos: number) => {
+        console.log(pos);
+    }
+
     let columns: GridColDef[] = [
         AvatarCheckBox,
         {
@@ -283,6 +287,7 @@ export default function Contacts() {
                 onPageChange={onPageChange}
                 onDelete={onDelete}
                 onRefreshClick={onRefreshClick}
+                onScroll={onScroll}
                 showPagination={!isMobile}
             />
             {isMobile &&

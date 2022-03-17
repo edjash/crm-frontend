@@ -12,11 +12,12 @@ import useOnce from '../../hooks/useOnce';
 import Avatar from '../Avatar';
 
 //potentially memoise these functions
-export const GridHeaderCheckbox = () => {
+export const GridHeaderCheckbox = (props: GridColumnHeaderParams) => {
     const apiRef = useGridApiContext();
     const [checked, setChecked] = useState(false);
 
     useOnce(() => {
+        PubSub.publish('MAINGRID.APIREF', apiRef);
         const token = PubSub.subscribe('GRID.CHECKALL', (c, checked) => {
             toggleSelection(checked);
         });
@@ -111,7 +112,7 @@ const AvatarCheckBox: GridColDef = {
     headerAlign: 'center',
     width: 60,
     renderHeader: (params: GridColumnHeaderParams) => {
-        return <GridHeaderCheckbox />;
+        return <GridHeaderCheckbox {...params} />;
     },
     renderCell: (params: GridRenderCellParams) => {
         return <GridCellCheckbox {...params} />;
