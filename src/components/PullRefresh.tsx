@@ -1,5 +1,5 @@
 import { Loop as LoopIcon } from '@mui/icons-material/';
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface TouchPoint {
     x: number;
@@ -84,6 +84,7 @@ interface PullRefreshProps {
 const INITIAL_HEIGHT = -24;
 const REFRESH_HEIGHT = 44;
 const MAX_HEIGHT = 130;
+const REFRESH_DELAY_MS = 700;
 
 export default function PullRefresh(props: PullRefreshProps) {
 
@@ -100,6 +101,14 @@ export default function PullRefresh(props: PullRefreshProps) {
         setRefreshReady(false);
         setRotate(0);
     }, []);
+
+    const timer = useRef<NodeJS.Timeout>();
+
+    const clearTimer = () => {
+        if (timer.current) {
+            clearTimeout(timer.current);
+        }
+    }
 
     const handleTouchEvent = useCallback((type: string, td: TouchData) => {
         if (td.direction === 'right') {
@@ -149,9 +158,14 @@ export default function PullRefresh(props: PullRefreshProps) {
 
     useEffect(() => {
         if (refreshReady && props.onRefresh) {
-            props.onRefresh(() => {
-                endRefresh();
-            });
+            clearTimer();
+            timer.current = setTimeout(() => {
+                props.onRefresh(() => {
+                    endRefresh();
+                });
+            }, REFRESH_DELAY_MS);
+
+            return () => clearTimer();
         }
     }, [refreshReady, props, endRefresh]);
 
@@ -196,8 +210,8 @@ export default function PullRefresh(props: PullRefreshProps) {
           }
           .pullRefresh-refresh {
                 animation-name: pullRefresh-up, pullRefresh-rotating;
-                animation-duration: 0.5s, 1.5s;
-                animation-delay: 0ms, 1s;
+                animation-duration: 0.5s, 1s;
+                animation-delay: 0ms, 0.5s;
                 animation-timing-function: ease, linear;
                 animation-iteration-count: 1, infinite;
                 animation-fill-mode: forwards;
