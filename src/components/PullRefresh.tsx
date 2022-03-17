@@ -1,5 +1,5 @@
 import { Loop as LoopIcon } from '@mui/icons-material/';
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface TouchPoint {
     x: number;
@@ -81,37 +81,25 @@ interface PullRefreshProps {
     onRefresh: () => void;
 };
 
+const INITIAL_HEIGHT = -24;
+const REFRESH_HEIGHT = 44;
+const MAX_HEIGHT = 130;
+
 export default function PullRefresh(props: PullRefreshProps) {
 
-    const initialHeight = -24;
-    const refreshHeight = 44;
-    const maxHeight = 130;
-
     const [rotate, setRotate] = useState(0);
-    const [height, setHeight] = useState(initialHeight);
+    const [height, setHeight] = useState(INITIAL_HEIGHT);
     const [hitEnd, setHitEnd] = useState(false);
     const [refreshReady, setRefreshReady] = useState(false);
     const [ready, setReady] = useState(false);
 
-    const rotateTimer = useRef<NodeJS.Timeout>();
-
-
-    // const rotateIcon = () => {
-    //     setRotate((rotate) => rotate + 5);
-    // };
-
-    const endRefresh = () => {
+    const endRefresh = useCallback(() => {
         setReady(false);
         setHitEnd(false);
-        setHeight(initialHeight);
+        setHeight(INITIAL_HEIGHT);
         setRefreshReady(false);
         setRotate(0);
-
-        if (rotateTimer.current) {
-            console.log("CLEARED");
-            clearInterval(rotateTimer.current);
-        }
-    }
+    }, []);
 
     const handleTouchEvent = useCallback((type: string, td: TouchData) => {
         if (td.direction === 'right') {
@@ -122,7 +110,7 @@ export default function PullRefresh(props: PullRefreshProps) {
         }
         switch (type) {
             case 'move':
-                if (height < maxHeight) {
+                if (height < MAX_HEIGHT) {
                     let v = 15;
                     if (!ready) {
                         setReady(true);
@@ -134,20 +122,14 @@ export default function PullRefresh(props: PullRefreshProps) {
                 }
                 break;
             case 'end':
-                if (!hitEnd && height < refreshHeight) {
+                if (!hitEnd && height < REFRESH_HEIGHT) {
                     endRefresh();
                     return;
                 }
                 setRefreshReady(true);
                 break;
-            case 'tap':
-                //noop
-                break;
-            case 'start':
-            default:
-                console.log('start', td);
         }
-    }, [height, hitEnd, ready]);
+    }, [height, hitEnd, ready, endRefresh]);
 
     useEffect(() => {
         const events: Record<string, any> = {
@@ -173,17 +155,16 @@ export default function PullRefresh(props: PullRefreshProps) {
                 }
             }, 2000);
         }
-    }, [refreshReady]);
-    console.log("STYLE TAGS", document.head.getElementsByTagName('style').length);
+    }, [refreshReady, props]);
 
     let styles = `
-        .backdrop {
+        .pullRefresh-backdrop {
             position: fixed;
             height: 100vh;
             width: 100vw;
             zIndex: 2000,
         }
-        .refresh {
+        .pullRefresh-refresh {
             position: absolute;
             z-index:2001;
             left:calc(50% - 12px);
@@ -199,7 +180,7 @@ export default function PullRefresh(props: PullRefreshProps) {
 
     if (refreshReady) {
         styles += `
-        @keyframes rotating {
+        @keyframes pullRefresh-rotating {
             from {
                 transform: rotate(360deg);
             }
@@ -207,16 +188,16 @@ export default function PullRefresh(props: PullRefreshProps) {
               transform: rotate(0deg);
             }
           }
-          @keyframes up {
+          @keyframes pullRefresh-up {
             from {
               top: ${height}px;
             }
             to {
-              top: ${refreshHeight}px;
+              top: ${REFRESH_HEIGHT}px;
             }
           }
-          .refresh {
-                animation-name: up, rotating;
+          .pullRefresh-refresh {
+                animation-name: pullRefresh-up, pullRefresh-rotating;
                 animation-duration: 0.5s, 1.5s;
                 animation-delay: 0ms, 1s;
                 animation-timing-function: ease, linear;
@@ -229,8 +210,8 @@ export default function PullRefresh(props: PullRefreshProps) {
     return (
         <div hidden={!ready}>
             <style children={styles} />
-            <div className="backdrop" />
-            <LoopIcon className="refresh" />
+            <div className="pullRefresh-backdrop" />
+            <LoopIcon className="pullRefresh-refresh" />
         </div>
     );
 }
