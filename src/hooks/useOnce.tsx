@@ -1,8 +1,9 @@
 import { useState } from "react";
 
 /**
- * This is used as opposed to useEffect(() => {}, []),
- * as the latter triggers missing dependency linting errors.
+ * This executes BEFORE a component is mounted and rendered,
+ * as opposed to useEffect(()=>, []).
+ * Could be thought as a useConstrutor
  **/
 
 export default function useOnce(callBack: () => void) {
