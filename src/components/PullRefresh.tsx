@@ -96,28 +96,16 @@ export default function PullRefresh(props: PullRefreshProps) {
     const [refreshReady, setRefreshReady] = useState(false);
     const [ready, setReady] = useState(false);
 
+    const swiping = useRef(false);
+
     const endRefresh = useCallback(() => {
         setReady(false);
         setHitEnd(false);
         setHeight(INITIAL_HEIGHT);
         setRefreshReady(false);
         setRotate(0);
+        swiping.current = false;
     }, []);
-
-    const onScroll = (e: Event) => {
-        const el = e.currentTarget as HTMLElement;
-        console.log(el.scrollTop);
-    }
-
-    useEffect(() => {
-        if (props?.scrollElement) {
-            const scrollEl = props.scrollElement;
-            scrollEl.addEventListener('scroll', onScroll);
-            return () => {
-                scrollEl.removeEventListener('scroll', onScroll);
-            }
-        }
-    }, [props.scrollElement]);
 
     const timer = useRef<NodeJS.Timeout>();
 
@@ -128,14 +116,20 @@ export default function PullRefresh(props: PullRefreshProps) {
     }
 
     const handleTouchEvent = useCallback((type: string, td: TouchData) => {
-        if (td.direction === 'right') {
-            return endRefresh();
-        }
-        if (td.direction !== 'down') {
+        if (td.direction !== 'down' || !props.scrollElement) {
             return;
         }
+
+        if (props.scrollElement.scrollTop > 50) {
+            return;
+        }
+        if (!swiping.current) {
+            props.scrollElement.scrollTop = 0;
+        }
+        
         switch (type) {
             case 'move':
+                swiping.current = true;
                 if (height < MAX_HEIGHT) {
                     let v = 15;
                     if (!ready) {
@@ -155,7 +149,7 @@ export default function PullRefresh(props: PullRefreshProps) {
                 setRefreshReady(true);
                 break;
         }
-    }, [height, hitEnd, ready, endRefresh]);
+    }, [height, hitEnd, ready, endRefresh, props.scrollElement]);
 
     useEffect(() => {
         const events: Record<string, any> = {
