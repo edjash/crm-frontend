@@ -10,7 +10,7 @@ import {
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { CSSObject, SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
