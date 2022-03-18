@@ -10,11 +10,10 @@ import {
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { CSSObject, SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
-import PullRefresh from '../../components/PullRefresh';
 import TopBar from '../../components/TopBar';
 
 interface TabPanelProps {
@@ -196,10 +195,12 @@ export default function Home() {
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const margin = (isMobile) ? 0 : 1;
+    const listRef = useRef(null);
 
     const [state, setState] = useState({
         navOpen: false,
         selected: 'contacts',
+        canPullRefresh: isMobile,
     });
 
     const onNavClick = (ident: string) => {
@@ -241,11 +242,6 @@ export default function Home() {
 
     const onNavToggleClick = () => {
         PubSub.publishSync('NAV.TOGGLE');
-    }
-
-    const onPullRefresh = (onRefreshed: () => void) => {
-        PubSub.subscribeOnce('CONTACTS.REFRESHED', onRefreshed);
-        PubSub.publish('CONTACTS.REFRESH');
     }
 
     return (
@@ -301,9 +297,6 @@ export default function Home() {
                 </Box>
             </Box>
             <SessionExpiredDialog />
-            {isMobile &&
-                <PullRefresh onRefresh={onPullRefresh} />
-            }
         </Box>
     );
 }

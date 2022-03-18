@@ -1,5 +1,5 @@
 import { Loop as LoopIcon } from '@mui/icons-material/';
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Ref, useCallback, useEffect, useRef, useState } from "react";
 
 interface TouchPoint {
     x: number;
@@ -79,6 +79,8 @@ const onTouchEnd = (e: TouchEvent): TouchData => {
 
 interface PullRefreshProps {
     onRefresh: (refreshed: () => void) => void;
+    scrollElement?: HTMLElement | null;
+    enabled: boolean;
 };
 
 const INITIAL_HEIGHT = -24;
@@ -101,6 +103,21 @@ export default function PullRefresh(props: PullRefreshProps) {
         setRefreshReady(false);
         setRotate(0);
     }, []);
+
+    const onScroll = (e: Event) => {
+        const el = e.currentTarget as HTMLElement;
+        console.log(el.scrollTop);
+    }
+
+    useEffect(() => {
+        if (props?.scrollElement) {
+            const scrollEl = props.scrollElement;
+            scrollEl.addEventListener('scroll', onScroll);
+            return () => {
+                scrollEl.removeEventListener('scroll', onScroll);
+            }
+        }
+    }, [props.scrollElement]);
 
     const timer = useRef<NodeJS.Timeout>();
 
@@ -170,12 +187,6 @@ export default function PullRefresh(props: PullRefreshProps) {
     }, [refreshReady, props, endRefresh]);
 
     let styles = `
-        .pullRefresh-backdrop {
-            position: fixed;
-            height: 100vh;
-            width: 100vw;
-            zIndex: 2000,
-        }
         .pullRefresh-refresh {
             position: absolute;
             z-index:2001;
@@ -187,6 +198,7 @@ export default function PullRefresh(props: PullRefreshProps) {
             border-radius: 24px;
             box-shadow: 0px 0px 5px 0px yellow;
             transform: rotate(${rotate}deg);
+            display:${(!ready || !props.enabled) ? 'none' : 'block'};
         }
     `;
 
@@ -220,10 +232,9 @@ export default function PullRefresh(props: PullRefreshProps) {
     };
 
     return (
-        <div hidden={!ready}>
+        <>
             <style children={styles} />
-            <div className="pullRefresh-backdrop" />
             <LoopIcon className="pullRefresh-refresh" />
-        </div>
+        </>
     );
 }

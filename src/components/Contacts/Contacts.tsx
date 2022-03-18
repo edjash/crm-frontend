@@ -1,36 +1,53 @@
 import { Mail, PhoneEnabled as Phone } from '@mui/icons-material/';
+import AddIcon from '@mui/icons-material/Add';
 import { Box, Fab, Link, Theme, useMediaQuery } from '@mui/material';
 import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HTTPVerb, request } from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
-import MainGrid, { MainGridProps } from '../MainGrid/MainGrid.Grid';
+import MainGrid from '../MainGrid/MainGrid.Grid';
+import PullRefresh from '../PullRefresh';
 import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
-import AddIcon from '@mui/icons-material/Add';
 
 export default function Contacts() {
 
     const { showModal } = useModal();
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const scrollRef = useRef<HTMLElement>();
 
-    const [gridState, setGridState] = useState<MainGridProps>({
+    const [gridState, setGridState] = useState({
         title: 'Contact',
         titlePlural: 'Contacts',
         searchQuery: '',
         searchChanged: false,
-        rows: [],
+        rows: [] as GridRowModel[],
         columns: [],
         loading: true,
-        deleteIds: [],
+        deleteIds: [] as GridRowId[],
         page: 1,
         rowCount: 0,
         rowsPerPage: isMobile ? 20 : 20,
         pageCount: 10,
+        pullRefreshEnabled: false,
     });
+
+    const setContainerRef = (container: HTMLDivElement | null) => {
+        if (container && !scrollRef.current) {
+            console.log("OK?");
+            const scrollEl = container.querySelector('div.MuiDataGrid-virtualScroller');
+            if (scrollEl) {
+                scrollRef.current = scrollEl as HTMLDivElement;
+                setGridState(state => ({
+                    ...state,
+                    pullRefreshEnabled: true,
+                }));
+            }
+        }
+    }
 
     useEffect(() => {
         const token = PubSub.subscribe('CONTACTS.REFRESH', () => {
@@ -39,6 +56,7 @@ export default function Contacts() {
                 loading: true,
             }));
         });
+
         return () => {
             PubSub.unsubscribe(token);
         }
@@ -189,10 +207,6 @@ export default function Contacts() {
         });
     };
 
-    const onScroll = (e: Event, pos: number) => {
-        console.log(pos);
-    }
-
     let columns: GridColDef[] = [
         AvatarCheckBox,
         {
@@ -281,13 +295,13 @@ export default function Contacts() {
         <Box display="grid">
             <MainGrid
                 {...gridState}
+                containerRef={setContainerRef}
                 columns={columns}
                 onSearch={onSearch}
                 onCreateClick={showCreateEditDlg}
                 onPageChange={onPageChange}
                 onDelete={onDelete}
                 onRefreshClick={onRefreshClick}
-                onScroll={onScroll}
                 showPagination={!isMobile}
             />
             {isMobile &&
@@ -302,6 +316,13 @@ export default function Contacts() {
                     }}>
                     <AddIcon sx={{ color: '#000000' }} />
                 </Fab>
+            }
+            {isMobile &&
+                <PullRefresh
+                    onRefresh={onRefreshClick}
+                    enabled={gridState.pullRefreshEnabled}
+                    scrollElement={scrollRef.current}
+                />
             }
         </Box>
     );

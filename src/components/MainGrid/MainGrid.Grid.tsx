@@ -2,13 +2,14 @@ import { Theme, useMediaQuery } from '@mui/material';
 import {
     DataGrid, GridColDef, GridRowId, GridRowModel, GridSelectionModel
 } from '@mui/x-data-grid';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Ref, useEffect, useState } from 'react';
 import MainGridFooter from './MainGrid.Footer';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
 import SelectionToolbar from './MainGrid.SelectionToolbar';
 import GridToolbar from './MainGrid.Toolbar';
 
 export interface MainGridProps {
+    containerRef: Ref<HTMLDivElement>;
     rows: GridRowModel[];
     columns: GridColDef[];
     title: string;
@@ -27,7 +28,6 @@ export interface MainGridProps {
     onEdit?: () => void;
     onDelete?: (rowIds: GridRowId[]) => void;
     onRefreshClick?: () => void;
-    onScroll?: (e: Event, scrollPos: number) => void;
     showPagination?: boolean;
 }
 
@@ -43,28 +43,8 @@ export default function MainGrid(props: MainGridProps) {
         selectedGridRows: [],
     });
 
-    const containerRef = useRef<HTMLDivElement>(null);
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const columns = props.columns;
-
-    const onGridScroll = useCallback((e: Event) => {
-        if (props.onScroll) {
-            props.onScroll(e, (e.currentTarget as HTMLDivElement).scrollTop);
-        }
-    }, [props]);
-
-    useEffect(() => {
-        if (!containerRef.current) {
-            return;
-        }
-        const scrollDiv = containerRef.current.querySelector('div.MuiDataGrid-virtualScroller');
-        if (scrollDiv) {
-            scrollDiv.addEventListener('scroll', onGridScroll);
-            return () => {
-                scrollDiv.removeEventListener('scroll', onGridScroll);
-            }
-        }
-    }, [onGridScroll]);
 
     const onSelectionChange = (selRows: GridSelectionModel) => {
         setState({
@@ -75,7 +55,7 @@ export default function MainGrid(props: MainGridProps) {
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }} ref={props.containerRef}>
             <div>
                 {state.displaySelectionToolbar ?
                     <SelectionToolbar
@@ -96,7 +76,7 @@ export default function MainGrid(props: MainGridProps) {
                     />
                 }
             </div>
-            <div style={{ flexGrow: 1 }} ref={containerRef}>
+            <div style={{ flexGrow: 1 }}>
                 <DataGrid
                     columns={columns}
                     rows={props.rows}
