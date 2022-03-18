@@ -195,7 +195,6 @@ export default function Home() {
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const margin = (isMobile) ? 0 : 1;
-    const listRef = useRef(null);
 
     const [state, setState] = useState({
         navOpen: false,

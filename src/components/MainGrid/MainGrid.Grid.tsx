@@ -2,7 +2,7 @@ import { Theme, useMediaQuery } from '@mui/material';
 import {
     DataGrid, GridColDef, GridRowId, GridRowModel, GridSelectionModel
 } from '@mui/x-data-grid';
-import { Ref, useEffect, useState } from 'react';
+import { Ref, useState } from 'react';
 import MainGridFooter from './MainGrid.Footer';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
 import SelectionToolbar from './MainGrid.SelectionToolbar';

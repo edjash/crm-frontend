@@ -1,5 +1,5 @@
 import { Loop as LoopIcon } from '@mui/icons-material/';
-import { Ref, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface TouchPoint {
     x: number;
