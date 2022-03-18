@@ -17,7 +17,6 @@ export const GridHeaderCheckbox = (props: GridColumnHeaderParams) => {
     const [checked, setChecked] = useState(false);
 
     useOnce(() => {
-        PubSub.publish('MAINGRID.APIREF', apiRef);
         const token = PubSub.subscribe('GRID.CHECKALL', (c, checked) => {
             toggleSelection(checked);
         });

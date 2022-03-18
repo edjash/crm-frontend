@@ -1,8 +1,8 @@
 import { Theme, useMediaQuery } from '@mui/material';
 import {
-    DataGrid, GridApi, GridApiRef, GridColDef, GridRenderCellParams, GridRowId, GridRowModel, GridSelectionModel, useGridApiContext
+    DataGrid, GridApi, GridApiRef, GridColDef, GridRowId, GridRowModel, GridSelectionModel
 } from '@mui/x-data-grid';
-import { RefObject, useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useOnce from '../../hooks/useOnce';
 import MainGridFooter from './MainGrid.Footer';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
@@ -46,42 +46,28 @@ export default function MainGrid(props: MainGridProps) {
         selectedGridRows: [],
     });
 
-    const apiRef = useRef<GridApi>();
-    const scrollRef = useRef<HTMLDivElement>();
+    const containerRef = useRef<HTMLDivElement>(null);
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const columns = props.columns;
-
-    useOnce(() => {
-        PubSub.subscribeOnce('MAINGRID.APIREF', (msg, data: GridApiRef) => {
-            if (!data.current || apiRef.current) {
-                return;
-            }
-            apiRef.current = data.current;
-            console.log(data);
-            setScrollEvent();
-        });
-    });
-
-    const setScrollEvent = () => {
-        if (!apiRef.current || scrollRef.current) {
-            return;
-        }
-        console.log(123);
-        if (apiRef.current.rootElementRef?.current) {
-            const div: HTMLDivElement = apiRef.current.rootElementRef.current;
-            const scrollDiv = div.querySelector('div.MuiDataGrid-virtualScroller');
-            if (scrollDiv) {
-                scrollRef.current = scrollDiv as HTMLDivElement;
-                scrollDiv.addEventListener('scroll', onGridScroll);
-            }
-        }
-    }
 
     const onGridScroll = useCallback((e: Event) => {
         if (props.onScroll) {
             props.onScroll(e, (e.currentTarget as HTMLDivElement).scrollTop);
         }
     }, [props]);
+
+    useEffect(() => {
+        if (!containerRef.current) {
+            return;
+        }
+        const scrollDiv = containerRef.current.querySelector('div.MuiDataGrid-virtualScroller');
+        if (scrollDiv) {
+            scrollDiv.addEventListener('scroll', onGridScroll);
+            return () => {
+                scrollDiv.removeEventListener('scroll', onGridScroll);
+            }
+        }
+    }, [onGridScroll]);
 
     const onSelectionChange = (selRows: GridSelectionModel) => {
         setState({
@@ -113,7 +99,7 @@ export default function MainGrid(props: MainGridProps) {
                     />
                 }
             </div>
-            <div style={{ flexGrow: 1 }}>
+            <div style={{ flexGrow: 1 }} ref={containerRef}>
                 <DataGrid
                     columns={columns}
                     rows={props.rows}
