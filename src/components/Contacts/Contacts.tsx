@@ -18,6 +18,7 @@ export default function Contacts() {
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const scrollRef = useRef<HTMLElement>();
+    const onRefreshed = useRef<() => void>();
 
     const [gridState, setGridState] = useState({
         title: 'Contact',
@@ -37,7 +38,6 @@ export default function Contacts() {
 
     const setContainerRef = (container: HTMLDivElement | null) => {
         if (container && !scrollRef.current) {
-            console.log("OK?");
             const scrollEl = container.querySelector('div.MuiDataGrid-virtualScroller');
             if (scrollEl) {
                 scrollRef.current = scrollEl as HTMLDivElement;
@@ -50,15 +50,16 @@ export default function Contacts() {
     }
 
     useEffect(() => {
-        const token = PubSub.subscribe('CONTACTS.REFRESH', () => {
+        const s1 = PubSub.subscribe('CONTACTS.REFRESH', (msg, callback?: () => void) => {
+            const fn = () => { };
+            onRefreshed.current = callback ?? fn;
             setGridState((state) => ({
                 ...state,
                 loading: true,
             }));
         });
-
         return () => {
-            PubSub.unsubscribe(token);
+            PubSub.unsubscribe(s1);
         }
     }, []);
 
@@ -83,16 +84,16 @@ export default function Contacts() {
         })
             .then((res) => {
                 if (res.data.last_page < res.data.current_page) {
-                    setGridState({
-                        ...gridState,
+                    setGridState(state => ({
+                        ...state,
                         deleteIds: [],
                         page: res.data.last_page
-                    });
+                    }));
                     return;
                 }
 
-                setGridState({
-                    ...gridState,
+                setGridState(state => ({
+                    ...state,
                     page: res.data.current_page ?? 1,
                     rowCount: res.data.total ?? 0,
                     rows: res.data.data ?? [],
@@ -100,19 +101,19 @@ export default function Contacts() {
                     loading: false,
                     deleteIds: [],
                     searchChanged: false,
-                });
-
-                PubSub.publish('CONTACTS.REFRESHED');
+                }));
             })
             .catch((error) => {
-                setGridState({
-                    ...gridState,
+                setGridState(state => ({
+                    ...state,
                     deleteIds: [],
                     rows: [],
                     loading: false
-                });
-
-                PubSub.publish('CONTACTS.REFRESHED');
+                }));
+            }).finally(() => {
+                if (onRefreshed.current) {
+                    onRefreshed.current();
+                }
             });
     }, [gridState]);
 
@@ -176,8 +177,8 @@ export default function Contacts() {
         }
     };
 
-    const onRefreshClick = () => {
-        PubSub.publish('CONTACTS.REFRESH');
+    const onRefresh = (callback?: () => void) => {
+        PubSub.publish('CONTACTS.REFRESH', callback);
     };
 
     const showCreateEditDlg = (props?: ShowCreateEditProps) => {
@@ -301,7 +302,7 @@ export default function Contacts() {
                 onCreateClick={showCreateEditDlg}
                 onPageChange={onPageChange}
                 onDelete={onDelete}
-                onRefreshClick={onRefreshClick}
+                onRefreshClick={onRefresh}
                 showPagination={!isMobile}
             />
             {isMobile &&
@@ -319,7 +320,7 @@ export default function Contacts() {
             }
             {isMobile &&
                 <PullRefresh
-                    onRefresh={onRefreshClick}
+                    onRefresh={onRefresh}
                     enabled={gridState.pullRefreshEnabled}
                     scrollElement={scrollRef.current}
                 />

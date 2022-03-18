@@ -83,7 +83,7 @@ interface PullRefreshProps {
     enabled: boolean;
 };
 
-const INITIAL_HEIGHT = -24;
+const INITIAL_HEIGHT = -32;
 const REFRESH_HEIGHT = 44;
 const MAX_HEIGHT = 130;
 const REFRESH_DELAY_MS = 700;
@@ -221,6 +221,7 @@ export default function PullRefresh(props: PullRefreshProps) {
             }
           }
           .pullRefresh-refresh {
+                transform: none;
                 animation-name: pullRefresh-up, pullRefresh-rotating;
                 animation-duration: 0.5s, 1s;
                 animation-delay: 0ms, 0.5s;
