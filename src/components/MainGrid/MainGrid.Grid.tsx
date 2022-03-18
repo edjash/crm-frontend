@@ -1,9 +1,8 @@
 import { Theme, useMediaQuery } from '@mui/material';
 import {
-    DataGrid, GridApi, GridApiRef, GridColDef, GridRowId, GridRowModel, GridSelectionModel
+    DataGrid, GridColDef, GridRowId, GridRowModel, GridSelectionModel
 } from '@mui/x-data-grid';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import useOnce from '../../hooks/useOnce';
 import MainGridFooter from './MainGrid.Footer';
 import LoadingOverlay from './MainGrid.LoadingOverlay';
 import SelectionToolbar from './MainGrid.SelectionToolbar';
@@ -33,7 +32,6 @@ export interface MainGridProps {
 }
 
 interface MainGridState {
-    apiRef: null | GridApiRef;
     displaySelectionToolbar: boolean;
     selectedGridRows: GridRowId[];
 }
@@ -41,7 +39,6 @@ interface MainGridState {
 export default function MainGrid(props: MainGridProps) {
 
     const [state, setState] = useState<MainGridState>({
-        apiRef: null,
         displaySelectionToolbar: false,
         selectedGridRows: [],
     });
