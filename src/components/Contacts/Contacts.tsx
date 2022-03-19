@@ -18,7 +18,7 @@ export default function Contacts() {
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const scrollRef = useRef<HTMLElement>();
-    const onRefreshed = useRef<() => void>();
+    const onRefreshed = useRef<() => void>(() => { });
 
     const [gridState, setGridState] = useState({
         title: 'Contact',
@@ -51,6 +51,7 @@ export default function Contacts() {
 
     useEffect(() => {
         const s1 = PubSub.subscribe('CONTACTS.REFRESH', (msg, callback?: () => void) => {
+            console.log(callback);
             const fn = () => { };
             onRefreshed.current = callback ?? fn;
             setGridState((state) => ({
@@ -177,7 +178,7 @@ export default function Contacts() {
         }
     };
 
-    const onRefresh = (callback?: () => void) => {
+    const onRefresh = (callback = () => { }) => {
         PubSub.publish('CONTACTS.REFRESH', callback);
     };
 
