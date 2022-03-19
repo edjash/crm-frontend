@@ -54,15 +54,11 @@ export default function DialogEx(props: DialogExProps) {
         if (props.suppressGlobalCount) {
             return;
         }
-        
+
         if (state.open) {
-            PubSub.publishSync('DIALOG.OPEN', (count: number) => {
-                console.log(count);
-            });
+            PubSub.publishSync('DIALOG.OPEN');
         } else {
-            PubSub.publishSync('DIALOG.CLOSE', (count: number) => {
-                console.log(count);
-            });
+            PubSub.publishSync('DIALOG.CLOSE');
         }
 
     }, [state.open, props.suppressGlobalCount]);
