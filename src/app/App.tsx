@@ -16,6 +16,7 @@ import { APP_TITLE } from './constants';
 interface AppState {
     loggedIn: boolean;
     userInfo: Record<string, string> | null;
+    dialogsOpen: number;
 }
 
 interface LoginData {
@@ -35,11 +36,35 @@ export default function App() {
         return {
             loggedIn: !!(user),
             userInfo: (user) ? JSON.parse(user) : null,
+            dialogsOpen: 0,
         };
     });
 
     useEffect(() => {
         document.title = APP_TITLE;
+
+        PubSub.subscribe('DIALOG.OPEN', (msg, callback = () => { }) => {
+            let count = 0;
+            setState(state => {
+                count = state.dialogsOpen + 1;
+                return {
+                    ...state,
+                    dialogsOpen: count,
+                }
+            });
+            callback(count);
+        });
+        PubSub.subscribe('DIALOG.CLOSED', (msg, callback = () => { }) => {
+            let count = 0;
+            setState(state => {
+                count = state.dialogsOpen - 1;
+                return {
+                    ...state,
+                    dialogsOpen: count,
+                }
+            });
+            callback(count);
+        });
 
         PubSub.subscribe('AUTH.LOGIN', (msg: string, data: LoginData) => {
             if (data?.userInfo) {
@@ -63,10 +88,10 @@ export default function App() {
     }, []);
 
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline enableColorScheme={true} />
-            <ModalProvider beta={true}>
-                <AppContextProvider value={state}>
+        <AppContextProvider value={state}>
+            <ThemeProvider theme={theme}>
+                <CssBaseline enableColorScheme={true} />
+                <ModalProvider beta={true}>
                     <Router>
                         <Switch>
                             <Route path="/login" component={Login} />
@@ -80,9 +105,9 @@ export default function App() {
                             </PrivateRoute>
                         </Switch>
                     </Router>
-                </AppContextProvider>
-                <Toaster />
-            </ModalProvider>
-        </ThemeProvider>
+                    <Toaster />
+                </ModalProvider>
+            </ThemeProvider>
+        </AppContextProvider>
     );
 }

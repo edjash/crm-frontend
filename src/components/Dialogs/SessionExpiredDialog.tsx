@@ -14,6 +14,10 @@ export default function SesssionExpiredDialog() {
     const appContext = useAppContext();
 
     useEffect(() => {
+        if (!appContext.dialogsOpen) {
+            PubSub.publishSync('AUTH.LOGOUT');
+            return;
+        }
         const sessionTimer = setInterval(() => {
             if (!csrfCookieExists()) {
                 setSessionExpired(true);
@@ -28,7 +32,7 @@ export default function SesssionExpiredDialog() {
             clearInterval(sessionTimer);
             PubSub.unsubscribe(timeoutToken);
         }
-    }, []);
+    }, [appContext.dialogsOpen]);
 
     if (!sessionExpired || !appContext.userInfo) {
         return <></>;

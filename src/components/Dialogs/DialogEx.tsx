@@ -4,7 +4,8 @@ import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAppContext } from '../../app/AppContext';
 import DialogButton from '../DialogButton';
 
 export type DialogExProps = Omit<DialogProps, 'onExited'> & {
@@ -15,12 +16,12 @@ export type DialogExProps = Omit<DialogProps, 'onExited'> & {
     onSave?: () => void;
     displayMode?: 'mobile' | 'normal' | string;
     saveButtonProps?: Record<string, any>;
+    suppressGlobalCount?: boolean;
 };
 
 
 export default function DialogEx(props: DialogExProps) {
     const mode = props.displayMode ?? 'normal';
-
     const config = {
         ...props,
         title: props?.title ?? '',
@@ -48,6 +49,23 @@ export default function DialogEx(props: DialogExProps) {
             props.onSave();
         }
     };
+
+    useEffect(() => {
+        if (props.suppressGlobalCount) {
+            return;
+        }
+        
+        if (state.open) {
+            PubSub.publishSync('DIALOG.OPEN', (count: number) => {
+                console.log(count);
+            });
+        } else {
+            PubSub.publishSync('DIALOG.CLOSE', (count: number) => {
+                console.log(count);
+            });
+        }
+
+    }, [state.open, props.suppressGlobalCount]);
 
     return (
         <Dialog
