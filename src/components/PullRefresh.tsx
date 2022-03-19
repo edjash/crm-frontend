@@ -1,4 +1,4 @@
-import { Loop as LoopIcon } from '@mui/icons-material/';
+import { Refresh as RefreshIcon } from '@mui/icons-material/';
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface TouchPoint {
@@ -84,7 +84,7 @@ interface PullRefreshProps {
 };
 
 const INITIAL_HEIGHT = -32;
-const REFRESH_HEIGHT = 44;
+const REFRESH_HEIGHT = 40;
 const MAX_HEIGHT = 130;
 const REFRESH_DELAY_MS = 700;
 
@@ -115,20 +115,21 @@ export default function PullRefresh(props: PullRefreshProps) {
         }
     }
 
-    const handleTouchEvent = useCallback((type: string, td: TouchData) => {
-        if (td.direction !== 'down' || !props.scrollElement) {
-            return;
-        }
-
-        if (props.scrollElement.scrollTop > 50) {
-            return;
-        }
-        if (!swiping.current) {
-            props.scrollElement.scrollTop = 0;
-        }
-        
+    const handleTouchEvent = useCallback((type: string, td: TouchData, e: TouchEvent) => {
         switch (type) {
             case 'move':
+                if (!swiping.current) {
+                    if (td.direction !== 'down' || !props.scrollElement) {
+                        return;
+                    }
+                    if (props.scrollElement.scrollTop > 50) {
+                        const rect = props.scrollElement.getBoundingClientRect();
+                        if (td.current.y >= rect.top) {
+                            return;
+                        }
+                    }
+                }
+
                 swiping.current = true;
                 if (height < MAX_HEIGHT) {
                     let v = 15;
@@ -153,9 +154,9 @@ export default function PullRefresh(props: PullRefreshProps) {
 
     useEffect(() => {
         const events: Record<string, any> = {
-            'start': (e: TouchEvent) => handleTouchEvent('start', onTouchStart(e)),
-            'move': (e: TouchEvent) => handleTouchEvent('move', onTouchMove(e)),
-            'end': (e: TouchEvent) => handleTouchEvent('end', onTouchEnd(e)),
+            'start': (e: TouchEvent) => handleTouchEvent('start', onTouchStart(e), e),
+            'move': (e: TouchEvent) => handleTouchEvent('move', onTouchMove(e), e),
+            'end': (e: TouchEvent) => handleTouchEvent('end', onTouchEnd(e), e),
         };
         for (let name in events) {
             window.addEventListener(`touch${name}`, events[name]);
@@ -172,6 +173,9 @@ export default function PullRefresh(props: PullRefreshProps) {
             clearTimer();
             timer.current = setTimeout(() => {
                 props.onRefresh(() => {
+                    if (props?.scrollElement) {
+                        props.scrollElement.scrollTop = 0;
+                    }
                     endRefresh();
                 });
             }, REFRESH_DELAY_MS);
@@ -190,7 +194,6 @@ export default function PullRefresh(props: PullRefreshProps) {
             height: 32px;
             width: 32px;
             border-radius: 24px;
-            box-shadow: 0px 0px 5px 0px yellow;
             transform: rotate(${rotate}deg);
             display:${(!ready || !props.enabled) ? 'none' : 'block'};
         }
@@ -200,7 +203,7 @@ export default function PullRefresh(props: PullRefreshProps) {
         styles += `
         @keyframes pullRefresh-rotating {
             from {
-                transform: rotate(360deg);
+                transform: rotate(-360deg);
             }
             to {
               transform: rotate(0deg);
@@ -229,7 +232,7 @@ export default function PullRefresh(props: PullRefreshProps) {
     return (
         <>
             <style children={styles} />
-            <LoopIcon className="pullRefresh-refresh" />
+            <RefreshIcon className="pullRefresh-refresh" />
         </>
     );
 }
