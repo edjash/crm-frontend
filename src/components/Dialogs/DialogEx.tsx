@@ -5,7 +5,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
-import { useAppContext } from '../../app/AppContext';
 import DialogButton from '../DialogButton';
 
 export type DialogExProps = Omit<DialogProps, 'onExited'> & {
