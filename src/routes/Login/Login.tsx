@@ -9,10 +9,13 @@ import useOnce from '../../hooks/useOnce';
 import loginSchema from '../../validation/loginSchema';
 import AuthPage from '../AuthPage';
 import { APP_URL, APP_MODE } from '../../app/constants';
+import { useDispatch } from 'react-redux';
+import { login } from '../../store/reducers/auth/authSlice';
 
 export default function Login() {
 
     const history = useHistory();
+    const dispatch = useDispatch();
 
     const [state, setState] = useState({
         fieldValues: {},
@@ -50,9 +53,7 @@ export default function Login() {
                     return;
                 }
 
-                PubSub.publishSync('AUTH.LOGIN', {
-                    userInfo: response.data.user,
-                });
+                dispatch(login(response.data.userInfo));
                 history.push('/');
             })
             .catch((response) => {

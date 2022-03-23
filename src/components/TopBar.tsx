@@ -5,6 +5,8 @@ import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { logout } from '../store/reducers/auth/authSlice';
+import { useStoreDispatch } from '../store/store';
 
 interface TopBarProps {
     sx?: SxProps,
@@ -14,9 +16,10 @@ interface TopBarProps {
 export default function TopBar(props: TopBarProps) {
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const dispatch = useStoreDispatch();
 
     const handleLogout = () => {
-        PubSub.publish('AUTH.LOGOUT');
+        dispatch(logout());
     };
 
     return (
