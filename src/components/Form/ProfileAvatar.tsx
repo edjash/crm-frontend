@@ -36,7 +36,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         let src = null;
 
         if (filename) {
-            src = `${SERVER_URL}/storage/avatars/${filename}`;
+            src = `${SERVER_URL}/storage/avatars/medium/${filename}`;
         }
 
         return {

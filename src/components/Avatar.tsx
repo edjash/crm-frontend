@@ -17,7 +17,7 @@ export default function Avatar(props: AvatarProps) {
 
     let src = '';
     if (props.avatar) {
-        src = `${SERVER_URL}/storage/avatars/${props.avatar}`;
+        src = `${SERVER_URL}/${props.avatar}`;
     }
 
     return (

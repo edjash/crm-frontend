@@ -98,7 +98,7 @@ const GridCellCheckbox = (params: GridRenderCellParams) => {
         >
             {state.showCheckbox
                 ? <Checkbox onChange={handleChange} checked={state.checked} />
-                : <Avatar name={params.row.fullname} avatar={params.row.avatar} />
+                : <Avatar name={params.row.fullname} avatar={`storage/avatars/small/${params.row.avatar}`} />
             }
         </div>
     );
