@@ -1,4 +1,4 @@
-import { AccountBox as ContactsIcon } from '@mui/icons-material/';
+import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {
     Box, Divider, Drawer as MuiDrawer, List,
@@ -11,6 +11,7 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { CSSObject, SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
 import { useEffect, useState } from 'react';
+import Companies from '../../components/Companies/Companies';
 import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
@@ -257,6 +258,13 @@ export default function Home() {
                         <ListItemIcon><ContactsIcon /></ListItemIcon>
                         <ListItemText primary="Contacts" />
                     </ListItem>
+                    <ListItem button key="companies"
+                        onClick={() => { onNavClick('companies'); }}
+                        selected={state.selected === 'companies'}
+                    >
+                        <ListItemIcon><CompaniesIcon /></ListItemIcon>
+                        <ListItemText primary="Companies" />
+                    </ListItem>
                     <Divider sx={{ mt: 5, mb: 2 }} hidden={!isMobile} />
                     {isMobile &&
                         <ListItem button key="logout"
@@ -291,6 +299,9 @@ export default function Home() {
                 >
                     <TabPanel value={state.selected} ident="contacts" sx={{ display: 'grid', flexGrow: 1 }}>
                         <Contacts />
+                    </TabPanel>
+                    <TabPanel value={state.selected} ident="companies" sx={{ display: 'grid', flexGrow: 1 }}>
+                        <Companies />
                     </TabPanel>
                     <Footer />
                 </Box>

@@ -7,7 +7,7 @@ interface AvatarProps {
 };
 
 export default function Avatar(props: AvatarProps) {
-    const nameA = props.name.split(' ');
+    const nameA = (props.name) ? props.name.split(' ') : ['?'];
     let str = '';
     nameA.forEach((s, index) => {
         if (index < 2) {

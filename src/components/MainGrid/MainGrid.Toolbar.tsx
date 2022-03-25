@@ -49,7 +49,7 @@ export default function MainGridToolbar(props: ToolbarProps) {
             {isMobile
                 ?
                 <Typography sx={{ pl: 2, pr: 1 }}>
-                    Contacts
+                    {props.titlePlural}
                 </Typography>
                 :
                 <Box sx={{ gap: 30, flexGrow: 0 }}>
