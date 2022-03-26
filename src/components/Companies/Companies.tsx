@@ -134,7 +134,7 @@ export default function Companies() {
                 dialogContent.push(
                     <span key={row.id}>
                         <br />
-                        {row.firstname + ' ' + row.lastname}
+                        {row.name}
                     </span>
                 );
             }

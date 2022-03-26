@@ -4,15 +4,15 @@ import { uniqueId } from 'lodash';
 import { useRef, useState } from 'react';
 import { SocialIcon } from 'react-social-icons';
 import useOnce from '../../hooks/useOnce';
-import companySchema from '../../validation/contactSchema';
+import companySchema from '../../validation/companySchema';
 import apiClient from '../apiClient';
 import DialogEx from '../Dialogs/DialogEx';
 import CountrySelect from '../Form/CountrySelect';
 import Fieldset from '../Form/Fieldset';
 import Form from '../Form/Form';
+import IndustrySelect from '../Form/IndustrySelect';
 import MultiFieldset from '../Form/MultiFieldset';
 import ProfileAvatar from '../Form/ProfileAvatar';
-import RemoteSelect from '../Form/RemoteSelect';
 import TextFieldEx from '../Form/TextFieldEx';
 import Overlay from '../Overlay';
 
@@ -83,7 +83,7 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                 PubSub.publish('COMPANIES.REFRESH');
             } else {
                 PubSub.publish('TOAST.SHOW', {
-                    message: 'Contact Added',
+                    message: 'Company Added',
                     autoHide: true,
                 });
                 PubSub.publish('COMPANIES.REFRESH');
@@ -179,6 +179,10 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                                     name="name"
                                     label="Name"
                                     required
+                                />
+                                <IndustrySelect
+                                    label="Industry"
+                                    name="industry"
                                 />
                             </Box>
                         </Fieldset>

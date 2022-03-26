@@ -2,7 +2,7 @@ import { object, string } from 'yup';
 import './locale.ts';
 
 const companySchema = object({
-    firstname:
+    name:
         string()
             .max(255)
             .required(),
