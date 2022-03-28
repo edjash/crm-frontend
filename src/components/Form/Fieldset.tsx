@@ -1,7 +1,10 @@
+import { Box, SxProps } from "@mui/material";
+
 type FieldsetProps = {
     children: React.ReactNode;
     legend: string;
     styles?: Record<string, any>;
+    boxStyles?: SxProps;
 };
 
 export default function Fieldset(props: FieldsetProps) {
@@ -13,7 +16,9 @@ export default function Fieldset(props: FieldsetProps) {
             ...props.styles
         }}>
             <legend><span>{props.legend}</span></legend>
-            {props.children}
+            <Box sx={{ ...props.boxStyles }}>
+                {props.children}
+            </Box>
         </fieldset>
     );
 }

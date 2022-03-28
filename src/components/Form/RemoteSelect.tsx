@@ -1,9 +1,10 @@
-import { SxProps, TextField, Theme } from '@mui/material';
+import { SxProps, Theme } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Ref, useEffect, useState } from 'react';
 import { Control, Controller, FieldError, FieldValues } from 'react-hook-form';
 import apiClient from '../apiClient';
+import TextFieldEx from './TextFieldEx';
 
 export type SelectOption = Record<string, string>;
 
@@ -198,9 +199,8 @@ function RemoteSelectBase(props: RemoteSelectProps) {
             loading={state.loading}
             value={state.selectedOption}
             ref={props.inputRef}
-            sx={props.sx}
             renderInput={(params) => (
-                <TextField
+                <TextFieldEx
                     {...params}
                     label={props.label}
                     helperText={props?.errors?.message ?? props?.helperText}

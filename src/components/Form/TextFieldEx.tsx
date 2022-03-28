@@ -2,14 +2,14 @@ import TextField, { TextFieldProps } from "@mui/material/TextField";
 import { Controller, useFormContext } from "react-hook-form";
 
 type TextFieldExProps = TextFieldProps & {
-    name: string;
+    name?: string;
     hidden?: boolean;
 }
 
 export default function TextFieldEx(props: TextFieldExProps) {
     const { formState, control } = useFormContext();
 
-    let errorMsg = formState.errors?.[props.name]?.message;
+    let errorMsg = props.name ? formState.errors?.[props.name]?.message : '';
 
     return (
         <Controller
@@ -18,7 +18,7 @@ export default function TextFieldEx(props: TextFieldExProps) {
                     {...props}
                     {...field}
                     sx={{
-                        display: props.hidden ? 'none' : 'block',
+                        display: props.hidden ? 'none' : 'inline-block',
                         ...props.sx
                     }}
                     value={field.value ?? ''}
@@ -31,7 +31,7 @@ export default function TextFieldEx(props: TextFieldExProps) {
                 />
             )}
             control={control}
-            name={props.name}
+            name={props.name ?? ''}
             defaultValue={props?.defaultValue ?? ''}
         />
     );

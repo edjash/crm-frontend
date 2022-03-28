@@ -2,7 +2,7 @@ import { Box, Theme, useMediaQuery } from '@mui/material';
 import { DialogProps } from '@mui/material/Dialog';
 import { uniqueId } from 'lodash';
 import { useRef, useState } from 'react';
-import { SocialIcon } from 'react-social-icons';
+import SocialIcon from '../SocialIcon';
 import useOnce from '../../hooks/useOnce';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
@@ -165,40 +165,39 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                         display: 'grid',
                         gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : 'auto',
                         alignItems: 'start',
-                        gap: 2,
+                        gap: 2
                     }}
                 >
-                    <Box display="grid" gap={2}>
+                    <Box display="grid" gap={1}>
                         <Fieldset legend="Personal">
-                            <Box display="grid" gap={1}>
-                                <ProfileAvatar
-                                    name="avatar"
-                                    sx={{ justifySelf: "center" }}
+                            <ProfileAvatar
+                                name="avatar"
+                                sx={{ justifySelf: "center" }}
+                            />
+                            <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
+                                <RemoteSelect
+                                    name="title"
+                                    label="Title"
+                                    sx={{ m: 0 }}
+                                    options={[
+                                        { value: 'Mr', label: 'Mr' },
+                                        { value: 'Mrs', label: 'Mrs' },
+                                        { value: 'Miss', label: 'Miss' },
+                                        { value: 'Ms', label: 'Ms' },
+                                        { value: 'Mx', label: 'Mx' },
+                                    ]}
                                 />
-                                <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
-                                    <RemoteSelect
-                                        name="title"
-                                        label="Title"
-                                        options={[
-                                            { value: 'Mr', label: 'Mr' },
-                                            { value: 'Mrs', label: 'Mrs' },
-                                            { value: 'Miss', label: 'Miss' },
-                                            { value: 'Ms', label: 'Ms' },
-                                            { value: 'Mx', label: 'Mx' },
-                                        ]}
-                                    />
-                                    <RemoteSelect
-                                        label="Pronouns"
-                                        name="pronouns"
-                                        options={[
-                                            { value: 'She/Her', label: 'She/Her' },
-                                            { value: 'He/Him', label: 'He/Him' },
-                                            { value: 'They/Them', label: 'They/Them' },
-                                        ]}
-                                    />
-                                </Box>
+                                <RemoteSelect
+                                    label="Pronouns"
+                                    name="pronouns"
+                                    options={[
+                                        { value: 'She/Her', label: 'She/Her' },
+                                        { value: 'He/Him', label: 'He/Him' },
+                                        { value: 'They/Them', label: 'They/Them' },
+                                    ]}
+                                />
                             </Box>
-                            <Box sx={{ display: 'grid' }}>
+                            <Box>
                                 <TextFieldEx
                                     name="firstname"
                                     label="First Name"
@@ -208,19 +207,24 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                     name="lastname"
                                     label="Last Name"
                                 />
+                                <TextFieldEx
+                                    name="nickname"
+                                    label="Nick Name"
+                                />
                             </Box>
                         </Fieldset>
-                        <MultiFieldset
-                            legend="Email Address"
-                            baseName="email_address"
-                        >
+                        <Fieldset legend="Company">
                             <TextFieldEx
-                                name="address"
-                                label="Email Address"
+                                name="company"
+                                label="Company"
                             />
-                        </MultiFieldset>
+                            <TextFieldEx
+                                name="jobtitle"
+                                label="Job Title"
+                            />
+                        </Fieldset>
                     </Box>
-                    <Box sx={{ overflowX: 'hidden', minWidth: 0 }}>
+                    <Box display="grid" gap={1}>
                         <MultiFieldset
                             baseName="address"
                             legend="Address"
@@ -234,27 +238,34 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                 name="country"
                             />
                         </MultiFieldset>
-                    </Box>
-                    <Box display="grid" gap={2}>
                         <MultiFieldset
                             legend="Phone Number"
                             baseName="phone_number"
                         >
                             <TextFieldEx name="number" label="Phone Number" />
                         </MultiFieldset>
+                    </Box>
+                    <Box display="grid" gap={1}>
                         <Fieldset legend="Social Media">
-                            {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
-                                <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>
-                                    <Box>
-                                        <SocialIcon network={network.toLowerCase()} fgColor="white" style={{ height: 25, width: 25 }} />
-                                    </Box>
-                                    <TextFieldEx
+                            {['LinkedIn', 'Twitter', 'Facebook', 'Instagram', 'Teams', 'Skype'].map((network, index) => (
+                                <Box display="flex" alignItems="center" gap={1}>
+                                    <SocialIcon network={network} />
+                                    < TextFieldEx
                                         name={`socialmedia.${network.toLowerCase()}`}
                                         label={network}
                                     />
                                 </Box>
                             ))}
                         </Fieldset>
+                        <MultiFieldset
+                            legend="Email Address"
+                            baseName="email_address"
+                        >
+                            <TextFieldEx
+                                name="address"
+                                label="Email Address"
+                            />
+                        </MultiFieldset>
                     </Box>
                 </Box>
             </Form>

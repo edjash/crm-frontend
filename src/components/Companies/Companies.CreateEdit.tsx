@@ -2,7 +2,7 @@ import { Box, Theme, useMediaQuery } from '@mui/material';
 import { DialogProps } from '@mui/material/Dialog';
 import { uniqueId } from 'lodash';
 import { useRef, useState } from 'react';
-import { SocialIcon } from 'react-social-icons';
+import SocialIcon from '../SocialIcon';
 import useOnce from '../../hooks/useOnce';
 import companySchema from '../../validation/companySchema';
 import apiClient from '../apiClient';
@@ -221,9 +221,7 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                         <Fieldset legend="Social Media">
                             {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
                                 <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>
-                                    <Box>
-                                        <SocialIcon network={network.toLowerCase()} fgColor="white" style={{ height: 25, width: 25 }} />
-                                    </Box>
+                                    <SocialIcon network={network} />
                                     <TextFieldEx
                                         name={`socialmedia.${network.toLowerCase()}`}
                                         label={network}

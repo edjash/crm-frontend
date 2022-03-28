@@ -58,6 +58,9 @@ const theme = createTheme({
         .formIconButton:hover .MuiSvgIcon-root {
             color: #ffffff;
         }
+        fieldset {
+            border:1px solid #484848;
+        }
       `,
         },
     },
