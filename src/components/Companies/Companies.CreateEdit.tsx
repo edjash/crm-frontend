@@ -2,8 +2,6 @@ import { Box, Theme, useMediaQuery } from '@mui/material';
 import { DialogProps } from '@mui/material/Dialog';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
-import SocialIcon from '../SocialIcon';
-import useOnce from '../../hooks/useOnce';
 import companySchema from '../../validation/companySchema';
 import apiClient from '../apiClient';
 import DialogEx from '../Dialogs/DialogEx';
@@ -15,6 +13,7 @@ import MultiFieldset from '../Form/MultiFieldset';
 import ProfileAvatar from '../Form/ProfileAvatar';
 import TextFieldEx from '../Form/TextFieldEx';
 import Overlay from '../Overlay';
+import SocialIcon from '../SocialIcon';
 
 export interface ShowCreateEditProps {
     contactId: number;
