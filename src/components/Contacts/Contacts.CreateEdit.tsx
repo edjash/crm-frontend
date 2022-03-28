@@ -1,9 +1,7 @@
 import { Box, Theme, useMediaQuery } from '@mui/material';
 import { DialogProps } from '@mui/material/Dialog';
 import { uniqueId } from 'lodash';
-import { useRef, useState } from 'react';
-import SocialIcon from '../SocialIcon';
-import useOnce from '../../hooks/useOnce';
+import { useEffect, useRef, useState } from 'react';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
 import DialogEx from '../Dialogs/DialogEx';
@@ -15,6 +13,7 @@ import ProfileAvatar from '../Form/ProfileAvatar';
 import RemoteSelect from '../Form/RemoteSelect';
 import TextFieldEx from '../Form/TextFieldEx';
 import Overlay from '../Overlay';
+import SocialIcon from '../SocialIcon';
 
 export interface ShowCreateEditProps {
     contactId: number;
@@ -44,8 +43,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         defaultValues: {},
     });
 
-    useOnce(() => {
-        if (props.type === 'edit') {
+    useEffect(() => {
+        if (props.type === 'edit' && !state.ready) {
             apiClient.get(`/contacts/${props.data?.contactId}`).then((response) => {
                 const values = prepareIncomingValues(response.data);
 
@@ -59,7 +58,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
             });
         }
-    });
+    }, [state.ready, props.type, props.data?.contactId]);
 
     const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
@@ -248,7 +247,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                     <Box display="grid" gap={1}>
                         <Fieldset legend="Social Media">
                             {['LinkedIn', 'Twitter', 'Facebook', 'Instagram', 'Teams', 'Skype'].map((network, index) => (
-                                <Box display="flex" alignItems="center" gap={1}>
+                                <Box display="flex" alignItems="center" gap={1} key={network}>
                                     <SocialIcon network={network} />
                                     < TextFieldEx
                                         name={`socialmedia.${network.toLowerCase()}`}

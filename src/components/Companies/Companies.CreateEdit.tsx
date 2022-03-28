@@ -1,7 +1,7 @@
 import { Box, Theme, useMediaQuery } from '@mui/material';
 import { DialogProps } from '@mui/material/Dialog';
 import { uniqueId } from 'lodash';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SocialIcon from '../SocialIcon';
 import useOnce from '../../hooks/useOnce';
 import companySchema from '../../validation/companySchema';
@@ -44,8 +44,8 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
         defaultValues: {},
     });
 
-    useOnce(() => {
-        if (props.type === 'edit') {
+    useEffect(() => {
+        if (props.type === 'edit' && !state.ready) {
             apiClient.get(`/companies/${props.data?.contactId}`).then((response) => {
                 const values = prepareIncomingValues(response.data);
 
@@ -59,7 +59,7 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
 
             });
         }
-    });
+    }, [props.type, state.ready, props.data?.contactId]);
 
     const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
