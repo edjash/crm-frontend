@@ -1,4 +1,4 @@
-import { Box, Theme, useMediaQuery } from '@mui/material';
+import { Box, TextField, Theme, useMediaQuery } from '@mui/material';
 import { DialogProps } from '@mui/material/Dialog';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
@@ -167,35 +167,36 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                         gap: 2,
                     }}
                 >
-                    <Box display="grid" gap={2}>
+                    <Box display="grid" gap={1}>
                         <Fieldset legend="Identity">
-                            <Box display="grid" gap={1}>
-                                <ProfileAvatar
-                                    name="avatar"
-                                    sx={{ justifySelf: "center" }}
-                                />
-                                <TextFieldEx
-                                    name="name"
-                                    label="Name"
-                                    required
-                                />
-                                <IndustrySelect
-                                    label="Industry"
-                                    name="industry"
-                                />
-                            </Box>
+                            <ProfileAvatar
+                                name="avatar"
+                                sx={{ justifySelf: "center" }}
+                            />
+                            <TextFieldEx
+                                name="name"
+                                label="Name"
+                                required
+                            />
+                            <IndustrySelect
+                                label="Industry"
+                                name="industry"
+                            />
+                            <TextFieldEx
+                                name="description"
+                                label="Description"
+                                multiline
+                                rows={3}
+                            />
                         </Fieldset>
                         <MultiFieldset
-                            legend="Email Address"
-                            baseName="email_address"
+                            legend="Phone Number"
+                            baseName="phone_number"
                         >
-                            <TextFieldEx
-                                name="address"
-                                label="Email Address"
-                            />
+                            <TextFieldEx name="number" label="Phone Number" />
                         </MultiFieldset>
                     </Box>
-                    <Box sx={{ overflowX: 'hidden', minWidth: 0 }}>
+                    <Box display="grid" gap={1}>
                         <MultiFieldset
                             baseName="address"
                             legend="Address"
@@ -209,19 +210,22 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                                 name="country"
                             />
                         </MultiFieldset>
-                    </Box>
-                    <Box display="grid" gap={2}>
                         <MultiFieldset
-                            legend="Phone Number"
-                            baseName="phone_number"
+                            legend="Email Address"
+                            baseName="email_address"
                         >
-                            <TextFieldEx name="number" label="Phone Number" />
+                            <TextFieldEx
+                                name="address"
+                                label="Email Address"
+                            />
                         </MultiFieldset>
+                    </Box>
+                    <Box display="grid" gap={1}>
                         <Fieldset legend="Social Media">
-                            {['LinkedIn', 'Twitter', 'Facebook', 'Instagram'].map((network, index) => (
-                                <Box sx={{ display: 'flex', alignItems: 'center' }} gap={1} key={network}>
+                            {['LinkedIn', 'Twitter', 'Facebook', 'Instagram', 'Teams', 'Skype'].map((network, index) => (
+                                <Box display="flex" alignItems="center" gap={1} key={network}>
                                     <SocialIcon network={network} />
-                                    <TextFieldEx
+                                    < TextFieldEx
                                         name={`socialmedia.${network.toLowerCase()}`}
                                         label={network}
                                     />
