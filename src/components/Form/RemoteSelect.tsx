@@ -39,6 +39,7 @@ export default function RemoteSelect(props: RemoteSelectProps) {
             render={({ ...controlProps }) => {
                 const errorMessage = controlProps.fieldState.error?.message ?? '';
                 const onChange = (selValue: string | null) => {
+                    console.log("SELECTED VALUE", selValue);
                     controlProps.field.onChange(selValue);
                 }
 
@@ -84,13 +85,16 @@ function RemoteSelectBase(props: RemoteSelectProps) {
                 defaultValue = null;
             }
             selectedOption = defaultValue;
+            if (props.onChange) {
+                props.onChange(defaultValue?.[valueField] ?? null);
+            }
         }
 
         if (defaultValue !== null) {
             options.forEach((item) => {
                 if (!isValidOption(item, valueField, labelField)) {
-                    console.error(`RemoteSelect: The options array does not consist of objects ` +
-                        `with the required keys '${labelField}' and '${valueField}'. ` +
+                    console.error(`RemoteSelect: The options array returned from the server ` +
+                        `does not consist of objects with the required keys '${labelField}' and '${valueField}'. ` +
                         `You can change the required keys by using the valueField and labelField props.`);
                     return;
                 }
