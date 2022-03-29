@@ -39,7 +39,6 @@ export default function RemoteSelect(props: RemoteSelectProps) {
             render={({ ...controlProps }) => {
                 const errorMessage = controlProps.fieldState.error?.message ?? '';
                 const onChange = (selValue: string | null) => {
-                    console.log("SELECTED VALUE", selValue);
                     controlProps.field.onChange(selValue);
                 }
 
@@ -66,7 +65,7 @@ const isValidOption = (option: any, valueField: string, labelField: string): boo
     return (valueField in option && labelField in option);
 };
 
-function RemoteSelectBase(props: RemoteSelectProps) {
+export function RemoteSelectBase(props: RemoteSelectProps) {
 
     let defaultValue = props?.defaultValue ?? null;
     const valueField: string = props.valueField ?? 'value';

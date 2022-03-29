@@ -294,7 +294,7 @@ export default function Companies() {
     }
 
     return (
-        <Box display="grid">
+        <Box display="grid" height="100%">
             <MainGrid
                 {...gridState}
                 containerRef={setContainerRef}

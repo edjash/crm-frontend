@@ -11,6 +11,7 @@ import Form from '../Form/Form';
 import MultiFieldset from '../Form/MultiFieldset';
 import ProfileAvatar from '../Form/ProfileAvatar';
 import RemoteSelect from '../Form/RemoteSelect';
+import SearchField from '../Form/SearchField';
 import TextFieldEx from '../Form/TextFieldEx';
 import Overlay from '../Overlay';
 import SocialIcon from '../SocialIcon';
@@ -213,9 +214,14 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                             </Box>
                         </Fieldset>
                         <Fieldset legend="Company">
-                            <TextFieldEx
+                            <SearchField
+                                endpoint="/companies"
+                                labelField="name"
+                                dataProperty="data"
                                 name="company"
                                 label="Company"
+                                options={[state.defaultValues.company]}
+                                defaultValue={state.defaultValues.company.id}
                             />
                             <TextFieldEx
                                 name="jobtitle"

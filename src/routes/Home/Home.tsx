@@ -38,7 +38,7 @@ function TabPanel(props: TabPanelProps) {
             top: 0,
             left: -9000,
             zIndex: 1,
-            visibility: 'hidden'
+            height: '100%'
         } as SystemProps;
     }
 
@@ -297,10 +297,10 @@ export default function Home() {
                         flexDirection: 'column',
                     }}
                 >
-                    <TabPanel value={state.selected} ident="contacts" sx={{ display: 'grid', flexGrow: 1 }}>
+                    <TabPanel value={state.selected} ident="contacts" sx={{ display: 'grid', flexGrow: 1, height: '100%' }}>
                         <Contacts />
                     </TabPanel>
-                    <TabPanel value={state.selected} ident="companies" sx={{ display: 'grid', flexGrow: 1 }}>
+                    <TabPanel value={state.selected} ident="companies" sx={{ display: 'grid', flexGrow: 1, height: '100%' }}>
                         <Companies />
                     </TabPanel>
                     <Footer />

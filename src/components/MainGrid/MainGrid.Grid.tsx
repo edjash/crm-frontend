@@ -55,7 +55,7 @@ export default function MainGrid(props: MainGridProps) {
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column' }} ref={props.containerRef}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} ref={props.containerRef}>
             <div>
                 {state.displaySelectionToolbar ?
                     <SelectionToolbar
@@ -76,7 +76,7 @@ export default function MainGrid(props: MainGridProps) {
                     />
                 }
             </div>
-            <div style={{ flexGrow: 1 }}>
+            <div style={{ flexGrow: 1, height: '100%' }}>
                 <DataGrid
                     columns={columns}
                     rows={props.rows}
