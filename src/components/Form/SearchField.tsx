@@ -27,7 +27,7 @@ export interface SearchFieldProps {
     inputRef?: Ref<HTMLInputElement>;
     remoteDataProperty?: string;
     addNewItemLabel?: string;
-    onAddClick?: () => void;
+    onAddClick?: () => Promise<Record<string, any>>;
     onChange?: (selOption: Record<string, string> | null) => void;
 };
 
@@ -172,8 +172,11 @@ export function SearchFieldBase(props: SearchFieldProps) {
 
     const onAddOptionClick = () => {
         if (props.onAddClick) {
-            props.onAddClick();
-        }   
+            const create = props.onAddClick();
+            create.then((data) => {
+                console.log("OK", data);
+            });
+        }
     }
 
     return (

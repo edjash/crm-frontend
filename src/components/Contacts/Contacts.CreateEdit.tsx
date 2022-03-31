@@ -138,10 +138,19 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         return pvalues;
     }
 
-    const onAddCompany = () => {
-        PubSub.publish('COMPANIES.NEW', () => {
-            console.log(arguments);
-            console.log("COMPANIES CALLBACK RESOLVED");
+    const onAddCompany = (): Promise<Record<string, any>> => {
+        return new Promise((resolve, reject) => {
+            PubSub.publish('COMPANIES.NEW', {
+                onSave: (success: boolean, data: Record<string, any>) => {
+                    if (success) {
+                        resolve(data.company);
+                    } else {
+                        reject(data);
+                    }
+                },
+                noAnimation: true,
+                hideBackdrop: true,
+            })
         });
     }
 

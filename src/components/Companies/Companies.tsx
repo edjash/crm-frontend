@@ -10,7 +10,7 @@ import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
 import MainGrid from '../MainGrid/MainGrid.Grid';
 import PullRefresh from '../PullRefresh';
-import CreateEditDlg, { ShowCreateEditProps } from './Companies.CreateEdit';
+import CompanyDialog, { CompanyDialogProps } from './Companies.CreateEdit';
 
 export default function Companies() {
 
@@ -19,7 +19,6 @@ export default function Companies() {
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const scrollRef = useRef<HTMLElement>();
     const onRefreshed = useRef<() => void>(() => { });
-    const onCompleted = useRef<() => void>(() => { });
 
     const [gridState, setGridState] = useState({
         title: 'Company',
@@ -134,7 +133,6 @@ export default function Companies() {
             },
             onConfirm: () => {
                 confirm.hide();
-
                 setGridState({
                     ...gridState,
                     deleteIds: dialogData,
@@ -168,30 +166,36 @@ export default function Companies() {
         PubSub.publish('COMPANIES.REFRESH', callback);
     };
 
-    const showCreateEditDlg = useCallback((props?: ShowCreateEditProps) => {
-        const type = (!props?.contactId) ? 'new' : 'edit';
-        const dlg = showModal(CreateEditDlg, {
-            type: type,
-            data: props,
+    const showCompanyDialog = useCallback((props: CompanyDialogProps) => {
+        const dlg = showModal(CompanyDialog, {
+            ...props,
             onCancel: () => {
                 dlg.destroy();
+                if (props.onCancel) {
+                    props.onCancel();
+                }
             },
-            onSave: () => {
+            onSave: (success: boolean, data: Record<string, any>) => {
                 dlg.destroy();
-            },
-            onCompleted: onCompleted.current
+                if (props.onSave) {
+                    props.onSave(success, data);
+                }
+            }
         });
     }, [showModal]);
 
-    const onFabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        showCreateEditDlg();
+    const onNewClick = () => {
+        showCompanyDialog({ type: 'new' });
     }
 
     const onClickContact = (e: React.MouseEvent, rowData: GridRowModel) => {
         e.preventDefault();
-        showCreateEditDlg({
-            contactId: rowData.id,
-            name: rowData.name,
+        showCompanyDialog({
+            type: 'edit',
+            data: {
+                contactId: rowData.id,
+                name: rowData.name,
+            }
         });
     };
 
@@ -204,16 +208,18 @@ export default function Companies() {
                 loading: true,
             }));
         });
-        const s2 = PubSub.subscribe('COMPANIES.NEW', (msg, callback?: () => void) => {
-            const fn = () => { };
-            onCompleted.current = callback ?? fn;
-            showCreateEditDlg();
+        const s2 = PubSub.subscribe('COMPANIES.NEW', (msg, props: CompanyDialogProps) => {
+            showCompanyDialog({
+                ...props,
+                type: 'new',
+            });
         });
         return () => {
             PubSub.unsubscribe(s1);
             PubSub.unsubscribe(s2);
         }
-    }, [showCreateEditDlg]);
+    }, [showCompanyDialog]);
+
     let columns: GridColDef[] = [
         AvatarCheckBox,
         {
@@ -305,7 +311,7 @@ export default function Companies() {
                 containerRef={setContainerRef}
                 columns={columns}
                 onSearch={onSearch}
-                onCreateClick={showCreateEditDlg}
+                onCreateClick={onNewClick}
                 onPageChange={onPageChange}
                 onDelete={onDelete}
                 onRefreshClick={onRefresh}
@@ -314,7 +320,7 @@ export default function Companies() {
             {isMobile &&
                 <Fab
                     aria-label="add"
-                    onClick={onFabClick}
+                    onClick={onNewClick}
                     sx={{
                         position: 'fixed',
                         bottom: 16,

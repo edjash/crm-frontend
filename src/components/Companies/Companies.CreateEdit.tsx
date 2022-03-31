@@ -1,5 +1,4 @@
 import { Box, Theme, useMediaQuery } from '@mui/material';
-import { DialogProps } from '@mui/material/Dialog';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import companySchema from '../../validation/companySchema';
@@ -15,30 +14,30 @@ import TextFieldEx from '../Form/TextFieldEx';
 import Overlay from '../Overlay';
 import SocialIcon from '../SocialIcon';
 
-export interface ShowCreateEditProps {
+export interface CompanyDialogData {
     contactId: number;
     name: string;
 };
 
-interface CreateEditState {
+export interface CompanyDialogProps {
+    type: 'new' | 'edit',
+    data?: CompanyDialogData,
+    onCancel?: () => void;
+    onSave?: (success: boolean, data: Record<string, any>) => void;
+    noAnimation?: boolean;
+    hideBackdrop?: boolean;
+};
+
+interface CompanyDialogState {
     loading: boolean;
     ready: boolean;
     open: boolean;
     defaultValues: Record<string, any>;
 }
 
-type CreateEditProps = DialogProps & {
-    type: 'new' | 'edit',
-    data?: ShowCreateEditProps,
-    onCancel: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-    onSave: () => void;
-    onCompleted?: (success: boolean, data: any) => void;
-};
+export default function CompanyDialog(props: CompanyDialogProps) {
 
-
-export default function CompanyCreateEdit(props: CreateEditProps) {
-
-    const [state, setState] = useState<CreateEditState>({
+    const [state, setState] = useState<CompanyDialogState>({
         loading: false,
         ready: (props.type === 'new'),
         open: true,
@@ -77,30 +76,29 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
             url = `${url}/${props.data.contactId}`;
         }
 
-        apiClient.post(url, data).then((response) => {
-            setState({ ...state, loading: false });
-            props.onSave();
-            if (props.type === 'edit') {
-                PubSub.publish('COMPANIES.REFRESH');
-            } else {
-                PubSub.publish('TOAST.SHOW', {
-                    message: 'Company Added',
-                    autoHide: true,
-                });
-                PubSub.publish('COMPANIES.REFRESH');
-            }
+        apiClient.post(url, data)
+            .then((response) => {
+                setState({ ...state, loading: false });
+                if (props.onSave) {
+                    props.onSave(true, response.data);
+                }
+                if (props.type === 'edit') {
+                    PubSub.publish('COMPANIES.REFRESH');
+                } else {
+                    PubSub.publish('TOAST.SHOW', {
+                        message: 'Company Added',
+                        autoHide: true,
+                    });
+                    PubSub.publish('COMPANIES.REFRESH');
+                }
 
-        }).then((response) => {
-            if (props.onCompleted) {
-                props.onCompleted(true, response);
-            }
-        }).catch((response) => {
-            setState({ ...state, loading: false });
-            if (props.onCompleted) {
-                props.onCompleted(false, null);
-            }
-            // apiClient.showErrors(response, formMethods.setError);
-        });
+            }).catch((response) => {
+                setState({ ...state, loading: false });
+                if (props.onSave) {
+                    props.onSave(false, response);
+                }
+                // apiClient.showErrors(response, formMethods.setError);
+            });
     }
 
     const onError = (data: any) => {
@@ -150,16 +148,25 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
         title = props?.data?.name ?? 'Unnamed';
     }
 
+    let extraProps: Record<string, any> = {};
+    if (props.noAnimation) {
+        extraProps['transitionDuration'] = 0;
+    }
+    if (props.hideBackdrop) {
+        extraProps['hideBackdrop'] = true;
+    }
+
     return (
         <DialogEx
             open={state.open}
-            onClose={props.onClose}
+            onClose={props.onCancel}
             title={title}
             displayMode={isDesktop ? 'normal' : 'mobile'}
             saveButtonProps={{
                 type: 'submit',
                 form: formId.current
             }}
+            {...extraProps}
         >
             <Form
                 onSubmit={onSubmit}
