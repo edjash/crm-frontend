@@ -4,7 +4,7 @@ import { Box, Fab, Link, Theme, useMediaQuery } from '@mui/material';
 import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { HTTPVerb, request } from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
@@ -19,6 +19,7 @@ export default function Companies() {
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const scrollRef = useRef<HTMLElement>();
     const onRefreshed = useRef<() => void>(() => { });
+    const onCompleted = useRef<() => void>(() => { });
 
     const [gridState, setGridState] = useState({
         title: 'Company',
@@ -48,21 +49,6 @@ export default function Companies() {
             }
         }
     }
-
-    useEffect(() => {
-        const s1 = PubSub.subscribe('COMPANIES.REFRESH', (msg, callback?: () => void) => {
-            console.log(callback);
-            const fn = () => { };
-            onRefreshed.current = callback ?? fn;
-            setGridState((state) => ({
-                ...state,
-                loading: true,
-            }));
-        });
-        return () => {
-            PubSub.unsubscribe(s1);
-        }
-    }, []);
 
     useEffect(() => {
         if (!gridState.loading) {
@@ -182,9 +168,8 @@ export default function Companies() {
         PubSub.publish('COMPANIES.REFRESH', callback);
     };
 
-    const showCreateEditDlg = (props?: ShowCreateEditProps) => {
+    const showCreateEditDlg = useCallback((props?: ShowCreateEditProps) => {
         const type = (!props?.contactId) ? 'new' : 'edit';
-
         const dlg = showModal(CreateEditDlg, {
             type: type,
             data: props,
@@ -194,8 +179,9 @@ export default function Companies() {
             onSave: () => {
                 dlg.destroy();
             },
+            onCompleted: onCompleted.current
         });
-    };
+    }, [showModal]);
 
     const onFabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         showCreateEditDlg();
@@ -209,6 +195,25 @@ export default function Companies() {
         });
     };
 
+    useEffect(() => {
+        const s1 = PubSub.subscribe('COMPANIES.REFRESH', (msg, callback?: () => void) => {
+            const fn = () => { };
+            onRefreshed.current = callback ?? fn;
+            setGridState((state) => ({
+                ...state,
+                loading: true,
+            }));
+        });
+        const s2 = PubSub.subscribe('COMPANIES.NEW', (msg, callback?: () => void) => {
+            const fn = () => { };
+            onCompleted.current = callback ?? fn;
+            showCreateEditDlg();
+        });
+        return () => {
+            PubSub.unsubscribe(s1);
+            PubSub.unsubscribe(s2);
+        }
+    }, [showCreateEditDlg]);
     let columns: GridColDef[] = [
         AvatarCheckBox,
         {

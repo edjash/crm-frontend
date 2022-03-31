@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ErrorOption } from 'react-hook-form';
 import { SERVER_URL } from '../app/constants';
 
@@ -51,7 +51,7 @@ export function request(
             config.params = data;
     }
 
-    return axios.request(config).catch(handleError);
+    return axios.request(config);
 }
 
 export function get(endpoint: string, params: object = {}) {
@@ -86,14 +86,14 @@ export function clearSession() {
 }
 
 
-function handleError(error: AxiosError) {
+// function handleError(error: AxiosError) {
 
-    if (error.response?.status === 401) {
-        PubSub.publish('AUTH.TIMEOUT');
-    }
+//     if (error.response?.status === 401) {
+//         PubSub.publish('AUTH.TIMEOUT');
+//     }
 
-    return Promise.reject(error.response);
-}
+//     return Promise.reject(error.response);
+// }
 
 type setErrorFn = (name: string, error: ErrorOption, options?: {
     shouldFocus: boolean;

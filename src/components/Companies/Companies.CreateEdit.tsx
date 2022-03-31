@@ -32,7 +32,9 @@ type CreateEditProps = DialogProps & {
     data?: ShowCreateEditProps,
     onCancel: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     onSave: () => void;
+    onCompleted?: (success: boolean, data: any) => void;
 };
+
 
 export default function CompanyCreateEdit(props: CreateEditProps) {
 
@@ -88,8 +90,15 @@ export default function CompanyCreateEdit(props: CreateEditProps) {
                 PubSub.publish('COMPANIES.REFRESH');
             }
 
+        }).then((response) => {
+            if (props.onCompleted) {
+                props.onCompleted(true, response);
+            }
         }).catch((response) => {
             setState({ ...state, loading: false });
+            if (props.onCompleted) {
+                props.onCompleted(false, null);
+            }
             // apiClient.showErrors(response, formMethods.setError);
         });
     }

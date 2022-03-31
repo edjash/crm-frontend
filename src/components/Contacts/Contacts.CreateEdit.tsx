@@ -68,15 +68,14 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     const onSubmit = (data: any) => {
 
         setState({ ...state, loading: true });
-
-        data = prepareOutgoingValues(data);
+        const postData = prepareOutgoingValues(data);
 
         let url = '/contacts';
         if (props.type === 'edit' && props.data?.contactId) {
             url = `${url}/${props.data.contactId}`;
         }
 
-        apiClient.post(url, data).then((response) => {
+        apiClient.post(url, postData).then((response) => {
             setState({ ...state, loading: false });
             props.onSave();
             if (props.type === 'edit') {
@@ -100,26 +99,31 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     };
 
     const prepareOutgoingValues = (values: Record<string, any>) => {
-        if (values.address) {
-            values.address =
-                values.address.map((item: Record<string, any>) => {
-                    if (item.country && typeof item.country == 'object') {
+        const pvalues = { ...values };
+        if (pvalues.address) {
+            pvalues.address =
+                pvalues.address.map((item: Record<string, any>) => {
+                    if (item.country && typeof item.country === 'object') {
                         item.country = item.country.code;
                     }
                     return item;
                 });
         }
-        return values;
+        if (pvalues.company && typeof pvalues.company === 'object') {
+            pvalues.company = pvalues.company.id;
+        }
+        return pvalues;
     }
 
     const prepareIncomingValues = (values: Record<string, any>) => {
-        values.social_media_url.forEach((item: Record<string, string>) => {
-            values[`socialmedia.${item.ident}`] = item.url;
+        const pvalues = { ...values };
+        pvalues.social_media_url.forEach((item: Record<string, string>) => {
+            pvalues[`socialmedia.${item.ident}`] = item.url;
         });
-        delete values['social_media_url'];
+        delete pvalues['social_media_url'];
 
-        values.address =
-            values.address.map((addr: Record<string, any>) => {
+        pvalues.address =
+            pvalues.address.map((addr: Record<string, any>) => {
                 if (addr?.country_code && addr?.country_name) {
                     addr.country = {
                         code: addr?.country_code,
@@ -131,7 +135,14 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                 return addr;
             });
 
-        return values;
+        return pvalues;
+    }
+
+    const onAddCompany = () => {
+        PubSub.publish('COMPANIES.NEW', () => {
+            console.log(arguments);
+            console.log("COMPANIES CALLBACK RESOLVED");
+        });
     }
 
     let title = "New Contact";
@@ -215,13 +226,13 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                         </Fieldset>
                         <Fieldset legend="Company">
                             <SearchField
-                                endpoint="/companies"
+                                url="/companies"
                                 labelField="name"
-                                dataProperty="data"
+                                valueField="id"
                                 name="company"
                                 label="Company"
-                                options={[state.defaultValues.company]}
-                                defaultValue={state.defaultValues.company.id}
+                                remoteDataProperty="data"
+                                onAddClick={onAddCompany}
                             />
                             <TextFieldEx
                                 name="jobtitle"
