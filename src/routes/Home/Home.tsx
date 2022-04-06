@@ -6,11 +6,13 @@ import {
 import { SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Companies from '../../components/Companies/Companies';
 import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
 import TopBar from '../../components/TopBar';
+import { logout } from '../../store/reducers/auth/authSlice';
 import NavDrawer, { NavbarSpacer, NavItem } from './Nav';
 
 interface TabPanelProps {
@@ -56,13 +58,16 @@ function TabPanel(props: TabPanelProps) {
 
 
 export default function Home() {
-
+    const dispatch = useDispatch();
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const margin = (isMobile) ? 0 : 1;
 
     const [selected, setSelected] = useState('contacts');
 
     const onNavClick = (ident: string) => {
+        if (ident === 'logout') {
+            return dispatch(logout());
+        }
         if (isMobile) {
             PubSub.publishSync('NAV.TOGGLECLICK');
         }
