@@ -1,21 +1,20 @@
 import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {
-    Box, Divider, Drawer as MuiDrawer, List,
+    Box, Divider, List,
     ListItem,
     ListItemIcon,
-    ListItemText, styled, Theme, Typography,
-    useMediaQuery
+    ListItemText, Theme, useMediaQuery
 } from '@mui/material';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import { CSSObject, SystemProps } from '@mui/system';
+import { SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Companies from '../../components/Companies/Companies';
 import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import Footer from '../../components/Footer';
 import TopBar from '../../components/TopBar';
+import NavDrawer, { NavbarSpacer, NavItem } from './Nav';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -29,6 +28,9 @@ function TabPanel(props: TabPanelProps) {
 
     let styles = {
         zIndex: 2,
+        display: 'grid',
+        flexGrow: 1,
+        height: '100%',
         ...sx,
     } as SystemProps;
 
@@ -55,237 +57,56 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-const drawerWidth = 240;
-
-const openNavAnimation = (theme: Theme): CSSObject => ({
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: 'hidden',
-});
-
-const closeNavAnimation = (theme: Theme): CSSObject => ({
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up('sm')]: {
-        width: `calc(${theme.spacing(9)} + 1px)`,
-    },
-});
-
-const DesktopDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
-        width: drawerWidth,
-        flexShrink: 0,
-        whiteSpace: 'nowrap',
-        boxSizing: 'border-box',
-        ...(open && {
-            ...openNavAnimation(theme),
-            '& .MuiDrawer-paper': openNavAnimation(theme),
-        }),
-        ...(!open && {
-            ...closeNavAnimation(theme),
-            '& .MuiDrawer-paper': closeNavAnimation(theme),
-        }),
-    }),
-);
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-}));
-
-interface DrawerProps {
-    open: boolean;
-    isMobile?: boolean;
-    children: React.ReactNode;
-    onClose: () => void;
-};
-
-const MobileDrawer = (props: DrawerProps) => {
-
-    const [open, setOpen] = useState(props.open);
-
-    useEffect(() => {
-        const token = PubSub.subscribe('NAV.TOGGLE', (msg, data) => {
-            setOpen(!open);
-        });
-        return () => {
-            PubSub.unsubscribe(token);
-        }
-    }, [open]);
-
-    const toggle = (open: boolean) =>
-        (event: React.KeyboardEvent | React.MouseEvent) => {
-            if (
-                event &&
-                event.type === 'keydown' &&
-                ((event as React.KeyboardEvent).key === 'Tab' ||
-                    (event as React.KeyboardEvent).key === 'Shift')
-            ) {
-                return;
-            }
-
-            setOpen(open);
-            if (!open && props.onClose) {
-                props.onClose();
-            }
-        };
-
-    return (
-        <SwipeableDrawer
-            anchor="left"
-            open={open}
-            onClose={toggle(false)}
-            onOpen={toggle(true)}
-            disableSwipeToOpen={true}
-            disableDiscovery={true}
-            ModalProps={{
-                keepMounted: true,
-            }}
-        >
-            <Typography variant="subtitle2" sx={{
-                textAlign: 'center',
-                padding: 3,
-                overflow: 'hidden',
-                mb: 1
-            }}>
-                <i>CRMdemo</i>
-            </Typography>
-            <div style={{ width: '80vw' }}>
-                {props.children}
-            </div>
-        </SwipeableDrawer>
-    );
-}
-
-const Drawer = (props: DrawerProps) => {
-    if (props.isMobile) {
-        return (
-            <MobileDrawer open={props.open} onClose={props.onClose}>
-                {props.children}
-            </MobileDrawer>
-        );
-    }
-    return (
-        <DesktopDrawer
-            anchor="left"
-            open={props.open}
-            PaperProps={{ elevation: 1 }}
-            sx={{ zIndex: 1 }}
-            variant="permanent"
-            ModalProps={{
-                keepMounted: true,
-            }}
-        >
-            {props.children}
-        </DesktopDrawer>
-    );
-};
 
 export default function Home() {
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const margin = (isMobile) ? 0 : 1;
 
-    const [state, setState] = useState({
-        navOpen: false,
-        selected: 'contacts',
-        canPullRefresh: isMobile,
-    });
+    const [selected, setSelected] = useState('contacts');
 
     const onNavClick = (ident: string) => {
-
-        setState({
-            ...state,
-            selected: ident
-        });
-
         if (isMobile) {
-            toggleNav();
+            PubSub.publishSync('NAV.TOGGLECLICK');
         }
-
-        PubSub.publish('NAV.ITEMCLICK', { ident: ident });
-    };
-
-    const toggleNav = () => {
-        setState((state) => {
-            return {
-                ...state,
-                navOpen: !state.navOpen
-            };
-        });
-    };
-
-    const closeNav = () => {
-        setState({
-            ...state,
-            navOpen: false,
-        });
-    }
-
-    useEffect(() => {
-        const navToken = PubSub.subscribe('NAV.TOGGLE', toggleNav);
-        return () => {
-            PubSub.unsubscribe(navToken);
-        }
-    }, []);
-
-    const onNavToggleClick = () => {
-        PubSub.publishSync('NAV.TOGGLE');
+        setSelected(ident);
     }
 
     return (
         <Box sx={{ display: 'flex', height: '100vh' }}>
-            <Drawer isMobile={isMobile} onClose={closeNav} open={state.navOpen}>
+            <NavDrawer isMobile={isMobile}>
                 {!isMobile &&
-                    <DrawerHeader />
+                    <NavbarSpacer />
                 }
                 <List>
-                    <ListItem button key="contacts"
-                        onClick={() => { onNavClick('contacts'); }}
-                        selected={state.selected === 'contacts'}
-                    >
-                        <ListItemIcon><ContactsIcon /></ListItemIcon>
-                        <ListItemText primary="Contacts" />
-                    </ListItem>
-                    <ListItem button key="companies"
-                        onClick={() => { onNavClick('companies'); }}
-                        selected={state.selected === 'companies'}
-                    >
-                        <ListItemIcon><CompaniesIcon /></ListItemIcon>
-                        <ListItemText primary="Companies" />
-                    </ListItem>
+                    <NavItem
+                        id="contacts"
+                        label="Contacts"
+                        selected={selected === 'contacts'}
+                        icon={<ContactsIcon />}
+                        onClick={() => onNavClick('contacts')}
+                    />
+                    <NavItem
+                        id="companies"
+                        label="Companies"
+                        selected={selected === 'companies'}
+                        icon={<CompaniesIcon />}
+                        onClick={() => onNavClick('companies')}
+                    />
                     <Divider sx={{ mt: 5, mb: 2 }} hidden={!isMobile} />
                     {isMobile &&
-                        <ListItem button key="logout"
-                            onClick={() => { PubSub.publish('AUTH.LOGOUT'); }}
-                        >
-                            <ListItemIcon><LogoutIcon /></ListItemIcon>
-                            <ListItemText primary="Logout" />
-                        </ListItem>
+                        <NavItem
+                            id="logout"
+                            label="Logout"
+                            icon={<LogoutIcon />}
+                            onClick={() => onNavClick('logout')}
+                        />
                     }
-                    {/* <ListItem disabled button key="companies"
-                        onClick={() => { onNavClick('companies'); }}
-                        selected={state.selected === 'companies'}
-                    >
-                        <ListItemIcon><CompaniesIcon /></ListItemIcon>
-                        <ListItemText primary="Companies" />
-                    </ListItem> */}
                 </List>
-            </Drawer>
+            </NavDrawer>
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <TopBar sx={{ flexGrow: 0 }} onNavToggleClick={onNavToggleClick} />
-                <DrawerHeader />
+                <TopBar />
+                <NavbarSpacer />
                 <Box
                     component="main"
                     sx={{
@@ -297,10 +118,10 @@ export default function Home() {
                         flexDirection: 'column',
                     }}
                 >
-                    <TabPanel value={state.selected} ident="contacts" sx={{ display: 'grid', flexGrow: 1, height: '100%' }}>
+                    <TabPanel value={selected} ident="contacts">
                         <Contacts />
                     </TabPanel>
-                    <TabPanel value={state.selected} ident="companies" sx={{ display: 'grid', flexGrow: 1, height: '100%' }}>
+                    <TabPanel value={selected} ident="companies">
                         <Companies />
                     </TabPanel>
                     <Footer />

@@ -27,8 +27,9 @@ export default function TopBar(props: TopBarProps) {
             <Toolbar disableGutters sx={{ ml: 2, mr: 2 }}>
                 <IconButton
                     color="inherit"
-                    aria-label="open drawer"
-                    onClick={props.onNavToggleClick}
+                    onClick={() => {
+                        PubSub.publishSync('NAV.TOGGLECLICK');
+                    }}
                     edge="start"
                     sx={{ mr: 2 }}
                     size="small"
