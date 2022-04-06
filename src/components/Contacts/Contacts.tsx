@@ -51,7 +51,6 @@ export default function Contacts() {
 
     useEffect(() => {
         const s1 = PubSub.subscribe('CONTACTS.REFRESH', (msg, callback?: () => void) => {
-            console.log(callback);
             const fn = () => { };
             onRefreshed.current = callback ?? fn;
             setGridState((state) => ({
