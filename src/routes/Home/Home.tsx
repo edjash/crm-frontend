@@ -1,10 +1,7 @@
 import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {
-    Box, Divider, List,
-    ListItem,
-    ListItemIcon,
-    ListItemText, Theme, useMediaQuery
+    Box, Divider, List, Theme, useMediaQuery
 } from '@mui/material';
 import { SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';

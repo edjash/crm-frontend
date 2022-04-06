@@ -1,4 +1,14 @@
-import { CSSObject, Drawer as MuiDrawer, ListItem, ListItemIcon, ListItemText, styled, SwipeableDrawer, Theme, Typography } from "@mui/material";
+import {
+    CSSObject,
+    Drawer as MuiDrawer,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    styled,
+    SwipeableDrawer,
+    Theme,
+    Typography
+} from "@mui/material";
 import { useEffect, useState } from "react";
 
 const drawerWidth = 240;
@@ -68,37 +78,13 @@ export default function NavDrawer(props: NavDrawerProps) {
         };
     }, [open]);
 
-    const onClose = () => {
-        console.log("Close");
-    }
-
-    const toggle = (open: boolean) => {
-        setOpen(open);
-        console.log("set open", open);
-        // (event: React.KeyboardEvent | React.MouseEvent) => {
-        //     if (
-        //         event &&
-        //         event.type === 'keydown' &&
-        //         ((event as React.KeyboardEvent).key === 'Tab' ||
-        //             (event as React.KeyboardEvent).key === 'Shift')
-        //     ) {
-        //         return;
-        //     }
-        //     console.log("set open", open);
-        //     setOpen(open);
-        //     if (!open) {
-        //         onClose();
-        //     }
-        // };
-    }
-
     if (props.isMobile) {
         return (
             <SwipeableDrawer
                 anchor="left"
                 open={open}
-                onClose={() => toggle(false)}
-                onOpen={() => toggle(true)}
+                onClose={() => setOpen(false)}
+                onOpen={() => setOpen(true)}
                 disableSwipeToOpen={true}
                 disableDiscovery={true}
                 ModalProps={{
