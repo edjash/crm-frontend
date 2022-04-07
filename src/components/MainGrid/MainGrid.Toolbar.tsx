@@ -24,20 +24,21 @@ export default function MainGridToolbar(props: ToolbarProps) {
 
     const handleSearch = (value: string) => {
         if (props.onSearch) {
-            if (timer.current) {
-                clearInterval(timer.current);
-            }
             props.onSearch(value);
         }
     };
 
-    const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    const onSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
+        if (timer.current) {
+            clearInterval(timer.current);
+        }
+        
         const value = e.currentTarget.value;
 
         if (!value) {
             handleSearch('');
         } else {
-            timer.current = setInterval(() => handleSearch(value), 1000);
+            timer.current = setTimeout(() => handleSearch(value), 1000);
         }
     };
 
@@ -69,7 +70,7 @@ export default function MainGridToolbar(props: ToolbarProps) {
                     type="search"
                     size="small"
                     placeholder={`Search`}
-                    onChange={onSearch}
+                    onChange={onSearchInput}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">

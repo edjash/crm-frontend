@@ -87,7 +87,8 @@ export default function Contacts() {
                     setGridState(state => ({
                         ...state,
                         deleteIds: [],
-                        page: res.data.last_page
+                        page: res.data.last_page,
+                        loading: false,
                     }));
                     return;
                 }
