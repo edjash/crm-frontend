@@ -91,6 +91,7 @@ const GridCellCheckbox = (params: GridRenderCellParams) => {
         })
     }
 
+    const avatar = (params.row.avatar) ? `storage/avatars/small/${params.row.avatar}` : null;
     return (
         <div
             onMouseOver={onMouseOver}
@@ -98,7 +99,7 @@ const GridCellCheckbox = (params: GridRenderCellParams) => {
         >
             {state.showCheckbox
                 ? <Checkbox onChange={handleChange} checked={state.checked} />
-                : <Avatar name={params.row?.fullname ?? params.row.name} avatar={`storage/avatars/small/${params.row.avatar}`} />
+                : <Avatar name={params.row?.fullname ?? params.row.name} avatar={avatar} />
             }
         </div>
     );

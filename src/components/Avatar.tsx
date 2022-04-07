@@ -3,7 +3,7 @@ import { SERVER_URL } from '../app/constants';
 
 interface AvatarProps {
     name: string;
-    avatar: string;
+    avatar: string | null;
 };
 
 export default function Avatar(props: AvatarProps) {
