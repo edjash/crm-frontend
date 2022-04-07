@@ -271,6 +271,14 @@ export default function Contacts() {
                 flex: 1
             },
             {
+                field: 'phone_number',
+                hide: true,
+            },
+            {
+                field: 'email_address',
+                hide: true,
+            },
+            {
                 field: 'action',
                 headerName: '',
                 renderCell: (params) => {
