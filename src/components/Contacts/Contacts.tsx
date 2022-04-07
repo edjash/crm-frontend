@@ -25,7 +25,6 @@ export default function Contacts() {
         title: 'Contact',
         titlePlural: 'Contacts',
         searchQuery: '',
-        searchFields: [] as string[],
         searchChanged: false,
         rows: [] as GridRowModel[],
         columns: [],
@@ -77,12 +76,19 @@ export default function Contacts() {
             method = 'DELETE';
         }
 
+        const fields: string[] = [];
+        columns.current.forEach((el) => {
+            if (el.field !== 'id' && el.field !== 'action') {
+                fields.push(el.field);
+            }
+        });
+
         request(method, endpoint, {
             sortBy: 'id',
             sortDirection: 'desc',
             limit: gridState.rowsPerPage,
             search: gridState.searchQuery,
-            fields: gridState.searchFields.join(','),
+            fields: fields.join(','),
             page: gridState.page,
         })
             .then((res) => {
@@ -162,17 +168,9 @@ export default function Contacts() {
     };
 
     const onSearch = (query: string) => {
-        const fields: string[] = [];
-        columns.current.forEach((el) => {
-            if (el.field !== 'id' && el.field !== 'action') {
-                fields.push(el.field);
-            }
-        });
-
         setGridState({
             ...gridState,
             searchQuery: query,
-            searchFields: fields,
             searchChanged: true,
             page: 1,
             loading: true,
