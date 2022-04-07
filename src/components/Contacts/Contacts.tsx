@@ -19,11 +19,13 @@ export default function Contacts() {
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const scrollRef = useRef<HTMLElement>();
     const onRefreshed = useRef<() => void>(() => { });
+    const columns = useRef<GridColDef[]>([]);
 
     const [gridState, setGridState] = useState({
         title: 'Contact',
         titlePlural: 'Contacts',
         searchQuery: '',
+        searchFields: [] as string[],
         searchChanged: false,
         rows: [] as GridRowModel[],
         columns: [],
@@ -80,6 +82,7 @@ export default function Contacts() {
             sortDirection: 'desc',
             limit: gridState.rowsPerPage,
             search: gridState.searchQuery,
+            fields: gridState.searchFields.join(','),
             page: gridState.page,
         })
             .then((res) => {
@@ -159,9 +162,17 @@ export default function Contacts() {
     };
 
     const onSearch = (query: string) => {
+        const fields: string[] = [];
+        columns.current.forEach((el) => {
+            if (el.field !== 'id' && el.field !== 'action') {
+                fields.push(el.field);
+            }
+        });
+
         setGridState({
             ...gridState,
             searchQuery: query,
+            searchFields: fields,
             searchChanged: true,
             page: 1,
             loading: true,
@@ -209,7 +220,7 @@ export default function Contacts() {
         });
     };
 
-    let columns: GridColDef[] = [
+    const basic_columns = [
         AvatarCheckBox,
         {
             field: 'fullname',
@@ -222,41 +233,44 @@ export default function Contacts() {
                     </Link>
                 );
             }
-        },
-        {
-            field: 'address',
-            headerName: 'Address',
-            width: 410,
-            cellClassName: 'allowWrap',
-            valueGetter: (params: any) => {
-                return params.row?.address?.[0]?.full_address ?? '';
-            }
-        },
-        {
-            field: 'phone_number',
-            headerName: 'Phone Number',
-            width: 130,
-            valueGetter: (params: any) => {
-                return params.row?.phone_number?.[0]?.number ?? '';
-            }
-        },
-        {
-            field: 'email_address',
-            headerName: 'Email Address',
-            width: 220,
-            valueGetter: (params: any) => {
-                return params.row?.email_address?.[0]?.address ?? '';
-            }
         }
     ];
 
-    if (isMobile) {
-
-        columns = [
-            columns[0],
+    if (!isMobile) {
+        columns.current = [
+            ...basic_columns,
             {
-                ...columns[1],
-                flex: 1,
+                field: 'address',
+                headerName: 'Address',
+                width: 410,
+                cellClassName: 'allowWrap',
+                valueGetter: (params: any) => {
+                    return params.row?.address?.[0]?.full_address ?? '';
+                }
+            },
+            {
+                field: 'phone_number',
+                headerName: 'Phone Number',
+                width: 130,
+                valueGetter: (params: any) => {
+                    return params.row?.phone_number?.[0]?.number ?? '';
+                }
+            },
+            {
+                field: 'email_address',
+                headerName: 'Email Address',
+                width: 220,
+                valueGetter: (params: any) => {
+                    return params.row?.email_address?.[0]?.address ?? '';
+                }
+            }
+        ];
+    } else {
+        columns.current = [
+            basic_columns[0],
+            {
+                ...basic_columns[1],
+                flex: 1
             },
             {
                 field: 'action',
@@ -298,7 +312,7 @@ export default function Contacts() {
             <MainGrid
                 {...gridState}
                 containerRef={setContainerRef}
-                columns={columns}
+                columns={columns.current}
                 onSearch={onSearch}
                 onCreateClick={showCreateEditDlg}
                 onPageChange={onPageChange}
