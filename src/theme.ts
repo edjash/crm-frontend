@@ -61,6 +61,23 @@ const theme = createTheme({
         fieldset {
             border:1px solid #484848;
         }
+        .AvatarCheckBox .MuiCheckbox-root {
+            display: none;
+        }
+        .Mui-selected .AvatarCheckBox .MuiCheckbox-root,
+        .AvatarCheckBox.checked .MuiCheckbox-root {
+            display: inline-flex;
+        }
+        .Mui-selected .AvatarCheckBox .MuiAvatar-root,
+        .AvatarCheckBox.checked .MuiAvatar-root {
+            display: none;
+        }
+        .AvatarCheckBox:hover .MuiAvatar-root {
+            display: none;
+        }
+        .AvatarCheckBox:hover .MuiCheckbox-root {
+            display: inline-flex;
+        }
       `,
         },
     },

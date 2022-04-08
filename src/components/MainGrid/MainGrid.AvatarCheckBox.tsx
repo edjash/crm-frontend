@@ -7,9 +7,10 @@ import {
     GridSelectionModel,
     useGridApiContext
 } from '@mui/x-data-grid';
-import { ChangeEvent, useState, MouseEvent, useEffect } from 'react';
+import { ChangeEvent, useState } from 'react';
 import useOnce from '../../hooks/useOnce';
 import Avatar from '../Avatar';
+import clsx from 'clsx';
 
 //potentially memoise these functions
 export const GridHeaderCheckbox = (props: GridColumnHeaderParams) => {
@@ -45,17 +46,7 @@ export const GridHeaderCheckbox = (props: GridColumnHeaderParams) => {
 
 const GridCellCheckbox = (params: GridRenderCellParams) => {
     const selected = params.api.isRowSelected(params.id);
-    const [state, setState] = useState({
-        showCheckbox: selected,
-        checked: selected,
-    });
-
-    useEffect(() => {
-        setState({
-            showCheckbox: selected,
-            checked: selected,
-        });
-    }, [selected]);
+    const [checked, setChecked] = useState(selected);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const checked = e.target.checked;
@@ -70,37 +61,15 @@ const GridCellCheckbox = (params: GridRenderCellParams) => {
             selModel.push(params.id);
         }
         params.api.setSelectionModel(selModel);
-        setState({
-            ...state,
-            checked: checked,
-            showCheckbox: checked,
-        });
+        setChecked(checked);
     };
 
-    const onMouseOver = (e: MouseEvent<HTMLDivElement>) => {
-        setState({
-            ...state,
-            showCheckbox: true,
-        })
-    }
-
-    const onMouseLeave = (e: MouseEvent<HTMLDivElement>) => {
-        setState({
-            ...state,
-            showCheckbox: state.checked || false,
-        })
-    }
-
     const avatar = (params.row.avatar) ? `storage/avatars/small/${params.row.avatar}` : null;
+
     return (
-        <div
-            onMouseOver={onMouseOver}
-            onMouseLeave={onMouseLeave}
-        >
-            {state.showCheckbox
-                ? <Checkbox onChange={handleChange} checked={state.checked} />
-                : <Avatar name={params.row?.fullname ?? params.row.name} avatar={avatar} />
-            }
+        <div className={clsx({ 'AvatarCheckBox': true, 'checked': checked || selected })}>
+            <Checkbox onChange={handleChange} checked={checked || selected} />
+            <Avatar name={params.row?.fullname ?? params.row.name} avatar={avatar} />
         </div>
     );
 };
