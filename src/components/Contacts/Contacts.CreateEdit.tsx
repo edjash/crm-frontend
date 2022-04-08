@@ -275,7 +275,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                             {['LinkedIn', 'Twitter', 'Facebook', 'Instagram', 'Teams', 'Skype'].map((network, index) => (
                                 <Box display="flex" alignItems="center" gap={1} key={network}>
                                     <SocialIcon network={network} />
-                                    < TextFieldEx
+                                    <TextFieldEx
                                         name={`socialmedia.${network.toLowerCase()}`}
                                         label={network}
                                     />
