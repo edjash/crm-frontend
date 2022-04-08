@@ -189,11 +189,6 @@ export function SearchFieldBase(props: SearchFieldProps) {
 
     return (
         <Autocomplete
-            // autoComplete
-            // includeInputInList
-            // filterSelectedOptions
-            //filterOptions={(x) => x}
-            //PaperComponent={AutocompletePaperEx}
             filterOptions={(options: SelectOption[]) => {
                 options.push({
                     value: "--add-new-item--",
