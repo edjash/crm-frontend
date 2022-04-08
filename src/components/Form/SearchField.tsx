@@ -174,7 +174,15 @@ export function SearchFieldBase(props: SearchFieldProps) {
         if (props.onAddClick) {
             const create = props.onAddClick();
             create.then((data) => {
-                console.log("OK", data);
+                const selectedOption = {
+                    value: data?.[valueField] ?? '',
+                    label: data?.[labelField] ?? '',
+                };
+                setState(state => ({
+                    ...state,
+                    selectedOption: selectedOption,
+                }));
+                formChange(selectedOption);
             });
         }
     }
