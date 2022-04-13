@@ -159,7 +159,7 @@ export default function CompanyDialog(props: CompanyDialogProps) {
     return (
         <DialogEx
             open={state.open}
-            onClose={props.onCancel}
+            onCancel={props.onCancel}
             title={title}
             displayMode={isDesktop ? 'normal' : 'mobile'}
             saveButtonProps={{
@@ -174,6 +174,9 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                 defaultValues={state.defaultValues}
                 validationSchema={companySchema}
                 id={formId.current}
+                boxProps={{
+                    display:'flex'
+                }}
             >
                 <Box
                     sx={{

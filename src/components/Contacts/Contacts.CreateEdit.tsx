@@ -1,11 +1,9 @@
-import { CSSObject } from '@emotion/react';
-import { Box, Theme, useMediaQuery, Tabs, Tab } from '@mui/material';
-import { DialogProps } from '@mui/material/Dialog';
+import { Box, Tab, Tabs, Theme, useMediaQuery } from '@mui/material';
 import { uniqueId } from 'lodash';
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
-import DialogEx from '../Dialogs/DialogEx';
+import DialogEx, { DialogExProps } from '../Dialogs/DialogEx';
 import CountrySelect from '../Form/CountrySelect';
 import Fieldset from '../Form/Fieldset';
 import Form from '../Form/Form';
@@ -16,7 +14,6 @@ import SearchField from '../Form/SearchField';
 import TextFieldEx from '../Form/TextFieldEx';
 import Overlay from '../Overlay';
 import SocialIcon from '../SocialIcon';
-import TabPanel, { TabLabel } from '../TabPanel';
 
 export interface ShowCreateEditProps {
     contactId: number;
@@ -31,12 +28,31 @@ interface CreateEditState {
     activeTab: number;
 }
 
-type CreateEditProps = DialogProps & {
+type CreateEditProps = DialogExProps & {
     type: 'new' | 'edit',
     data?: ShowCreateEditProps,
-    onCancel: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    onCancel: () => void;
     onSave: () => void;
 };
+
+interface TitleProps {
+    title: string;
+}
+
+const DialogTitle = (props: TitleProps) => {
+
+    return (
+        <Box display="flex" alignItems="center" gap={1}>
+            <ProfileAvatar
+                name="avatar"
+                sx={{ justifySelf: "left" }}
+            />
+            <div>
+                {props.title}
+            </div>
+        </Box>
+    );
+}
 
 export default function ContactCreateEdit(props: CreateEditProps) {
 
@@ -158,7 +174,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         });
     }
 
-    let title = "New Contact";
+    let title = 'New Contact';
     if (props.type === 'edit') {
         if (!state.ready) {
             return (<Overlay open={true} showProgress={true} />);
@@ -172,7 +188,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             position: 'relative',
             zIndex: 2,
             transform: 'translateY(-670)',
-            float: 'left'
+            float: 'left',
+            overflowY: 'auto',
         },
         hidden: {
             visibility: 'hidden',
@@ -184,9 +201,9 @@ export default function ContactCreateEdit(props: CreateEditProps) {
     return (
         <DialogEx
             open={state.open}
-            onClose={props.onClose}
-            title={title}
+            onCancel={props.onCancel}
             displayMode={isDesktop ? 'normal' : 'mobile'}
+            title={<DialogTitle title={title} />}
             saveButtonProps={{
                 type: 'submit',
                 form: formId.current
@@ -198,30 +215,34 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                 defaultValues={state.defaultValues}
                 validationSchema={contactSchema}
                 id={formId.current}
+                boxProps={{
+                    display: 'flex',
+                    gap: 1
+                }}
             >
-                <Tabs value={state.activeTab} onChange={(e, n) => {
-                    console.log("NEW TAB", n);
-                    setState(state => ({ ...state, activeTab: n }));
-                }}>
+                <Tabs
+                    orientation="vertical"
+                    value={state.activeTab}
+                    onChange={(e, n) => {
+
+                        setState(state => ({ ...state, activeTab: n }));
+                    }}>
                     <Tab label="General" value={0} />
                     <Tab label="Notes" value={1} />
                 </Tabs>
-                <div style={{ position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'relative' }}>
                     <div style={state.activeTab === 0 ? tabcls.active : tabcls.hidden}>
                         <Box
                             sx={{
                                 display: 'grid',
                                 gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : 'auto',
                                 alignItems: 'start',
-                                gap: 2
+                                gap: 2,
+                                overflowY: 'auto'
                             }}
                         >
                             <Box display="grid" gap={1}>
                                 <Fieldset legend="Personal">
-                                    <ProfileAvatar
-                                        name="avatar"
-                                        sx={{ justifySelf: "center" }}
-                                    />
                                     <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
                                         <RemoteSelect
                                             name="title"

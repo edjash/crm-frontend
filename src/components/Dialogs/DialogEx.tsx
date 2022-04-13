@@ -1,21 +1,25 @@
 import CloseIcon from '@mui/icons-material/CancelOutlined';
 import { Box, IconButton } from '@mui/material';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
+import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import DialogButton from '../DialogButton';
 
-export type DialogExProps = Omit<DialogProps, 'onExited'> & {
+export type DialogExProps = {
     open: boolean;
-    title?: string;
+    title?: string | JSX.Element;
     closeIcon?: boolean;
     onCancel?: () => void;
     onSave?: () => void;
     displayMode?: 'mobile' | 'normal' | string;
     saveButtonProps?: Record<string, any>;
     suppressGlobalCount?: boolean;
+    disableRestoreFocus?: boolean;
+    hideBackdrop?: boolean;
+    transitionDuration?: number;
+    children?: ReactNode;
 };
 
 
@@ -71,7 +75,7 @@ export default function DialogEx(props: DialogExProps) {
             scroll="paper"
             maxWidth="xl"
             sx={{
-                pt: 0,
+                p: 0,
             }}
             BackdropProps={{
                 sx: { backdropFilter: 'blur(1px)' }
@@ -79,7 +83,7 @@ export default function DialogEx(props: DialogExProps) {
             transitionDuration={props.transitionDuration}
             hideBackdrop={props.hideBackdrop}
         >
-            {mode === 'normal' && (config.title || config.closeIcon) &&
+            {mode === 'normal' && config.title &&
                 <Box sx={{ display: 'flex', alignItems: 'center', pr: 1 }}>
                     <DialogTitle sx={{ flexGrow: 1 }}>
                         {config.title}
@@ -91,7 +95,7 @@ export default function DialogEx(props: DialogExProps) {
                     }
                 </Box>
             }
-            {mode === 'mobile' && (config.title || config.closeIcon) &&
+            {mode === 'mobile' && config.title &&
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pr: 2 }}>
                     {config.closeIcon &&
                         <IconButton
@@ -109,7 +113,7 @@ export default function DialogEx(props: DialogExProps) {
                     </DialogButton>
                 </Box>
             }
-            <DialogContent sx={{ position: 'relative' }}>
+            <DialogContent sx={{ position: 'relative', p: 0, overflow:'hidden' }}>
                 {props.children}
             </DialogContent>
             {mode === 'normal' &&

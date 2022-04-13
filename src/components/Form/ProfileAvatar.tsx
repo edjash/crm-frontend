@@ -1,5 +1,5 @@
 import { Avatar, Box, BoxProps, CircularProgress, IconButton, Typography } from "@mui/material";
-import { Delete } from '@mui/icons-material/';
+import { Delete, Edit } from '@mui/icons-material/';
 import { AxiosRequestConfig } from "axios";
 import { uniqueId } from 'lodash';
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
@@ -28,11 +28,11 @@ interface ProfileAvatarState {
 
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 
-    const { setValue, getValues } = useFormContext();
+    //const { setValue, getValues } = useFormContext();
     const acceptType = ['.jpg', '.jpeg', '.png', '.gif'];
 
     const [state, setState] = useState<ProfileAvatarState>(() => {
-        let filename = getValues(props.name) ?? '';
+        let filename = props.src ?? '';
         let src = null;
 
         if (filename) {
@@ -99,8 +99,6 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
     }
 
     const onDeleteAvatarClick = () => {
-        setValue(props.name, '');
-
         setState((state) => ({
             ...state,
             src: null,
@@ -137,8 +135,6 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                     filename: response.data.filename,
                     src: src,
                 }));
-
-                setValue(props.name, response.data.filename);
             }
         }).catch((error) => {
             if (error?.data?.errors?.avatar) {
@@ -167,7 +163,6 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         state.uploading,
         state.fileObject,
         props.name,
-        setValue
     ]);
 
     return (
@@ -182,13 +177,13 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         >
             <Box
                 position="relative"
-                width={100}
-                height={100}
+                width={48}
+                height={48}
             >
                 <Avatar
                     alt={props.alt}
                     src={state.src || undefined}
-                    sx={{ width: 100, height: 100, color: '#e0e0e0' }}
+                    sx={{ width: 48, height: 48, color: '#e0e0e0' }}
                     onMouseOver={onMouseOver}
                     onMouseLeave={onMouseLeave}
                 />
@@ -207,18 +202,18 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                             cursor: 'pointer',
                             width: '100%',
                             height: '100%',
-                            display: 'table',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                         }}>
-                            <span style={{ display: 'table-cell', verticalAlign: 'middle' }}>
-                                Change Photo
-                            </span>
+                            <Edit fontSize="inherit" />
                         </label>
                         :
                         <Box sx={{ position: 'relative', display: 'inline-flex' }} >
                             <CircularProgress
                                 variant="determinate"
                                 value={state.progressPercent}
-                                size={100}
+                                size={48}
                             />
                             <Box sx={{
                                 top: 0,
@@ -249,7 +244,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                     onChange={onFileInputChange}
                 />
             </Box>
-            {state.src && !state.uploading &&
+            {/* {!state.uploading &&
                 <Box
                     className="AvatarControlIcons"
                     sx={{ position: 'absolute', top: 0, right: 3, display: 'grid' }}
@@ -258,7 +253,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                         <Delete fontSize="inherit" />
                     </IconButton>
                 </Box>
-            }
+            } */}
         </Box>
     );
 }
