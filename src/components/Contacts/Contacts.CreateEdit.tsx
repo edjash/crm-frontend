@@ -237,8 +237,9 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                                 display: 'grid',
                                 gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : 'auto',
                                 alignItems: 'start',
-                                gap: 2,
-                                overflowY: 'auto'
+                                overflowY: 'auto',
+                                p: 1,
+                                gap: 1
                             }}
                         >
                             <Box display="grid" gap={1}>
