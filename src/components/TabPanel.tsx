@@ -1,44 +1,30 @@
-import { Box, Tab } from '@mui/material';
-import { SystemProps } from '@mui/system';
+import { Box, SxProps, Tab, Tabs } from '@mui/material';
+import { ReactElement, ReactNode, useEffect, useState } from 'react';
+
 
 
 interface TabPanelProps {
-    children?: React.ReactNode;
-    ident: any;
-    value: any;
-    sx?: Record<string, any>
+    label?: string;
+    children?: ReactNode;
+    value?: number;
+    activeTab?: number;
+    sx?: SxProps;
 }
 
 export default function TabPanel(props: TabPanelProps) {
-    const { children, value, ident, sx, ...other } = props;
-
-    let styles = {
-        zIndex: 2,
-        display: 'grid',
-        flexGrow: 1,
-        height: '100%',
-        ...sx,
-    } as SystemProps;
-
-    if (value !== ident) {
-        styles = {
-            position: 'absolute',
-            top: 0,
-            left: -9000,
-            zIndex: 1,
-            height: '100%'
-        } as SystemProps;
-    }
+    const active = (props.value === props.activeTab);
 
     return (
         <Box
-            sx={{ ...styles }}
-            role="tabpanel"
-            id={`nav-tabpanel-${ident}`}
-            aria-labelledby={`nav-tab-${ident}`}
-            {...other}
+            sx={{
+                ...props.sx,
+            }}
+            style={{
+                visibility: (active) ? 'visible' : 'hidden',
+                order: (active) ? 1 : 2,
+            }}
         >
-            {children}
+            {props.children}
         </Box>
     );
 }
@@ -58,3 +44,44 @@ export const TabLabel = (props: TabProps) => {
     );
 }
 
+interface TabBoxProps {
+    children: ReactElement<TabPanelProps>[];
+}
+
+export const TabBox = (props: TabBoxProps) => {
+
+    const [activeTab, setActiveTab] = useState(0);
+    const [init, setInit] = useState(0);
+
+    useEffect(() => {
+        if (!init) {
+
+            setInit(1);
+        }
+    }, [init]);
+
+    return (
+        <div style={{ display: 'flex' }}>
+            <Tabs
+                orientation="vertical"
+                value={activeTab}
+                onChange={(e, n) => {
+                    setActiveTab(n);
+                }}>
+                {props.children.map((child: ReactElement<TabPanelProps>, index: number) =>
+                    <Tab label={child.props.label} value={index} />
+                )}
+            </Tabs>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
+                {props.children.map((child: ReactElement<TabPanelProps>, index: number) =>
+                    <TabPanel value={index} activeTab={activeTab} sx={child.props.sx}>
+                        {child.props.children}
+                    </TabPanel>
+                )}
+            </div>
+        </div>
+    );
+}

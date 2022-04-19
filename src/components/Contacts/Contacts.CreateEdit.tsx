@@ -1,6 +1,6 @@
-import { Box, Tab, Tabs, Theme, useMediaQuery } from '@mui/material';
+import { Box, Theme, useMediaQuery } from '@mui/material';
 import { uniqueId } from 'lodash';
-import { CSSProperties, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
 import DialogEx, { DialogExProps } from '../Dialogs/DialogEx';
@@ -14,6 +14,7 @@ import SearchField from '../Form/SearchField';
 import TextFieldEx from '../Form/TextFieldEx';
 import Overlay from '../Overlay';
 import SocialIcon from '../SocialIcon';
+import TabPanel, { TabBox } from '../TabPanel';
 
 export interface ShowCreateEditProps {
     contactId: number;
@@ -182,22 +183,6 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         title = props?.data?.fullname ?? 'Unnamed';
     }
 
-    const tabcls: Record<string, CSSProperties> = {
-        active: {
-            visibility: 'visible',
-            position: 'relative',
-            zIndex: 2,
-            transform: 'translateY(-670)',
-            float: 'left',
-            overflowY: 'auto',
-        },
-        hidden: {
-            visibility: 'hidden',
-            position: 'relative',
-            zIndex: 1,
-        }
-    };
-
     return (
         <DialogEx
             open={state.open}
@@ -215,139 +200,124 @@ export default function ContactCreateEdit(props: CreateEditProps) {
                 defaultValues={state.defaultValues}
                 validationSchema={contactSchema}
                 id={formId.current}
-                boxProps={{
-                    display: 'flex',
-                    gap: 1
-                }}
             >
-                <Tabs
-                    orientation="vertical"
-                    value={state.activeTab}
-                    onChange={(e, n) => {
-
-                        setState(state => ({ ...state, activeTab: n }));
-                    }}>
-                    <Tab label="General" value={0} />
-                    <Tab label="Notes" value={1} />
-                </Tabs>
-                <div style={{ position: 'relative' }}>
-                    <div style={state.activeTab === 0 ? tabcls.active : tabcls.hidden}>
-                        <Box
-                            sx={{
-                                display: 'grid',
-                                gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : 'auto',
-                                alignItems: 'start',
-                                overflowY: 'auto',
-                                p: 1,
-                                gap: 1
-                            }}
-                        >
-                            <Box display="grid" gap={1}>
-                                <Fieldset legend="Personal">
-                                    <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
-                                        <RemoteSelect
-                                            name="title"
-                                            label="Title"
-                                            sx={{ m: 0 }}
-                                            options={[
-                                                { value: 'Mr', label: 'Mr' },
-                                                { value: 'Mrs', label: 'Mrs' },
-                                                { value: 'Miss', label: 'Miss' },
-                                                { value: 'Ms', label: 'Ms' },
-                                                { value: 'Mx', label: 'Mx' },
-                                            ]}
-                                        />
-                                        <RemoteSelect
-                                            label="Pronouns"
-                                            name="pronouns"
-                                            options={[
-                                                { value: 'She/Her', label: 'She/Her' },
-                                                { value: 'He/Him', label: 'He/Him' },
-                                                { value: 'They/Them', label: 'They/Them' },
-                                            ]}
-                                        />
-                                    </Box>
-                                    <Box>
-                                        <TextFieldEx
-                                            name="firstname"
-                                            label="First Name"
-                                            required
-                                        />
-                                        <TextFieldEx
-                                            name="lastname"
-                                            label="Last Name"
-                                        />
-                                        <TextFieldEx
-                                            name="nickname"
-                                            label="Nick Name"
-                                        />
-                                    </Box>
-                                </Fieldset>
-                                <Fieldset legend="Company">
-                                    <SearchField
-                                        url="/companies"
-                                        labelField="name"
-                                        valueField="id"
-                                        name="company"
-                                        label="Company"
-                                        remoteDataProperty="data"
-                                        onAddClick={onAddCompany}
+                <TabBox>
+                    <TabPanel
+                        label="General"
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : 'auto',
+                            alignItems: 'start',
+                            overflowY: 'auto',
+                            p: 1,
+                            gap: 1
+                        }}
+                    >
+                        <Box display="grid" gap={1}>
+                            <Fieldset legend="Personal">
+                                <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
+                                    <RemoteSelect
+                                        name="title"
+                                        label="Title"
+                                        sx={{ m: 0 }}
+                                        options={[
+                                            { value: 'Mr', label: 'Mr' },
+                                            { value: 'Mrs', label: 'Mrs' },
+                                            { value: 'Miss', label: 'Miss' },
+                                            { value: 'Ms', label: 'Ms' },
+                                            { value: 'Mx', label: 'Mx' },
+                                        ]}
+                                    />
+                                    <RemoteSelect
+                                        label="Pronouns"
+                                        name="pronouns"
+                                        options={[
+                                            { value: 'She/Her', label: 'She/Her' },
+                                            { value: 'He/Him', label: 'He/Him' },
+                                            { value: 'They/Them', label: 'They/Them' },
+                                        ]}
+                                    />
+                                </Box>
+                                <Box>
+                                    <TextFieldEx
+                                        name="firstname"
+                                        label="First Name"
+                                        required
                                     />
                                     <TextFieldEx
-                                        name="jobtitle"
-                                        label="Job Title"
+                                        name="lastname"
+                                        label="Last Name"
                                     />
-                                </Fieldset>
-                            </Box>
-                            <Box display="grid" gap={1}>
-                                <MultiFieldset
-                                    baseName="address"
-                                    legend="Address"
-                                >
-                                    <TextFieldEx name="street" label="Street" />
-                                    <TextFieldEx name="town" label="Town / City" />
-                                    <TextFieldEx name="county" label="County / State" />
-                                    <TextFieldEx name="postcode" label="Zip / Postal Code" />
-                                    <CountrySelect
-                                        label="Country"
-                                        name="country"
-                                    />
-                                </MultiFieldset>
-                                <MultiFieldset
-                                    legend="Phone Number"
-                                    baseName="phone_number"
-                                >
-                                    <TextFieldEx name="number" label="Phone Number" />
-                                </MultiFieldset>
-                            </Box>
-                            <Box display="grid" gap={1}>
-                                <Fieldset legend="Social Media">
-                                    {['LinkedIn', 'Twitter', 'Facebook', 'Instagram', 'Teams', 'Skype'].map((network, index) => (
-                                        <Box display="flex" alignItems="center" gap={1} key={network}>
-                                            <SocialIcon network={network} />
-                                            <TextFieldEx
-                                                name={`socialmedia.${network.toLowerCase()}`}
-                                                label={network}
-                                            />
-                                        </Box>
-                                    ))}
-                                </Fieldset>
-                                <MultiFieldset
-                                    legend="Email Address"
-                                    baseName="email_address"
-                                >
                                     <TextFieldEx
-                                        name="address"
-                                        label="Email Address"
+                                        name="nickname"
+                                        label="Nick Name"
                                     />
-                                </MultiFieldset>
-                            </Box>
+                                </Box>
+                            </Fieldset>
+                            <Fieldset legend="Company">
+                                <SearchField
+                                    url="/companies"
+                                    labelField="name"
+                                    valueField="id"
+                                    name="company"
+                                    label="Company"
+                                    remoteDataProperty="data"
+                                    onAddClick={onAddCompany}
+                                />
+                                <TextFieldEx
+                                    name="jobtitle"
+                                    label="Job Title"
+                                />
+                            </Fieldset>
                         </Box>
-                    </div>
-                    <div style={state.activeTab === 1 ? tabcls.active : tabcls.hidden}>
+                        <Box display="grid" gap={1}>
+                            <MultiFieldset
+                                baseName="address"
+                                legend="Address"
+                            >
+                                <TextFieldEx name="street" label="Street" />
+                                <TextFieldEx name="town" label="Town / City" />
+                                <TextFieldEx name="county" label="County / State" />
+                                <TextFieldEx name="postcode" label="Zip / Postal Code" />
+                                <CountrySelect
+                                    label="Country"
+                                    name="country"
+                                />
+                            </MultiFieldset>
+                            <MultiFieldset
+                                legend="Phone Number"
+                                baseName="phone_number"
+                            >
+                                <TextFieldEx name="number" label="Phone Number" />
+                            </MultiFieldset>
+                        </Box>
+                        <Box display="grid" gap={1}>
+                            <Fieldset legend="Social Media">
+                                {['LinkedIn', 'Twitter', 'Facebook', 'Instagram', 'Teams', 'Skype'].map((network, index) => (
+                                    <Box display="flex" alignItems="center" gap={1} key={network}>
+                                        <SocialIcon network={network} />
+                                        <TextFieldEx
+                                            name={`socialmedia.${network.toLowerCase()}`}
+                                            label={network}
+                                        />
+                                    </Box>
+                                ))}
+                            </Fieldset>
+                            <MultiFieldset
+                                legend="Email Address"
+                                baseName="email_address"
+                            >
+                                <TextFieldEx
+                                    name="address"
+                                    label="Email Address"
+                                />
+                            </MultiFieldset>
+                        </Box>
+                    </TabPanel>
+                    <TabPanel label="Notes">
                         NOTES AND STUFF
-                    </div>
-                </div>
+                    </TabPanel>
+                </TabBox>
             </Form>
             <Overlay open={state.loading} />
         </DialogEx>
