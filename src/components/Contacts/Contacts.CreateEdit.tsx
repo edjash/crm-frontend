@@ -16,12 +16,13 @@ import Overlay from '../Overlay';
 import SocialIcon from '../SocialIcon';
 import TabPanel, { TabBox } from '../TabPanel';
 
-export interface ShowCreateEditProps {
-    contactId: number;
+export interface ContactDialogData {
+    id: number;
     fullname: string;
+    avatar?: string;
 };
 
-interface CreateEditState {
+interface ContactDialogState {
     loading: boolean;
     ready: boolean;
     open: boolean;
@@ -29,15 +30,16 @@ interface CreateEditState {
     activeTab: number;
 }
 
-type CreateEditProps = DialogExProps & {
+interface ContactDialogProps extends DialogExProps {
     type: 'new' | 'edit',
-    data?: ShowCreateEditProps,
+    data?: ContactDialogData,
     onCancel: () => void;
     onSave: () => void;
 };
 
 interface TitleProps {
     title: string;
+    avatar?: string;
 }
 
 const DialogTitle = (props: TitleProps) => {
@@ -46,6 +48,7 @@ const DialogTitle = (props: TitleProps) => {
         <Box display="flex" alignItems="center" gap={1}>
             <ProfileAvatar
                 name="avatar"
+                src={props.avatar}
                 sx={{ justifySelf: "left" }}
             />
             <div>
@@ -55,9 +58,9 @@ const DialogTitle = (props: TitleProps) => {
     );
 }
 
-export default function ContactCreateEdit(props: CreateEditProps) {
+export default function ContactDialog(props: ContactDialogProps) {
 
-    const [state, setState] = useState<CreateEditState>({
+    const [state, setState] = useState<ContactDialogState>({
         loading: false,
         ready: (props.type === 'new'),
         open: true,
@@ -67,7 +70,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
     useEffect(() => {
         if (props.type === 'edit' && !state.ready) {
-            apiClient.get(`/contacts/${props.data?.contactId}`).then((response) => {
+            apiClient.get(`/contacts/${props.data?.id}`).then((response) => {
                 const values = prepareIncomingValues(response.data);
 
                 setState((state) => ({
@@ -80,7 +83,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
 
             });
         }
-    }, [state.ready, props.type, props.data?.contactId]);
+    }, [state.ready, props.type, props.data?.id]);
 
     const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
@@ -92,8 +95,8 @@ export default function ContactCreateEdit(props: CreateEditProps) {
         const postData = prepareOutgoingValues(data);
 
         let url = '/contacts';
-        if (props.type === 'edit' && props.data?.contactId) {
-            url = `${url}/${props.data.contactId}`;
+        if (props.type === 'edit' && props.data?.id) {
+            url = `${url}/${props.data.id}`;
         }
 
         apiClient.post(url, postData).then((response) => {
@@ -188,7 +191,7 @@ export default function ContactCreateEdit(props: CreateEditProps) {
             open={state.open}
             onCancel={props.onCancel}
             displayMode={isDesktop ? 'normal' : 'mobile'}
-            title={<DialogTitle title={title} />}
+            title={<DialogTitle title={title} avatar={props.data?.avatar} />}
             saveButtonProps={{
                 type: 'submit',
                 form: formId.current

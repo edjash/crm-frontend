@@ -31,6 +31,8 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
     //const { setValue, getValues } = useFormContext();
     const acceptType = ['.jpg', '.jpeg', '.png', '.gif'];
 
+    console.log("PROPS", props);
+    
     const [state, setState] = useState<ProfileAvatarState>(() => {
         let filename = props.src ?? '';
         let src = null;

@@ -10,7 +10,7 @@ import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
 import MainGrid from '../MainGrid/MainGrid.Grid';
 import PullRefresh from '../PullRefresh';
-import CreateEditDlg, { ShowCreateEditProps } from './Contacts.CreateEdit';
+import ContactDialog, { ContactDialogData } from './Contacts.CreateEdit';
 
 export default function Contacts() {
 
@@ -191,10 +191,10 @@ export default function Contacts() {
         PubSub.publish('CONTACTS.REFRESH', callback);
     };
 
-    const showCreateEditDlg = (props?: ShowCreateEditProps) => {
-        const type = (!props?.contactId) ? 'new' : 'edit';
+    const showContactDialog = (props?: ContactDialogData) => {
+        const type = (!props?.id) ? 'new' : 'edit';
 
-        const dlg = showModal(CreateEditDlg, {
+        const dlg = showModal(ContactDialog, {
             type: type,
             data: props,
             onCancel: () => {
@@ -207,14 +207,15 @@ export default function Contacts() {
     };
 
     const onFabClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        showCreateEditDlg();
+        showContactDialog();
     }
 
     const onClickContact = (e: React.MouseEvent, rowData: GridRowModel) => {
         e.preventDefault();
-        showCreateEditDlg({
-            contactId: rowData.id,
+        showContactDialog({
+            id: rowData.id,
             fullname: rowData.fullname,
+            avatar: rowData.avatar,
         });
     };
 
@@ -320,7 +321,7 @@ export default function Contacts() {
                 containerRef={setContainerRef}
                 columns={columns.current}
                 onSearch={onSearch}
-                onCreateClick={showCreateEditDlg}
+                onCreateClick={showContactDialog}
                 onPageChange={onPageChange}
                 onDelete={onDelete}
                 onRefreshClick={onRefresh}
