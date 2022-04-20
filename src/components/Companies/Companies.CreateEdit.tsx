@@ -175,7 +175,7 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                 validationSchema={companySchema}
                 id={formId.current}
                 boxProps={{
-                    display:'flex'
+                    display: 'flex'
                 }}
             >
                 <Box
@@ -191,6 +191,7 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                             <ProfileAvatar
                                 name="avatar"
                                 sx={{ justifySelf: "center" }}
+                                onAvatarChange={() => { }}
                             />
                             <TextFieldEx
                                 name="name"
