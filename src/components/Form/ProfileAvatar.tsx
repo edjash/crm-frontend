@@ -1,9 +1,8 @@
-import { Avatar, Box, BoxProps, CircularProgress, IconButton, Typography } from "@mui/material";
-import { Delete, Edit } from '@mui/icons-material/';
+import { Edit } from '@mui/icons-material/';
+import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
 import { uniqueId } from 'lodash';
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
-import { useFormContext } from "react-hook-form";
 import { SERVER_URL } from '../../app/constants';
 import apiClient from '../apiClient';
 import Overlay from '../Overlay';
@@ -13,7 +12,7 @@ interface ProfileAvatarProps extends BoxProps {
     alt?: string;
     src?: string;
     defaultValue?: string;
-    onChange?: (event: any) => void;
+    onAvatarChange: (filename: string) => void;
 }
 
 interface ProfileAvatarState {
@@ -28,11 +27,8 @@ interface ProfileAvatarState {
 
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 
-    //const { setValue, getValues } = useFormContext();
     const acceptType = ['.jpg', '.jpeg', '.png', '.gif'];
 
-    console.log("PROPS", props);
-    
     const [state, setState] = useState<ProfileAvatarState>(() => {
         let filename = props.src ?? '';
         let src = null;
@@ -48,7 +44,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             fileObject: null,
             src: src,
             filename: filename,
-            fieldId: uniqueId('avatarUlpoad_'),
+            fieldId: uniqueId('avatarUpload_'),
         };
     });
 
@@ -127,7 +123,6 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
         apiClient.post('/contacts/avatar', formData, config).then((response) => {
             if (response.data.filename) {
-                //const src = `${SERVER_URL}/storage/tmp_avatars/${response.data.filename}`;
                 const src = (state.fileObject) ? URL.createObjectURL(state.fileObject) : null;
                 setState(state => ({
                     ...state,
@@ -137,6 +132,9 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                     filename: response.data.filename,
                     src: src,
                 }));
+                if (props.onAvatarChange) {
+                    props.onAvatarChange(response.data.filename);
+                }
             }
         }).catch((error) => {
             if (error?.data?.errors?.avatar) {

@@ -10,7 +10,7 @@ import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
 import MainGrid from '../MainGrid/MainGrid.Grid';
 import PullRefresh from '../PullRefresh';
-import ContactDialog, { ContactDialogData } from './Contacts.CreateEdit';
+import ContactDialog, { ContactDialogData } from './Contacts.Dialog';
 
 export default function Contacts() {
 

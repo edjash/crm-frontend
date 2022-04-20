@@ -1,6 +1,7 @@
 import { Box, Theme, useMediaQuery } from '@mui/material';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
 import DialogEx, { DialogExProps } from '../Dialogs/DialogEx';
@@ -40,6 +41,7 @@ interface ContactDialogProps extends DialogExProps {
 interface TitleProps {
     title: string;
     avatar?: string;
+    onAvatarChange: (filename: string) => void;
 }
 
 const DialogTitle = (props: TitleProps) => {
@@ -50,6 +52,7 @@ const DialogTitle = (props: TitleProps) => {
                 name="avatar"
                 src={props.avatar}
                 sx={{ justifySelf: "left" }}
+                onAvatarChange={props.onAvatarChange}
             />
             <div>
                 {props.title}
@@ -88,6 +91,7 @@ export default function ContactDialog(props: ContactDialogProps) {
     const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
     const formId = useRef(uniqueId('contactForm'));
+    const formMethods = useRef<UseFormReturn>();
 
     const onSubmit = (data: any) => {
 
@@ -191,7 +195,16 @@ export default function ContactDialog(props: ContactDialogProps) {
             open={state.open}
             onCancel={props.onCancel}
             displayMode={isDesktop ? 'normal' : 'mobile'}
-            title={<DialogTitle title={title} avatar={props.data?.avatar} />}
+            title={
+                <DialogTitle
+                    title={title}
+                    avatar={props.data?.avatar}
+                    onAvatarChange={(filename: string) => {
+                        if (formMethods.current) {
+                            formMethods.current.setValue('avatar', filename);
+                        }
+                    }}
+                />}
             saveButtonProps={{
                 type: 'submit',
                 form: formId.current
@@ -203,6 +216,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                 defaultValues={state.defaultValues}
                 validationSchema={contactSchema}
                 id={formId.current}
+                setFormMethods={methods => formMethods.current = methods}
             >
                 <TabBox>
                     <TabPanel
@@ -323,6 +337,6 @@ export default function ContactDialog(props: ContactDialogProps) {
                 </TabBox>
             </Form>
             <Overlay open={state.loading} />
-        </DialogEx>
+        </DialogEx >
     );
 }

@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, BoxProps } from "@mui/material";
 import { ReactNode } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import { AnyObjectSchema } from "yup";
 
 export interface FormProps {
@@ -12,6 +12,7 @@ export interface FormProps {
     children?: ReactNode;
     defaultValues?: Record<string, any>;
     boxProps?: BoxProps;
+    setFormMethods?: (methods: UseFormReturn) => void;
 };
 
 export default function Form(props: FormProps) {
@@ -20,6 +21,10 @@ export default function Form(props: FormProps) {
         defaultValues: props.defaultValues,
         resolver: props?.validationSchema ? yupResolver(props.validationSchema) : undefined
     });
+
+    if (props.setFormMethods) {
+        props.setFormMethods(formMethods);
+    }
 
     return (
         <FormProvider {...formMethods}>
