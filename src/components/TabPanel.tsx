@@ -46,12 +46,14 @@ export const TabLabel = (props: TabProps) => {
 
 interface TabBoxProps {
     children: ReactElement<TabPanelProps>[];
+    orientation?: 'vertical' | 'horizontal';
 }
 
 export const TabBox = (props: TabBoxProps) => {
 
     const [activeTab, setActiveTab] = useState(0);
     const [init, setInit] = useState(0);
+    const orientation = props.orientation ?? 'horizontal';
 
     useEffect(() => {
         if (!init) {
@@ -61,9 +63,9 @@ export const TabBox = (props: TabBoxProps) => {
     }, [init]);
 
     return (
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', flexDirection: (orientation === 'horizontal') ? 'column' : 'row' }}>
             <Tabs
-                orientation="vertical"
+                orientation={orientation}
                 value={activeTab}
                 onChange={(e, n) => {
                     setActiveTab(n);
@@ -74,13 +76,15 @@ export const TabBox = (props: TabBoxProps) => {
             </Tabs>
             <div style={{
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
             }}>
-                {props.children.map((child: ReactElement<TabPanelProps>, index: number) =>
-                    <TabPanel value={index} activeTab={activeTab} sx={child.props.sx}>
-                        {child.props.children}
-                    </TabPanel>
-                )}
+                <div style={{ overflow: 'auto' }}>
+                    {props.children.map((child: ReactElement<TabPanelProps>, index: number) =>
+                        <TabPanel value={index} activeTab={activeTab} sx={child.props.sx}>
+                            {child.props.children}
+                        </TabPanel>
+                    )}
+                </div>
             </div>
         </div>
     );
