@@ -113,7 +113,7 @@ export default function DialogEx(props: DialogExProps) {
                     </DialogButton>
                 </Box>
             }
-            <DialogContent sx={{ position: 'relative', p: 0, overflow:'hidden' }}>
+            <DialogContent sx={{ p: 0, mt:'60px' }}>
                 {props.children}
             </DialogContent>
             {mode === 'normal' &&

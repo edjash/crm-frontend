@@ -63,13 +63,15 @@ export const TabBox = (props: TabBoxProps) => {
     }, [init]);
 
     return (
-        <div style={{ display: 'flex', flexDirection: (orientation === 'horizontal') ? 'column' : 'row' }}>
+        <div style={{ display: 'flex', marginTop: '0px', flexDirection: (orientation === 'horizontal') ? 'column' : 'row' }}>
             <Tabs
                 orientation={orientation}
                 value={activeTab}
                 onChange={(e, n) => {
                     setActiveTab(n);
-                }}>
+                }}
+                sx={{ position: 'absolute', mt: '-60px' }}
+            >
                 {props.children.map((child: ReactElement<TabPanelProps>, index: number) =>
                     <Tab label={child.props.label} value={index} />
                 )}
@@ -77,15 +79,14 @@ export const TabBox = (props: TabBoxProps) => {
             <div style={{
                 display: 'flex',
                 flexDirection: 'column',
+                float: 'left',
             }}>
-                <div style={{ overflow: 'auto' }}>
-                    {props.children.map((child: ReactElement<TabPanelProps>, index: number) =>
-                        <TabPanel value={index} activeTab={activeTab} sx={child.props.sx}>
-                            {child.props.children}
-                        </TabPanel>
-                    )}
-                </div>
+                {props.children.map((child: ReactElement<TabPanelProps>, index: number) =>
+                    <TabPanel value={index} activeTab={activeTab} sx={child.props.sx}>
+                        {child.props.children}
+                    </TabPanel>
+                )}
             </div>
-        </div>
+        </div >
     );
 }

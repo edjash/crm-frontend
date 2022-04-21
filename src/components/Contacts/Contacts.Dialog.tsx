@@ -219,7 +219,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                 setFormMethods={methods => formMethods.current = methods}
             >
                 <TabBox
-                    orientation={isDesktop ? "vertical" : "horizontal"}
+                    orientation={isDesktop ? "horizontal" : "horizontal"}
                 >
                     <TabPanel
                         label="General"
