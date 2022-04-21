@@ -220,6 +220,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                 tabProps={{
                     tabs: ['General', 'Notes'],
                     activeTab: state.activeTab,
+                    orientation: (isDesktop) ? 'vertical' : 'horizontal',
                     onChange: (tab: number) => {
                         setState(state => ({
                             ...state,

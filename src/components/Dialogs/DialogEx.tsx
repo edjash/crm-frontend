@@ -1,17 +1,18 @@
 import CloseIcon from '@mui/icons-material/CancelOutlined';
-import { Box, IconButton, Tabs, Tab } from '@mui/material';
+import { Box, IconButton, Tab, Tabs } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { ReactNode, useEffect, useState } from 'react';
 import DialogButton from '../DialogButton';
-import Form, { FormProps } from '../Form/Form';
+import { FormProps } from '../Form/Form';
 
 interface DialogTabProps {
     tabs: string[];
     activeTab: number;
     onChange: (tab: number) => void;
+    orientation?: 'horizontal' | 'vertical';
 }
 
 export interface DialogExProps {
@@ -37,14 +38,15 @@ interface TabbedDialogContentProps {
 }
 
 const TabbedDialogContent = (props: TabbedDialogContentProps) => {
+    const orientation = props.tabProps.orientation ?? 'horizontal';
     return (
         <div style={{
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: (orientation === 'horizontal') ? 'column' : 'row',
             overflow: 'hidden'
         }}>
             <Tabs
-                orientation="horizontal"
+                orientation={orientation}
                 value={props.tabProps.activeTab}
                 onChange={(e, n) => {
                     if (props.tabProps?.onChange) {
