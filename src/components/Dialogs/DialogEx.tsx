@@ -1,13 +1,20 @@
 import CloseIcon from '@mui/icons-material/CancelOutlined';
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Tabs, Tab } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { ReactNode, useEffect, useState } from 'react';
 import DialogButton from '../DialogButton';
+import Form, { FormProps } from '../Form/Form';
 
-export type DialogExProps = {
+interface DialogTabProps {
+    tabs: string[];
+    activeTab: number;
+    onChange: (tab: number) => void;
+}
+
+export interface DialogExProps {
     open: boolean;
     title?: string | JSX.Element;
     closeIcon?: boolean;
@@ -20,8 +27,47 @@ export type DialogExProps = {
     hideBackdrop?: boolean;
     transitionDuration?: number;
     children?: ReactNode;
+    tabProps?: DialogTabProps;
+    formProps?: FormProps;
 };
 
+interface TabbedDialogContentProps {
+    tabProps: DialogTabProps;
+    children?: ReactNode;
+}
+
+const TabbedDialogContent = (props: TabbedDialogContentProps) => {
+    return (
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+        }}>
+            <Tabs
+                orientation="horizontal"
+                value={props.tabProps.activeTab}
+                onChange={(e, n) => {
+                    if (props.tabProps?.onChange) {
+                        props.tabProps.onChange(n);
+                    }
+                }}
+            >
+                {props.tabProps?.tabs && props.tabProps.tabs.map((label: string, index: number) =>
+                    <Tab label={label} value={index} key={index} />
+                )}
+            </Tabs>
+            <DialogContent sx={{ overflow: 'auto' }}>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start'
+                }}>
+                    {props.children}
+                </div>
+            </DialogContent>
+        </div>
+    );
+}
 
 export default function DialogEx(props: DialogExProps) {
     const mode = props.displayMode ?? 'normal';
@@ -113,9 +159,10 @@ export default function DialogEx(props: DialogExProps) {
                     </DialogButton>
                 </Box>
             }
-            <DialogContent sx={{ p: 0, mt:'60px' }}>
-                {props.children}
-            </DialogContent>
+            {props?.tabProps
+                ? <TabbedDialogContent tabProps={props.tabProps}>{props.children}</TabbedDialogContent>
+                : <DialogContent>{props.children}</DialogContent>
+            }
             {mode === 'normal' &&
                 <DialogActions>
                     <DialogButton onClick={onCancel}>

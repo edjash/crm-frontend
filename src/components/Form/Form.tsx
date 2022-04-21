@@ -6,7 +6,7 @@ import { AnyObjectSchema } from "yup";
 
 export interface FormProps {
     id?: string;
-    onSubmit: (data: any) => void;
+    onSubmit?: (data: any) => void;
     onError?: (data: any) => void;
     validationSchema?: AnyObjectSchema;
     children?: ReactNode;
@@ -26,12 +26,22 @@ export default function Form(props: FormProps) {
         props.setFormMethods(formMethods);
     }
 
+    const onSubmit = (data: any) => {
+        if (props.onSubmit) {
+            props.onSubmit(data);
+        }
+    }
+
+    const onError = (data: any) => {
+        if (props.onError) {
+            props.onError(data);
+        }
+    }
+
     return (
         <FormProvider {...formMethods}>
-            <form onSubmit={formMethods.handleSubmit(props.onSubmit, props.onError)} id={props?.id}>
-                <Box {...props.boxProps}>
-                    {props.children}
-                </Box>
+            <form onSubmit={formMethods.handleSubmit(onSubmit, onError)} id={props?.id}>
+                {props.children}
             </form>
         </FormProvider>
     );

@@ -1,5 +1,5 @@
-import { Box, SxProps, Tab, Tabs } from '@mui/material';
-import { ReactElement, ReactNode, useEffect, useState } from 'react';
+import { Box, SxProps, Tab } from '@mui/material';
+import { ReactNode } from 'react';
 
 
 
@@ -41,52 +41,5 @@ export const TabLabel = (props: TabProps) => {
             key={`tab${props.value}`}
             value={props.value}
         />
-    );
-}
-
-interface TabBoxProps {
-    children: ReactElement<TabPanelProps>[];
-    orientation?: 'vertical' | 'horizontal';
-}
-
-export const TabBox = (props: TabBoxProps) => {
-
-    const [activeTab, setActiveTab] = useState(0);
-    const [init, setInit] = useState(0);
-    const orientation = props.orientation ?? 'horizontal';
-
-    useEffect(() => {
-        if (!init) {
-
-            setInit(1);
-        }
-    }, [init]);
-
-    return (
-        <div style={{ display: 'flex', marginTop: '0px', flexDirection: (orientation === 'horizontal') ? 'column' : 'row' }}>
-            <Tabs
-                orientation={orientation}
-                value={activeTab}
-                onChange={(e, n) => {
-                    setActiveTab(n);
-                }}
-                sx={{ position: 'absolute', mt: '-60px' }}
-            >
-                {props.children.map((child: ReactElement<TabPanelProps>, index: number) =>
-                    <Tab label={child.props.label} value={index} />
-                )}
-            </Tabs>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                float: 'left',
-            }}>
-                {props.children.map((child: ReactElement<TabPanelProps>, index: number) =>
-                    <TabPanel value={index} activeTab={activeTab} sx={child.props.sx}>
-                        {child.props.children}
-                    </TabPanel>
-                )}
-            </div>
-        </div >
     );
 }
