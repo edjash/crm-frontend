@@ -37,7 +37,11 @@ interface ContactDialogProps extends DialogExProps {
     onSave: () => void;
 };
 
-const Title = (props: ContactDialogProps) => {
+interface TitleProps extends ContactDialogProps {
+    isDesktop: boolean;
+}
+
+const Title = (props: TitleProps) => {
 
     let title = props.contactData?.fullname ?? 'Unnamed';
     if (props.type === 'new') {
@@ -46,11 +50,13 @@ const Title = (props: ContactDialogProps) => {
 
     return (
         <Box display="flex" alignItems="center" gap={1}>
-            <ProfileAvatar
-                name="avatar"
-                src={props.contactData?.avatar}
-                sx={{ justifySelf: "left" }}
-            />
+            {props.isDesktop &&
+                <ProfileAvatar
+                    name="avatar"
+                    src={props.contactData?.avatar}
+                    sx={{ justifySelf: "left" }}
+                />
+            }
             <div>
                 {title}
             </div>
@@ -193,7 +199,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                 open={state.open}
                 onCancel={props.onCancel}
                 displayMode={isDesktop ? 'normal' : 'mobile'}
-                title={<Title {...props} />}
+                title={<Title {...props} isDesktop={isDesktop} />}
                 saveButtonProps={{
                     type: 'submit',
                     form: formId.current
@@ -224,6 +230,14 @@ export default function ContactDialog(props: ContactDialogProps) {
                 >
                     <Box display="grid" gap={1}>
                         <Fieldset legend="Personal">
+                            {!isDesktop &&
+                                <ProfileAvatar
+                                    name="avatar"
+                                    src={props.contactData?.avatar}
+                                    sx={{ justifySelf: "left" }}
+                                    size={64}
+                                />
+                            }
                             <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
                                 <RemoteSelect
                                     name="title"

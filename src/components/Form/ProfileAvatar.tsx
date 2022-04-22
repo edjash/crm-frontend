@@ -14,6 +14,7 @@ interface ProfileAvatarProps extends BoxProps {
     src?: string;
     defaultValue?: string;
     onChange?: (event: any) => void;
+    size?: number;
 }
 
 interface ProfileAvatarState {
@@ -30,7 +31,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     const { setValue, getValues } = useFormContext();
     const acceptType = ['.jpg', '.jpeg', '.png', '.gif'];
-    const avatarSize = 48;
+    const avatarSize = props.size ?? 48;
 
     const [state, setState] = useState<ProfileAvatarState>(() => {
         let filename = getValues(props.name) ?? '';
