@@ -43,21 +43,22 @@ interface TitleProps extends ContactDialogProps {
 
 const Title = (props: TitleProps) => {
 
+    const isDesktop = props.isDesktop;
     let title = props.contactData?.fullname ?? 'Unnamed';
     if (props.type === 'new') {
         title = 'New Contact';
     }
 
     return (
-        <Box display="flex" alignItems="center" gap={1}>
-            {props.isDesktop &&
+        <Box display="flex" alignItems="center" gap={1} p="10px" mb={isDesktop ? '10px' : 'auto'}>
+            {isDesktop &&
                 <ProfileAvatar
                     name="avatar"
                     src={props.contactData?.avatar}
                     sx={{ justifySelf: "left" }}
                 />
             }
-            <div>
+            <div style={{ maxWidth: (isDesktop) ? 'auto' : '200px' }}>
                 {title}
             </div>
         </Box>
@@ -235,7 +236,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                                     name="avatar"
                                     src={props.contactData?.avatar}
                                     sx={{ justifySelf: "left" }}
-                                    size={64}
+                                    size={100}
                                 />
                             }
                             <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
