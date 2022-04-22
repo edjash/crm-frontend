@@ -1,7 +1,6 @@
 import { Box, Theme, useMediaQuery } from '@mui/material';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
 import DialogEx, { DialogExProps } from '../Dialogs/DialogEx';
@@ -33,29 +32,27 @@ interface ContactDialogState {
 
 interface ContactDialogProps extends DialogExProps {
     type: 'new' | 'edit',
-    data?: ContactDialogData,
+    contactData?: ContactDialogData,
     onCancel: () => void;
     onSave: () => void;
 };
 
-interface TitleProps {
-    title: string;
-    avatar?: string;
-    onAvatarChange: (filename: string) => void;
-}
+const Title = (props: ContactDialogProps) => {
 
-const DialogTitle = (props: TitleProps) => {
+    let title = props.contactData?.fullname ?? 'Unnamed';
+    if (props.type === 'new') {
+        title = 'New Contact';
+    }
 
     return (
         <Box display="flex" alignItems="center" gap={1}>
             <ProfileAvatar
                 name="avatar"
-                src={props.avatar}
+                src={props.contactData?.avatar}
                 sx={{ justifySelf: "left" }}
-                onAvatarChange={props.onAvatarChange}
             />
             <div>
-                {props.title}
+                {title}
             </div>
         </Box>
     );
@@ -73,7 +70,7 @@ export default function ContactDialog(props: ContactDialogProps) {
 
     useEffect(() => {
         if (props.type === 'edit' && !state.ready) {
-            apiClient.get(`/contacts/${props.data?.id}`).then((response) => {
+            apiClient.get(`/contacts/${props.contactData?.id}`).then((response) => {
                 const values = prepareIncomingValues(response.data);
 
                 setState((state) => ({
@@ -86,12 +83,10 @@ export default function ContactDialog(props: ContactDialogProps) {
 
             });
         }
-    }, [state.ready, props.type, props.data?.id]);
+    }, [state.ready, props.type, props.contactData?.id]);
 
     const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
-
     const formId = useRef(uniqueId('contactForm'));
-    const formMethods = useRef<UseFormReturn>();
 
     const onSubmit = (data: any) => {
 
@@ -99,8 +94,8 @@ export default function ContactDialog(props: ContactDialogProps) {
         const postData = prepareOutgoingValues(data);
 
         let url = '/contacts';
-        if (props.type === 'edit' && props.data?.id) {
-            url = `${url}/${props.data.id}`;
+        if (props.type === 'edit' && props.contactData?.id) {
+            url = `${url}/${props.contactData.id}`;
         }
 
         apiClient.post(url, postData).then((response) => {
@@ -182,12 +177,8 @@ export default function ContactDialog(props: ContactDialogProps) {
         });
     }
 
-    let title = 'New Contact';
-    if (props.type === 'edit') {
-        if (!state.ready) {
-            return (<Overlay open={true} showProgress={true} />);
-        }
-        title = props?.data?.fullname ?? 'Unnamed';
+    if (props.type === 'edit' && !state.ready) {
+        return (<Overlay open={true} showProgress={true} />);
     }
 
     return (
@@ -197,22 +188,12 @@ export default function ContactDialog(props: ContactDialogProps) {
             defaultValues={state.defaultValues}
             validationSchema={contactSchema}
             id={formId.current}
-            setFormMethods={(methods) => formMethods.current = methods}
         >
             <DialogEx
                 open={state.open}
                 onCancel={props.onCancel}
                 displayMode={isDesktop ? 'normal' : 'mobile'}
-                title={
-                    <DialogTitle
-                        title={title}
-                        avatar={props.data?.avatar}
-                        onAvatarChange={(filename: string) => {
-                            if (formMethods.current) {
-                                formMethods.current.setValue('avatar', filename);
-                            }
-                        }}
-                    />}
+                title={<Title {...props} />}
                 saveButtonProps={{
                     type: 'submit',
                     form: formId.current

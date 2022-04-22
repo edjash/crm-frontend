@@ -1,8 +1,6 @@
 import { Box, SxProps, Tab } from '@mui/material';
 import { ReactNode } from 'react';
 
-
-
 interface TabPanelProps {
     label?: string;
     children?: ReactNode;

@@ -1,8 +1,9 @@
-import { Edit } from '@mui/icons-material/';
-import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
+import { Avatar, Box, BoxProps, CircularProgress, IconButton, Typography } from "@mui/material";
+import { Delete, Edit } from '@mui/icons-material/';
 import { AxiosRequestConfig } from "axios";
 import { uniqueId } from 'lodash';
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { SERVER_URL } from '../../app/constants';
 import apiClient from '../apiClient';
 import Overlay from '../Overlay';
@@ -12,7 +13,7 @@ interface ProfileAvatarProps extends BoxProps {
     alt?: string;
     src?: string;
     defaultValue?: string;
-    onAvatarChange: (filename: string) => void;
+    onChange?: (event: any) => void;
 }
 
 interface ProfileAvatarState {
@@ -27,10 +28,12 @@ interface ProfileAvatarState {
 
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 
+    const { setValue, getValues } = useFormContext();
     const acceptType = ['.jpg', '.jpeg', '.png', '.gif'];
+    const avatarSize = 48;
 
     const [state, setState] = useState<ProfileAvatarState>(() => {
-        let filename = props.src ?? '';
+        let filename = getValues(props.name) ?? '';
         let src = null;
 
         if (filename) {
@@ -44,7 +47,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             fileObject: null,
             src: src,
             filename: filename,
-            fieldId: uniqueId('avatarUpload_'),
+            fieldId: uniqueId('avatarUlpoad_'),
         };
     });
 
@@ -97,6 +100,8 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
     }
 
     const onDeleteAvatarClick = () => {
+        setValue(props.name, '');
+
         setState((state) => ({
             ...state,
             src: null,
@@ -123,6 +128,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
         apiClient.post('/contacts/avatar', formData, config).then((response) => {
             if (response.data.filename) {
+                //const src = `${SERVER_URL}/storage/tmp_avatars/${response.data.filename}`;
                 const src = (state.fileObject) ? URL.createObjectURL(state.fileObject) : null;
                 setState(state => ({
                     ...state,
@@ -132,9 +138,8 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                     filename: response.data.filename,
                     src: src,
                 }));
-                if (props.onAvatarChange) {
-                    props.onAvatarChange(response.data.filename);
-                }
+
+                setValue(props.name, response.data.filename);
             }
         }).catch((error) => {
             if (error?.data?.errors?.avatar) {
@@ -163,6 +168,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         state.uploading,
         state.fileObject,
         props.name,
+        setValue
     ]);
 
     return (
@@ -177,13 +183,13 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         >
             <Box
                 position="relative"
-                width={48}
-                height={48}
+                width={avatarSize}
+                height={avatarSize}
             >
                 <Avatar
                     alt={props.alt}
                     src={state.src || undefined}
-                    sx={{ width: 48, height: 48, color: '#e0e0e0' }}
+                    sx={{ width: avatarSize, height: avatarSize, color: '#e0e0e0' }}
                     onMouseOver={onMouseOver}
                     onMouseLeave={onMouseLeave}
                 />
@@ -213,7 +219,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                             <CircularProgress
                                 variant="determinate"
                                 value={state.progressPercent}
-                                size={48}
+                                size={avatarSize}
                             />
                             <Box sx={{
                                 top: 0,
@@ -244,7 +250,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                     onChange={onFileInputChange}
                 />
             </Box>
-            {/* {!state.uploading &&
+            {/* {state.src && !state.uploading &&
                 <Box
                     className="AvatarControlIcons"
                     sx={{ position: 'absolute', top: 0, right: 3, display: 'grid' }}

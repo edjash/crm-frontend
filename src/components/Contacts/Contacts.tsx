@@ -196,7 +196,7 @@ export default function Contacts() {
 
         const dlg = showModal(ContactDialog, {
             type: type,
-            data: props,
+            contactData: props,
             onCancel: () => {
                 dlg.destroy();
             },

@@ -191,7 +191,6 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                             <ProfileAvatar
                                 name="avatar"
                                 sx={{ justifySelf: "center" }}
-                                onAvatarChange={() => { }}
                             />
                             <TextFieldEx
                                 name="name"
