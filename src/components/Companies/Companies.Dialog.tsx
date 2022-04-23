@@ -17,6 +17,7 @@ import SocialIcon from '../SocialIcon';
 export interface CompanyDialogData {
     contactId: number;
     name: string;
+    avatar?: string;
 };
 
 export interface CompanyDialogProps {
@@ -33,6 +34,34 @@ interface CompanyDialogState {
     ready: boolean;
     open: boolean;
     defaultValues: Record<string, any>;
+}
+
+interface TitleProps extends CompanyDialogProps {
+    isDesktop: boolean;
+}
+
+const Title = (props: TitleProps) => {
+
+    const isDesktop = props.isDesktop;
+    let title = props.data?.name ?? 'Unnamed';
+    if (props.type === 'new') {
+        title = 'New Company';
+    }
+
+    return (
+        <Box display="flex" alignItems="center" gap={1} p="10px" mb={isDesktop ? '10px' : 'auto'}>
+            {isDesktop &&
+                <ProfileAvatar
+                    name="avatar"
+                    src={props.data?.avatar}
+                    sx={{ justifySelf: "left" }}
+                />
+            }
+            <div style={{ maxWidth: (isDesktop) ? 'auto' : '200px' }}>
+                {title}
+            </div>
+        </Box>
+    );
 }
 
 export default function CompanyDialog(props: CompanyDialogProps) {
@@ -140,12 +169,8 @@ export default function CompanyDialog(props: CompanyDialogProps) {
         return values;
     }
 
-    let title = "New Company";
-    if (props.type === 'edit') {
-        if (!state.ready) {
-            return (<Overlay open={true} showProgress={true} />);
-        }
-        title = props?.data?.name ?? 'Unnamed';
+    if (props.type === 'edit' && !state.ready) {
+        return (<Overlay open={true} showProgress={true} />);
     }
 
     let extraProps: Record<string, any> = {};
@@ -157,26 +182,23 @@ export default function CompanyDialog(props: CompanyDialogProps) {
     }
 
     return (
-        <DialogEx
-            open={state.open}
-            onCancel={props.onCancel}
-            title={title}
-            displayMode={isDesktop ? 'normal' : 'mobile'}
-            saveButtonProps={{
-                type: 'submit',
-                form: formId.current
-            }}
-            {...extraProps}
+        <Form
+            onSubmit={onSubmit}
+            onError={onError}
+            defaultValues={state.defaultValues}
+            validationSchema={companySchema}
+            id={formId.current}
         >
-            <Form
-                onSubmit={onSubmit}
-                onError={onError}
-                defaultValues={state.defaultValues}
-                validationSchema={companySchema}
-                id={formId.current}
-                boxProps={{
-                    display: 'flex'
+            <DialogEx
+                open={state.open}
+                onCancel={props.onCancel}
+                title={<Title {...props} isDesktop={isDesktop} />}
+                displayMode={isDesktop ? 'normal' : 'mobile'}
+                saveButtonProps={{
+                    type: 'submit',
+                    form: formId.current
                 }}
+                {...extraProps}
             >
                 <Box
                     sx={{
@@ -188,10 +210,13 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                 >
                     <Box display="grid" gap={1}>
                         <Fieldset legend="Identity">
-                            <ProfileAvatar
-                                name="avatar"
-                                sx={{ justifySelf: "center" }}
-                            />
+                            {!isDesktop &&
+                                <ProfileAvatar
+                                    name="avatar"
+                                    sx={{ justifySelf: "center" }}
+                                    size={100}
+                                />
+                            }
                             <TextFieldEx
                                 name="name"
                                 label="Name"
@@ -214,6 +239,15 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                         >
                             <TextFieldEx name="number" label="Phone Number" />
                         </MultiFieldset>
+                        <MultiFieldset
+                            legend="Email Address"
+                            baseName="email_address"
+                        >
+                            <TextFieldEx
+                                name="address"
+                                label="Email Address"
+                            />
+                        </MultiFieldset>
                     </Box>
                     <Box display="grid" gap={1}>
                         <MultiFieldset
@@ -227,15 +261,6 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                             <CountrySelect
                                 label="Country"
                                 name="country"
-                            />
-                        </MultiFieldset>
-                        <MultiFieldset
-                            legend="Email Address"
-                            baseName="email_address"
-                        >
-                            <TextFieldEx
-                                name="address"
-                                label="Email Address"
                             />
                         </MultiFieldset>
                     </Box>
@@ -253,8 +278,8 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                         </Fieldset>
                     </Box>
                 </Box>
-            </Form>
+            </DialogEx>
             <Overlay open={state.loading} />
-        </DialogEx>
+        </Form>
     );
 }

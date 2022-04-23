@@ -10,7 +10,7 @@ import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
 import MainGrid from '../MainGrid/MainGrid.Grid';
 import PullRefresh from '../PullRefresh';
-import CompanyDialog, { CompanyDialogProps } from './Companies.CreateEdit';
+import CompanyDialog, { CompanyDialogProps } from './Companies.Dialog';
 
 export default function Companies() {
 

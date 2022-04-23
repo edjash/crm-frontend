@@ -4,6 +4,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import clsx from 'clsx';
 import { ReactNode, useEffect, useState } from 'react';
 import DialogButton from '../DialogButton';
 import { FormProps } from '../Form/Form';
@@ -62,7 +63,8 @@ const TabbedDialogContent = (props: TabbedDialogContentProps) => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'flex-start',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                p: 0
             }}>
                 {props.children}
             </DialogContent>
@@ -129,6 +131,7 @@ export default function DialogEx(props: DialogExProps) {
             }}
             transitionDuration={props.transitionDuration}
             hideBackdrop={props.hideBackdrop}
+            className={clsx({ DialogEx: true, tabbedDialog: (props.tabProps) })}
         >
             {mode === 'normal' && config.title &&
                 <Box sx={{ display: 'flex', alignItems: 'center', pr: 1 }}>
