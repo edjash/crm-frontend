@@ -205,7 +205,7 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                         display: 'grid',
                         gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : 'auto',
                         alignItems: 'start',
-                        gap: 2,
+                        gap: 1,
                     }}
                 >
                     <Box display="grid" gap={1}>

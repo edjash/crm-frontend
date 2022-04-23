@@ -165,7 +165,7 @@ export default function DialogEx(props: DialogExProps) {
             }
             {props?.tabProps
                 ? <TabbedDialogContent tabProps={props.tabProps}>{props.children}</TabbedDialogContent>
-                : <DialogContent>{props.children}</DialogContent>
+                : <DialogContent sx={{ p: 1 }}>{props.children}</DialogContent>
             }
             {mode === 'normal' &&
                 <DialogActions>
