@@ -37,12 +37,24 @@ const theme = createTheme({
         body {
             overscroll-behavior-y: none;
         },
+        /* Dialogs */
+        .MuiDialog-paperFullScreen .tabPanel {
+            position:absolute;
+            top:0px;
+            left:0px;
+            right:0px;
+            bottom:0px;
+        }
         .MuiDialogContent-root {
             padding: 0px !important;
         },
         .MuiDialogTitle-root {
             padding: 0px !important;
         }
+        .MuiDialog-paper {
+            overflow: hidden !important;
+        }
+        /* DataGrid */
         .MuiDataGrid-columnHeader:focus,
         .MuiDataGrid-columnHeader:focus-within,
         .MuiDataGrid-cell:focus-within,

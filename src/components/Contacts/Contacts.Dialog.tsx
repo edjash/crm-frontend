@@ -224,7 +224,6 @@ export default function ContactDialog(props: ContactDialogProps) {
                         display: 'grid',
                         gridTemplateColumns: (isDesktop) ? '320px 320px 320px' : 'auto',
                         alignItems: 'start',
-                        overflowY: 'auto',
                         p: 1,
                         gap: 1
                     }}

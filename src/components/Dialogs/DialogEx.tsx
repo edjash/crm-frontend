@@ -58,14 +58,13 @@ const TabbedDialogContent = (props: TabbedDialogContentProps) => {
                     <Tab label={label} value={index} key={index} />
                 )}
             </Tabs>
-            <DialogContent sx={{ overflow: 'auto' }}>
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start'
-                }}>
-                    {props.children}
-                </div>
+            <DialogContent sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                overflow: 'hidden'
+            }}>
+                {props.children}
             </DialogContent>
         </div>
     );

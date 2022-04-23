@@ -16,10 +16,10 @@ export default function TabPanel(props: TabPanelProps) {
         <Box
             sx={{
                 ...props.sx,
-            }}
-            style={{
                 visibility: (active) ? 'visible' : 'hidden',
                 order: (active) ? 1 : 2,
+                overflow: 'auto',
+                minHeight:'100%'
             }}
         >
             {props.children}
