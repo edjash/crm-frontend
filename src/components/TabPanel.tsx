@@ -5,21 +5,19 @@ interface TabPanelProps {
     label?: string;
     children?: ReactNode;
     value?: number;
-    activeTab?: number;
+    isActive?: boolean;
     sx?: SxProps;
 }
 
 export default function TabPanel(props: TabPanelProps) {
-    const active = (props.value === props.activeTab);
-
     return (
         <Box
             sx={{
                 ...props.sx,
-                visibility: (active) ? 'visible' : 'hidden',
-                order: (active) ? 1 : 2,
+                visibility: (props.isActive) ? 'visible' : 'hidden',
+                order: (props.isActive) ? 1 : 2,
                 overflow: 'auto',
-                minHeight:'100%'
+                minHeight: '100%'
             }}
         >
             {props.children}
