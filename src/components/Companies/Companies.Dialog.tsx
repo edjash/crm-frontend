@@ -49,7 +49,7 @@ const Title = (props: TitleProps) => {
     }
 
     return (
-        <Box display="flex" alignItems="center" gap={1} p="10px" mb={isDesktop ? '10px' : 'auto'}>
+        <Box display="flex" alignItems="center" gap={isDesktop ? 2 : 1} mb={2}>
             {isDesktop &&
                 <ProfileAvatar
                     name="avatar"
