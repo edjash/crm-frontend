@@ -4,7 +4,7 @@ import { uniqueId } from 'lodash';
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent, MouseEvent, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { SERVER_URL } from '../../app/constants';
+import { EVENTS, SERVER_URL } from '../../app/constants';
 import apiClient from '../apiClient';
 import ViewEditAvatarDialog from '../Dialogs/ViewEditAvatarDialog';
 import Overlay from '../Overlay';
@@ -82,7 +82,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         const file: File = files[0];
         const ext = '.' + (file.name ?? '').toLowerCase().split('.').pop();
         if (acceptTypes.indexOf(ext ?? '') < 0) {
-            PubSub.publish('TOAST.SHOW', {
+            PubSub.publish(EVENTS.TOAST, {
                 type: 'error',
                 autoHide: false,
                 message: 'Only images of the following type are allowed: ' +
@@ -141,14 +141,14 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             }
         }).catch((error) => {
             if (error?.data?.errors?.avatar) {
-                PubSub.publish('TOAST.SHOW', {
+                PubSub.publish(EVENTS.TOAST, {
                     autoHide: false,
                     message: "There was a problem updating the avatar:",
                     list: error.data.errors.avatar,
                     type: 'error',
                 });
             } else {
-                PubSub.publish('TOAST.SHOW', {
+                PubSub.publish(EVENTS.TOAST, {
                     autoHide: false,
                     message: "An error occured uploading the avatar. Please try again.",
                     type: 'error',

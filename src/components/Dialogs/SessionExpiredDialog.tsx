@@ -4,6 +4,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
 import { useAppContext } from '../../app/AppContext';
+import { EVENTS } from '../../app/constants';
 import Link from '../../components/Link';
 import EnterPassword from '../../routes/Login/EnterPassword';
 import apiClient, { csrfCookieExists } from '../apiClient';
@@ -17,7 +18,7 @@ export default function SesssionExpiredDialog() {
         const sessionTimer = setInterval(() => {
             if (!csrfCookieExists()) {
                 if (!appContext.dialogsOpen) {
-                    PubSub.publishSync('AUTH.LOGOUT');
+                    PubSub.publishSync(EVENTS.AUTH_LOGOUT);
                     return;
                 } else {
                     showDialog(true);
@@ -25,7 +26,7 @@ export default function SesssionExpiredDialog() {
             }
         }, 1000);
 
-        const s1 = PubSub.subscribe('AUTH.TIMEOUT', () => {
+        const s1 = PubSub.subscribe(EVENTS.AUTH_TIMEOUT, () => {
             showDialog(true);
         });
 
@@ -41,7 +42,7 @@ export default function SesssionExpiredDialog() {
         apiClient.post('/login', data, { url: '/login' })
             .then((response) => {
                 showDialog(false);
-                PubSub.publishSync('AUTH.LOGIN', {
+                PubSub.publishSync(EVENTS.AUTH_LOGIN, {
                     userInfo: response.data.user,
                 });
             })

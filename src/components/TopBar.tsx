@@ -5,6 +5,7 @@ import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { EVENTS } from '../app/constants';
 import { logout } from '../store/reducers/auth/authSlice';
 import { useStoreDispatch } from '../store/store';
 
@@ -28,7 +29,7 @@ export default function TopBar(props: TopBarProps) {
                 <IconButton
                     color="inherit"
                     onClick={() => {
-                        PubSub.publishSync('NAV.TOGGLECLICK');
+                        PubSub.publishSync(EVENTS.NAV_TOGGLECLICK);
                     }}
                     edge="start"
                     sx={{ mr: 2 }}

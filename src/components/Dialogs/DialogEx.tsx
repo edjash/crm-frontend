@@ -6,6 +6,7 @@ import DialogContent, { DialogContentProps } from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import clsx from 'clsx';
 import { ReactNode, useEffect, useState } from 'react';
+import { EVENTS } from '../../app/constants';
 import DialogButton from '../DialogButton';
 import { FormProps } from '../Form/Form';
 
@@ -121,9 +122,9 @@ export default function DialogEx(props: DialogExProps) {
         }
 
         if (state.open) {
-            PubSub.publishSync('DIALOG.OPEN');
+            PubSub.publishSync(EVENTS.DIALOG_OPEN);
         } else {
-            PubSub.publishSync('DIALOG.CLOSE');
+            PubSub.publishSync(EVENTS.DIALOG_CLOSE);
         }
 
     }, [state.open, props.suppressGlobalCount]);

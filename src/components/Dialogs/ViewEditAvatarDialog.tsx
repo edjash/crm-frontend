@@ -2,6 +2,7 @@ import { Delete, Upload } from '@mui/icons-material/';
 import { Avatar, Box, Button } from '@mui/material';
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent } from 'react';
+import { EVENTS } from '../../app/constants';
 import ConfirmDialog from './ConfirmDialog';
 import DialogEx from './DialogEx';
 
@@ -71,7 +72,7 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
         const file: File = files[0];
         const ext = '.' + (file.name ?? '').toLowerCase().split('.').pop();
         if (acceptTypes.indexOf(ext ?? '') < 0) {
-            PubSub.publish('TOAST.SHOW', {
+            PubSub.publish(EVENTS.TOAST, {
                 type: 'error',
                 autoHide: false,
                 message: 'Only images of the following type are allowed: ' +

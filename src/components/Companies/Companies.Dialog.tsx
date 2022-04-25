@@ -1,6 +1,7 @@
 import { Box, Theme, useMediaQuery } from '@mui/material';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
+import { EVENTS } from '../../app/constants';
 import companySchema from '../../validation/companySchema';
 import apiClient from '../apiClient';
 import DialogEx from '../Dialogs/DialogEx';
@@ -112,13 +113,13 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                     props.onSave(true, response.data);
                 }
                 if (props.type === 'edit') {
-                    PubSub.publish('COMPANIES.REFRESH');
+                    PubSub.publish(EVENTS.COMPANIES_REFRESH);
                 } else {
-                    PubSub.publish('TOAST.SHOW', {
+                    PubSub.publish(EVENTS.TOAST, {
                         message: 'Company Added',
                         autoHide: true,
                     });
-                    PubSub.publish('COMPANIES.REFRESH');
+                    PubSub.publish(EVENTS.COMPANIES_REFRESH);
                 }
 
             }).catch((response) => {

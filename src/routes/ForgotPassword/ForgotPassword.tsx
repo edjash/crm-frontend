@@ -18,7 +18,7 @@ import ForgotPasswordStep3, {
     title as step3Title,
 } from './ForgotPassword.Step3';
 import { Box } from '@mui/system';
-import { APP_MODE } from '../../app/constants';
+import { APP_MODE, EVENTS } from '../../app/constants';
 
 export default function ForgotPassword() {
     const history = useHistory();
@@ -74,7 +74,7 @@ export default function ForgotPassword() {
                     if (state.currentStep === 3) {
                         history.push('/');
 
-                        PubSub.publish('TOAST.SHOW', {
+                        PubSub.publish(EVENTS.TOAST, {
                             type: 'info',
                             autoHide: true,
                             message: 'Your password is now changed, please login.',
@@ -103,7 +103,7 @@ export default function ForgotPassword() {
 
     useEffect(() => {
         if (state.currentStep === 3) {
-            PubSub.publish('TOAST.SHOW', {
+            PubSub.publish(EVENTS.TOAST, {
                 type: 'info',
                 message: 'Code accepted, please enter a new password.',
                 autoHide: true,

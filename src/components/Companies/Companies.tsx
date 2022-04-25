@@ -5,6 +5,7 @@ import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { EVENTS } from '../../app/constants';
 import { HTTPVerb, request } from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
@@ -50,7 +51,7 @@ export default function Companies() {
     }
 
     useEffect(() => {
-        const s1 = PubSub.subscribe('COMPANIES.REFRESH', (msg, callback?: () => void) => {
+        const s1 = PubSub.subscribe(EVENTS.COMPANIES_REFRESH, (msg, callback?: () => void) => {
             const fn = () => { };
             onRefreshed.current = callback ?? fn;
             console.log("Doint it...");
@@ -181,7 +182,7 @@ export default function Companies() {
 
     const onRefresh = (callback?: () => void) => {
         const fn = (typeof (callback) === 'function') ? callback : () => { };
-        PubSub.publish('COMPANIES.REFRESH', fn);
+        PubSub.publish(EVENTS.COMPANIES_REFRESH, fn);
     };
 
     const showCompanyDialog = useCallback((props: CompanyDialogProps) => {
@@ -203,7 +204,7 @@ export default function Companies() {
     }, [showModal]);
 
     useEffect(() => {
-        const s2 = PubSub.subscribe('COMPANIES.NEW', (msg, props: CompanyDialogProps) => {
+        const s2 = PubSub.subscribe(EVENTS.COMPANIES_NEW, (msg, props: CompanyDialogProps) => {
             showCompanyDialog({
                 ...props,
                 type: 'new',

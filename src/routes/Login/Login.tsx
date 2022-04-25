@@ -8,7 +8,7 @@ import Link from '../../components/Link';
 import useOnce from '../../hooks/useOnce';
 import loginSchema from '../../validation/loginSchema';
 import AuthPage from '../AuthPage';
-import { APP_URL, APP_MODE } from '../../app/constants';
+import { APP_URL, APP_MODE, EVENTS } from '../../app/constants';
 import { useDispatch } from 'react-redux';
 import { login } from '../../store/reducers/auth/authSlice';
 
@@ -45,7 +45,7 @@ export default function Login() {
 
                 if (!csrfCookieExists()) {
                     console.error("Auth Error: CSRF Cookie not set.");
-                    PubSub.publishSync('TOAST.SHOW', {
+                    PubSub.publishSync(EVENTS.TOAST, {
                         message: "An unexpected error occurred logging you in. Please retry later.",
                         type: 'error',
                         autoHide: false,
@@ -61,7 +61,7 @@ export default function Login() {
                 lastError.current = `${response?.status}: ${response?.statusText} `
                     + response?.request?.responseText;
 
-                PubSub.publishSync('TOAST.SHOW', {
+                PubSub.publishSync(EVENTS.TOAST, {
                     message: "An unexpected error occurred logging you in.",
                     type: 'error',
                     autoHide: false,
@@ -72,7 +72,7 @@ export default function Login() {
 
     const showError = () => {
         if (lastError.current) {
-            return PubSub.publishSync('TOAST.SHOW', {
+            return PubSub.publishSync(EVENTS.TOAST, {
                 message: lastError.current,
                 type: 'error',
                 autoHide: false,

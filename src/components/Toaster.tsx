@@ -2,6 +2,7 @@ import { Alert } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import PubSub from 'pubsub-js';
 import { useEffect, useState } from 'react';
+import { EVENTS } from '../app/constants';
 
 export type ToastConfig = {
     show: boolean;
@@ -31,13 +32,13 @@ export default function Toast() {
     }
 
     useEffect(() => {
-        PubSub.subscribe('TOAST.SHOW', (msg, data) => {
+        const s1 = PubSub.subscribe(EVENTS.TOAST, (msg, data) => {
             data.show = true;
             setState(state => ({ ...state, ...data }));
         });
 
         return () => {
-            PubSub.unsubscribe('TOAST');
+            PubSub.unsubscribe(s1);
         }
     }, []);
 

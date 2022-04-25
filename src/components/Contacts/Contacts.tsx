@@ -5,6 +5,7 @@ import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
 import { useEffect, useRef, useState } from 'react';
+import { EVENTS } from '../../app/constants';
 import { HTTPVerb, request } from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
@@ -51,7 +52,7 @@ export default function Contacts() {
     }
 
     useEffect(() => {
-        const s1 = PubSub.subscribe('CONTACTS.REFRESH', (msg, callback?: () => void) => {
+        const s1 = PubSub.subscribe(EVENTS.CONTACTS_REFRESH, (msg, callback?: () => void) => {
             const fn = () => { };
             onRefreshed.current = callback ?? fn;
             setGridState((state) => ({
@@ -189,7 +190,7 @@ export default function Contacts() {
 
     const onRefresh = (callback?: () => void) => {
         const fn = (typeof (callback) === 'function') ? callback : () => { };
-        PubSub.publish('CONTACTS.REFRESH', fn);
+        PubSub.publish(EVENTS.CONTACTS_REFRESH, fn);
     };
 
     const showContactDialog = (props?: ContactDialogData) => {

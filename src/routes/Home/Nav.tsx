@@ -10,6 +10,7 @@ import {
     Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { EVENTS } from "../../app/constants";
 
 const drawerWidth = 240;
 
@@ -70,7 +71,7 @@ export default function NavDrawer(props: NavDrawerProps) {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        const s1 = PubSub.subscribe('NAV.TOGGLECLICK', () => {
+        const s1 = PubSub.subscribe(EVENTS.NAV_TOGGLECLICK, () => {
             setOpen(!open);
         });
         return () => {

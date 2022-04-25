@@ -9,6 +9,7 @@ import {
 } from '@mui/x-data-grid';
 import clsx from 'clsx';
 import { ChangeEvent, useState } from 'react';
+import { EVENTS } from '../../app/constants';
 import useOnce from '../../hooks/useOnce';
 import Avatar from '../Avatar';
 
@@ -18,7 +19,7 @@ export const GridHeaderCheckbox = (props: GridColumnHeaderParams) => {
     const [checked, setChecked] = useState(false);
 
     useOnce(() => {
-        const token = PubSub.subscribe('GRID.CHECKALL', (c, checked) => {
+        const token = PubSub.subscribe(EVENTS.GRID_CHECKALL, (c, checked) => {
             toggleSelection(checked);
         });
         return () => {

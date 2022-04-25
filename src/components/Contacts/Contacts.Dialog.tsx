@@ -1,6 +1,7 @@
 import { Box, Theme, useMediaQuery } from '@mui/material';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
+import { EVENTS } from '../../app/constants';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
 import DialogEx, { DialogExProps } from '../Dialogs/DialogEx';
@@ -103,13 +104,13 @@ export default function ContactDialog(props: ContactDialogProps) {
             setState({ ...state, loading: false });
             props.onSave();
             if (props.type === 'edit') {
-                PubSub.publish('CONTACTS.REFRESH');
+                PubSub.publish(EVENTS.CONTACTS_REFRESH);
             } else {
-                PubSub.publish('TOAST.SHOW', {
+                PubSub.publish(EVENTS.TOAST, {
                     message: 'Contact Added',
                     autoHide: true,
                 });
-                PubSub.publish('CONTACTS.REFRESH');
+                PubSub.publish(EVENTS.CONTACTS_REFRESH);
             }
 
         }).catch((response) => {
@@ -164,7 +165,7 @@ export default function ContactDialog(props: ContactDialogProps) {
 
     const onAddCompany = (): Promise<Record<string, any>> => {
         return new Promise((resolve, reject) => {
-            PubSub.publish('COMPANIES.NEW', {
+            PubSub.publish(EVENTS.COMPANIES_NEW, {
                 onSave: (success: boolean, data: Record<string, any>) => {
                     if (success) {
                         resolve(data.company);

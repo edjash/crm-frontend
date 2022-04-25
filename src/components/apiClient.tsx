@@ -89,7 +89,7 @@ export function clearSession() {
 // function handleError(error: AxiosError) {
 
 //     if (error.response?.status === 401) {
-//         PubSub.publish('AUTH.TIMEOUT');
+//         PubSub.publish(EVENTS.AUTH_TIMEOUT);
 //     }
 
 //     return Promise.reject(error.response);
