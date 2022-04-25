@@ -136,9 +136,7 @@ export default function DialogEx(props: DialogExProps) {
             fullScreen={config.fullScreen}
             scroll="paper"
             maxWidth="xl"
-            sx={{
-                p: 0,
-            }}
+            sx={{ p: 0 }}
             BackdropProps={{
                 sx: { backdropFilter: 'blur(1px)' }
             }}
@@ -147,54 +145,76 @@ export default function DialogEx(props: DialogExProps) {
             className={clsx({ DialogEx: true, tabbedDialog: (props.tabProps) })}
         >
             {mode === 'normal' && config.title &&
-                <DialogTitle sx={{
+                <Box sx={{
                     p: 0,
                     pl: 1,
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center'
                 }}>
-                    {config.title}
-                    {config.closeIcon &&
-                        <IconButton aria-label="close" onClick={onCancel} className="closeButton">
-                            <CloseIcon />
-                        </IconButton>
-                    }
-                </DialogTitle>
-            }
-            {mode === 'mobile' && config.title &&
-                <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pr: 2 }}>
+                    <DialogTitle>
+                        {config.title}
+                    </DialogTitle>
                     {config.closeIcon &&
                         <IconButton
                             aria-label="close"
                             onClick={onCancel}
+                            className="closeButton"
+                            sx={{
+                                alignSelf: 'flex-start',
+                                m: 0
+                            }}
                         >
                             <CloseIcon />
                         </IconButton>
                     }
-                    <DialogTitle sx={{ flexGrow: 1 }}>
-                        {config.title}
-                    </DialogTitle>
-                    <DialogButton onClick={onSave} {...props.saveButtonProps}>
-                        Save
-                    </DialogButton>
                 </Box>
             }
-            {props?.tabProps
-                ? <TabbedDialogContent
-                    contentProps={props.contentProps}
-                    tabProps={props.tabProps}
+            {mode === 'mobile' && config.title &&
+                <Box sx={{
+                    display: 'flex',
+                }}
                 >
-                    {props.children}
-                </TabbedDialogContent>
-                : <DialogContent
-                    sx={{ p: 1 }}
-                    {...props.contentProps}
-                >
-                    {props.children}
-                </DialogContent>
+                    {config.closeIcon &&
+                        <IconButton
+                            aria-label="close"
+                            onClick={onCancel}
+                            sx={{
+                                alignSelf: 'flex-start',
+                                m: 0
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+
+                    }
+                    <DialogTitle sx={{ flexGrow: 1, p: 0, alignSelf: 'center' }}>
+                        {config.title}
+                    </DialogTitle>
+                    <Box sx={{ mr: 1, mt: 1 }}>
+                        <DialogButton onClick={onSave} {...props.saveButtonProps}>
+                            Save
+                        </DialogButton>
+                    </Box>
+                </Box>
             }
-            {mode === 'normal' &&
+            {
+                props?.tabProps
+                    ? <TabbedDialogContent
+                        contentProps={props.contentProps}
+                        tabProps={props.tabProps}
+                    >
+                        {props.children}
+                    </TabbedDialogContent>
+                    : <DialogContent
+                        sx={{ p: 1 }}
+                        {...props.contentProps}
+                    >
+                        {props.children}
+                    </DialogContent>
+            }
+            {
+                mode === 'normal' &&
                 <DialogActions
                     sx={{
                         display: 'flex',
@@ -213,6 +233,6 @@ export default function DialogEx(props: DialogExProps) {
                     }
                 </DialogActions>
             }
-        </Dialog>
+        </Dialog >
     );
 }

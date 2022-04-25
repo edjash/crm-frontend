@@ -2,7 +2,6 @@ import { Delete, Upload } from '@mui/icons-material/';
 import { Avatar, Box, Button } from '@mui/material';
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent } from 'react';
-import DialogButton from '../DialogButton';
 import ConfirmDialog from './ConfirmDialog';
 import DialogEx from './DialogEx';
 
@@ -122,6 +121,7 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                     variant='square'
                     src={props.imageUrl || undefined}
                     sx={{
+                        color: 'inherit',
                         height: (props.imageUrl) ? 'auto' : '200px',
                         width: (props.imageUrl) ? 'auto' : '200px',
                     }}

@@ -181,7 +181,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                 <Avatar
                     alt={props.alt}
                     src={state.src || undefined}
-                    sx={{ width: avatarSize, height: avatarSize, color: '#e0e0e0' }}
+                    sx={{ width: avatarSize, height: avatarSize, color: 'inherit' }}
                     onMouseOver={onMouseOver}
                     onMouseLeave={onMouseLeave}
                 />
