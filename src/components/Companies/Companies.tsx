@@ -50,9 +50,26 @@ export default function Companies() {
     }
 
     useEffect(() => {
+        const s1 = PubSub.subscribe('COMPANIES.REFRESH', (msg, callback?: () => void) => {
+            const fn = () => { };
+            onRefreshed.current = callback ?? fn;
+            console.log("Doint it...");
+            setGridState((state) => ({
+                ...state,
+                loading: true,
+            }));
+        });
+
+        return () => {
+            PubSub.unsubscribe(s1);
+        }
+    }, []);
+
+    useEffect(() => {
         if (!gridState.loading) {
             return;
         }
+
         let method: HTTPVerb = 'GET';
         let endpoint = '/companies';
 
@@ -162,8 +179,9 @@ export default function Companies() {
         }
     };
 
-    const onRefresh = (callback = () => { }) => {
-        PubSub.publish('COMPANIES.REFRESH', callback);
+    const onRefresh = (callback?: () => void) => {
+        const fn = (typeof (callback) === 'function') ? callback : () => { };
+        PubSub.publish('COMPANIES.REFRESH', fn);
     };
 
     const showCompanyDialog = useCallback((props: CompanyDialogProps) => {
@@ -184,6 +202,18 @@ export default function Companies() {
         });
     }, [showModal]);
 
+    useEffect(() => {
+        const s2 = PubSub.subscribe('COMPANIES.NEW', (msg, props: CompanyDialogProps) => {
+            showCompanyDialog({
+                ...props,
+                type: 'new',
+            });
+        });
+        return () => {
+            PubSub.unsubscribe(s2);
+        }
+    }, [showCompanyDialog]);
+
     const onNewClick = () => {
         showCompanyDialog({ type: 'new' });
     }
@@ -199,26 +229,6 @@ export default function Companies() {
         });
     };
 
-    useEffect(() => {
-        const s1 = PubSub.subscribe('COMPANIES.REFRESH', (msg, callback?: () => void) => {
-            const fn = () => { };
-            onRefreshed.current = callback ?? fn;
-            setGridState((state) => ({
-                ...state,
-                loading: true,
-            }));
-        });
-        const s2 = PubSub.subscribe('COMPANIES.NEW', (msg, props: CompanyDialogProps) => {
-            showCompanyDialog({
-                ...props,
-                type: 'new',
-            });
-        });
-        return () => {
-            PubSub.unsubscribe(s1);
-            PubSub.unsubscribe(s2);
-        }
-    }, [showCompanyDialog]);
 
     let columns: GridColDef[] = [
         AvatarCheckBox,

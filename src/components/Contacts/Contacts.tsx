@@ -187,8 +187,9 @@ export default function Contacts() {
         }
     };
 
-    const onRefresh = (callback = () => { }) => {
-        PubSub.publish('CONTACTS.REFRESH', callback);
+    const onRefresh = (callback?: () => void) => {
+        const fn = (typeof (callback) === 'function') ? callback : () => { };
+        PubSub.publish('CONTACTS.REFRESH', fn);
     };
 
     const showContactDialog = (props?: ContactDialogData) => {
