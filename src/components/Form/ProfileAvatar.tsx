@@ -1,11 +1,12 @@
-import { Avatar, Box, BoxProps, CircularProgress, IconButton, Typography } from "@mui/material";
-import { Delete, Edit } from '@mui/icons-material/';
+import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
 import { uniqueId } from 'lodash';
-import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
+import { useModal } from 'mui-modal-provider';
+import { ChangeEvent, MouseEvent, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { SERVER_URL } from '../../app/constants';
 import apiClient from '../apiClient';
+import ViewEditAvatarDialog from '../Dialogs/ViewEditAvatarDialog';
 import Overlay from '../Overlay';
 
 interface ProfileAvatarProps extends BoxProps {
@@ -21,7 +22,6 @@ interface ProfileAvatarState {
     showMask: boolean;
     progressPercent: number;
     uploading: boolean;
-    fileObject: File | null;
     src: string | null;
     filename: string;
     fieldId: string;
@@ -30,9 +30,10 @@ interface ProfileAvatarState {
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     const { setValue, getValues } = useFormContext();
-    const acceptType = ['.jpg', '.jpeg', '.png', '.gif'];
+    const acceptTypes = ['.jpg', '.jpeg', '.png', '.gif'];
     const avatarSize = props.size ?? 48;
 
+    const { showModal } = useModal();
     const [state, setState] = useState<ProfileAvatarState>(() => {
         let filename = getValues(props.name) ?? '';
         let src = null;
@@ -45,7 +46,6 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             showMask: false,
             progressPercent: 0,
             uploading: false,
-            fileObject: null,
             src: src,
             filename: filename,
             fieldId: uniqueId('avatarUlpoad_'),
@@ -81,12 +81,12 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         }
         const file: File = files[0];
         const ext = '.' + (file.name ?? '').toLowerCase().split('.').pop();
-        if (acceptType.indexOf(ext ?? '') < 0) {
+        if (acceptTypes.indexOf(ext ?? '') < 0) {
             PubSub.publish('TOAST.SHOW', {
                 type: 'error',
                 autoHide: false,
                 message: 'Only images of the following type are allowed: ' +
-                    acceptType.join(', ')
+                    acceptTypes.join(', ')
             });
             return;
         }
@@ -100,7 +100,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     }
 
-    const onDeleteAvatarClick = () => {
+    const DeleteAvatar = () => {
         setValue(props.name, '');
 
         setState((state) => ({
@@ -110,13 +110,10 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         }));
     }
 
-    useEffect(() => {
-        if (!state.uploading || !state.fileObject) {
-            return;
-        }
+    const UploadAvatar = (fileObject: File) => {
 
         var formData = new FormData();
-        formData.append(props.name, state.fileObject);
+        formData.append(props.name, fileObject);
 
         const config: AxiosRequestConfig = {
             onUploadProgress: onUploadProgress,
@@ -129,8 +126,8 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
         apiClient.post('/contacts/avatar', formData, config).then((response) => {
             if (response.data.filename) {
-                //const src = `${SERVER_URL}/storage/tmp_avatars/${response.data.filename}`;
-                const src = (state.fileObject) ? URL.createObjectURL(state.fileObject) : null;
+
+                const src = (fileObject) ? URL.createObjectURL(fileObject) : null;
                 setState(state => ({
                     ...state,
                     showMask: false,
@@ -164,13 +161,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                 progressPercent: 0,
             }));
         });
-
-    }, [
-        state.uploading,
-        state.fileObject,
-        props.name,
-        setValue
-    ]);
+    }
 
     return (
         <Box
@@ -202,20 +193,23 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                         open: state?.showMask,
                         onMouseOver: onMouseOver,
                         onMouseLeave: onMouseLeave,
+                        onClick: () => {
+                            const dlg = showModal(ViewEditAvatarDialog, {
+                                title: 'Contact Photo',
+                                imageUrl: (state.filename) ? `${SERVER_URL}/storage/avatars/large/${state.filename}` : '',
+                                onFileAccepted: (file: File) => {
+                                    dlg.destroy();
+                                    UploadAvatar(file);
+                                },
+                                onDelete: () => {
+                                    dlg.destroy();
+                                    DeleteAvatar();
+                                }
+                            });
+                        }
                     }}
                 >
-                    {!state.uploading ?
-                        <label htmlFor={state.fieldId} style={{
-                            cursor: 'pointer',
-                            width: '100%',
-                            height: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
-                            <Edit fontSize="inherit" />
-                        </label>
-                        :
+                    {state.uploading &&
                         <Box sx={{ position: 'relative', display: 'inline-flex' }} >
                             <CircularProgress
                                 variant="determinate"
@@ -243,24 +237,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                         </Box>
                     }
                 </Overlay >
-                <input
-                    type="file"
-                    id={state.fieldId}
-                    accept={acceptType.join(',')}
-                    style={{ display: "none" }}
-                    onChange={onFileInputChange}
-                />
             </Box>
-            {/* {state.src && !state.uploading &&
-                <Box
-                    className="AvatarControlIcons"
-                    sx={{ position: 'absolute', top: 0, right: 3, display: 'grid' }}
-                >
-                    <IconButton size="small" className="formIconButton" onClick={onDeleteAvatarClick}>
-                        <Delete fontSize="inherit" />
-                    </IconButton>
-                </Box>
-            } */}
         </Box>
     );
 }

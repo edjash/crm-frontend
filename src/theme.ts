@@ -37,10 +37,6 @@ const theme = createTheme({
         body {
             overscroll-behavior-y: none;
         },
-        /* Dialogs */
-        .DialogEx .MuiDialogTitle-root {
-            padding: 0px !important;
-        }
         /* DataGrid */
         .MuiDataGrid-columnHeader:focus,
         .MuiDataGrid-columnHeader:focus-within,

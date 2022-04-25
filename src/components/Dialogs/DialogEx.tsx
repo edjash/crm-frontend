@@ -1,8 +1,8 @@
 import CloseIcon from '@mui/icons-material/CancelOutlined';
-import { Box, IconButton, Tab, Tabs } from '@mui/material';
+import { Box, ButtonProps, IconButton, Tab, Tabs } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
+import DialogContent, { DialogContentProps } from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import clsx from 'clsx';
 import { ReactNode, useEffect, useState } from 'react';
@@ -18,23 +18,33 @@ interface DialogTabProps {
 
 export interface DialogExProps {
     open: boolean;
-    title?: string | JSX.Element;
-    closeIcon?: boolean;
+    children?: ReactNode;
     onCancel?: () => void;
     onSave?: () => void;
+    title?: string | JSX.Element;
+    closeIcon?: boolean;
+    saveButtonText?: string;
+    cancelButtonText?: string;
     displayMode?: 'mobile' | 'normal' | string;
-    saveButtonProps?: Record<string, any>;
+    justifyActionButtons?:
+    'flex-start' | 'flex-end' | 'center' |
+    'space-between' | 'space-around' | 'space-evenly';
+    actionButtonGap?: number;
     suppressGlobalCount?: boolean;
     disableRestoreFocus?: boolean;
     hideBackdrop?: boolean;
     transitionDuration?: number;
-    children?: ReactNode;
     tabProps?: DialogTabProps;
     formProps?: FormProps;
+    contentProps?: DialogContentProps;
+    saveButtonProps?: ButtonProps;
+    cancelButtonProps?: ButtonProps;
+    saveButtonComponent?: JSX.Element;
 };
 
 interface TabbedDialogContentProps {
     tabProps: DialogTabProps;
+    contentProps?: DialogContentProps;
     children?: ReactNode;
 }
 
@@ -59,13 +69,16 @@ const TabbedDialogContent = (props: TabbedDialogContentProps) => {
                     <Tab label={label} value={index} key={index} />
                 )}
             </Tabs>
-            <DialogContent sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                overflow: 'hidden',
-                p: 0
-            }}>
+            <DialogContent
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    overflow: 'hidden',
+                    p: 0
+                }}
+                {...props.contentProps}
+            >
                 {props.children}
             </DialogContent>
         </div>
@@ -134,16 +147,20 @@ export default function DialogEx(props: DialogExProps) {
             className={clsx({ DialogEx: true, tabbedDialog: (props.tabProps) })}
         >
             {mode === 'normal' && config.title &&
-                <Box sx={{ display: 'flex', alignItems: 'center', pr: 1 }}>
-                    <DialogTitle sx={{ flexGrow: 1 }}>
-                        {config.title}
-                    </DialogTitle>
+                <DialogTitle sx={{
+                    p: 0,
+                    pl: 1,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                }}>
+                    {config.title}
                     {config.closeIcon &&
                         <IconButton aria-label="close" onClick={onCancel} className="closeButton">
                             <CloseIcon />
                         </IconButton>
                     }
-                </Box>
+                </DialogTitle>
             }
             {mode === 'mobile' && config.title &&
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pr: 2 }}>
@@ -164,17 +181,36 @@ export default function DialogEx(props: DialogExProps) {
                 </Box>
             }
             {props?.tabProps
-                ? <TabbedDialogContent tabProps={props.tabProps}>{props.children}</TabbedDialogContent>
-                : <DialogContent sx={{ p: 1 }}>{props.children}</DialogContent>
+                ? <TabbedDialogContent
+                    contentProps={props.contentProps}
+                    tabProps={props.tabProps}
+                >
+                    {props.children}
+                </TabbedDialogContent>
+                : <DialogContent
+                    sx={{ p: 1 }}
+                    {...props.contentProps}
+                >
+                    {props.children}
+                </DialogContent>
             }
             {mode === 'normal' &&
-                <DialogActions>
-                    <DialogButton onClick={onCancel}>
-                        Cancel
+                <DialogActions
+                    sx={{
+                        display: 'flex',
+                        justifyContent: props.justifyActionButtons ?? 'flex-end',
+                        gap: props.actionButtonGap ?? 0,
+                    }}
+                >
+                    <DialogButton onClick={onCancel} {...props.cancelButtonProps}>
+                        {props.cancelButtonText ?? 'Cancel'}
                     </DialogButton>
-                    <DialogButton onClick={onSave} {...props.saveButtonProps}>
-                        Save
-                    </DialogButton>
+                    {props.saveButtonComponent
+                        ? props.saveButtonComponent
+                        : <DialogButton onClick={onSave} {...props.saveButtonProps}>
+                            {props.saveButtonText ?? 'Save'}
+                        </DialogButton>
+                    }
                 </DialogActions>
             }
         </Dialog>
