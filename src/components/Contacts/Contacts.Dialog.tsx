@@ -1,4 +1,4 @@
-import { Box, Theme, useMediaQuery } from '@mui/material';
+import { Box, DialogTitle, Theme, useMediaQuery } from '@mui/material';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { EVENTS } from '../../app/constants';
@@ -45,7 +45,7 @@ const Title = (props: TitleProps) => {
     }
 
     return (
-        <Box display="flex" alignItems="center" gap={isDesktop ? 2 : 1} mb={2}>
+        <Box display="flex" alignItems="center" gap={isDesktop ? 2 : 1} p={isDesktop ? 2 : 0}>
             {isDesktop &&
                 <ProfileAvatar
                     name="avatar"
@@ -53,9 +53,9 @@ const Title = (props: TitleProps) => {
                     sx={{ justifySelf: "left" }}
                 />
             }
-            <div style={{ maxWidth: (isDesktop) ? 'auto' : '200px' }}>
+            <DialogTitle>
                 {title}
-            </div>
+            </DialogTitle>
         </Box>
     );
 }
@@ -195,7 +195,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                 open={state.open}
                 onCancel={props.onCancel}
                 displayMode={isDesktop ? 'normal' : 'mobile'}
-                title={<Title {...props} isDesktop={isDesktop} />}
+                titleComponent={<Title {...props} isDesktop={isDesktop} />}
                 saveButtonProps={{
                     type: 'submit',
                     form: formId.current

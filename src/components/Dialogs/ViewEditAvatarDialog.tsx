@@ -1,5 +1,5 @@
 import { Delete, Upload } from '@mui/icons-material/';
-import { Avatar, Box, Button } from '@mui/material';
+import { Box, Button, Theme, useMediaQuery } from '@mui/material';
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent } from 'react';
 import { EVENTS } from '../../app/constants';
@@ -44,7 +44,7 @@ const FileUploadButton = (props: FileUploadButtonProps) => {
 export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
 
     const { showModal } = useModal();
-
+    const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const acceptTypes = ['.jpg', '.jpeg', '.png', '.gif'];
 
     const onDelete = () => {
@@ -89,6 +89,8 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
     return (
         <DialogEx
             open={true}
+            displayMode={isMobile ? 'mobile' : 'normal'}
+            hideSaveButton={isMobile ? true : false}
             disableRestoreFocus={true}
             title={props.title}
             contentProps={{
@@ -114,20 +116,14 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
         >
             <Box
                 sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}>
-                <Avatar
-                    variant='square'
-                    src={props.imageUrl || undefined}
-                    sx={{
-                        color: 'inherit',
-                        height: (props.imageUrl) ? 'auto' : '200px',
-                        width: (props.imageUrl) ? 'auto' : '200px',
-                    }}
-                />
-            </Box>
+                    backgroundImage: `url('${props.imageUrl}')`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'contain',
+                    backgroundPosition: 'center center',
+                    width: '100%',
+                    height: '100%',
+                }}
+            />
         </DialogEx >
     );
 }

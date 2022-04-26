@@ -23,7 +23,9 @@ export interface DialogExProps {
     onCancel?: () => void;
     onSave?: () => void;
     title?: string | JSX.Element;
-    closeIcon?: boolean;
+    titleComponent?: JSX.Element;
+    hideCancelButton?: boolean;
+    hideSaveButton?: boolean;
     saveButtonText?: string;
     cancelButtonText?: string;
     displayMode?: 'mobile' | 'normal' | string;
@@ -91,7 +93,6 @@ export default function DialogEx(props: DialogExProps) {
     const config = {
         ...props,
         title: props?.title ?? '',
-        closeIcon: props?.closeIcon ?? true,
         disableRestoreFocus: props?.disableRestoreFocus ?? true,
         fullScreen: (mode === 'mobile') ? true : false,
     };
@@ -145,7 +146,7 @@ export default function DialogEx(props: DialogExProps) {
             hideBackdrop={props.hideBackdrop}
             className={clsx({ DialogEx: true, tabbedDialog: (props.tabProps) })}
         >
-            {mode === 'normal' && config.title &&
+            {mode === 'normal' &&
                 <Box sx={{
                     p: 0,
                     pl: 1,
@@ -153,10 +154,12 @@ export default function DialogEx(props: DialogExProps) {
                     justifyContent: 'space-between',
                     alignItems: 'center'
                 }}>
-                    <DialogTitle>
-                        {config.title}
-                    </DialogTitle>
-                    {config.closeIcon &&
+                    {props.titleComponent
+                        ?? <DialogTitle>
+                            {config.title}
+                        </DialogTitle>
+                    }
+                    {!props.hideCancelButton &&
                         <IconButton
                             aria-label="close"
                             onClick={onCancel}
@@ -171,17 +174,19 @@ export default function DialogEx(props: DialogExProps) {
                     }
                 </Box>
             }
-            {mode === 'mobile' && config.title &&
+            {mode === 'mobile' &&
                 <Box sx={{
                     display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                 }}
                 >
-                    {config.closeIcon &&
+                    {!props.hideCancelButton &&
                         <IconButton
                             aria-label="close"
                             onClick={onCancel}
                             sx={{
-                                alignSelf: 'flex-start',
+                                //alignSelf: 'flex-start',
                                 m: 0
                             }}
                         >
@@ -189,13 +194,17 @@ export default function DialogEx(props: DialogExProps) {
                         </IconButton>
 
                     }
-                    <DialogTitle sx={{ flexGrow: 1, p: 0, alignSelf: 'center' }}>
-                        {config.title}
-                    </DialogTitle>
-                    <Box sx={{ mr: 1, mt: 1 }}>
-                        <DialogButton onClick={onSave} {...props.saveButtonProps}>
-                            Save
-                        </DialogButton>
+                    {props.titleComponent
+                        ?? <DialogTitle>
+                            {config.title}
+                        </DialogTitle>
+                    }
+                    <Box sx={{ pr: 1 }}>
+                        {!props.hideSaveButton &&
+                            <DialogButton onClick={onSave} {...props.saveButtonProps}>
+                                Save
+                            </DialogButton>
+                        }
                     </Box>
                 </Box>
             }
