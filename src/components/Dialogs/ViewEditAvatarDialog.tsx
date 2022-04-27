@@ -111,20 +111,26 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'center',
-                    gap: 1
+                    gap: 4,
+                    mb: 1,
+                    order: 2
                 }}>
-                    <Button
-                        onClick={onDelete}
-                        startIcon={<Delete />}
-                        size="small"
-                    >
-                        Delete
-                    </Button>
+                    {props.imageUrl &&
+                        <Button
+                            onClick={onDelete}
+                            startIcon={<Delete />}
+                            size="medium"
+                            variant="outlined"
+                        >
+                            Delete
+                        </Button>
+                    }
                     <FileUploadButton
                         onChange={onFileInputChange}
                         acceptTypes={acceptTypes}
                         buttonProps={{
-                            size: "small"
+                            size: "medium",
+                            variant: "outlined"
                         }}
                     />
                 </Box>
@@ -133,7 +139,7 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                         backgroundImage: (props.imageUrl) ? `url('${props.imageUrl}')` : 'none',
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: 'contain',
-                        backgroundPosition:'top center',
+                        backgroundPosition: 'top center',
                         minWidth: '100px',
                         minHeight: '100px',
                         display: 'flex',
