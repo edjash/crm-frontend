@@ -133,6 +133,7 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                         backgroundImage: (props.imageUrl) ? `url('${props.imageUrl}')` : 'none',
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: 'contain',
+                        backgroundPosition:'top center',
                         minWidth: '100px',
                         minHeight: '100px',
                         display: 'flex',
