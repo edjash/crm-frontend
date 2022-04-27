@@ -1,5 +1,5 @@
 import { Delete, Upload } from '@mui/icons-material/';
-import { Box, Button, ButtonProps, Theme, useMediaQuery } from '@mui/material';
+import { Avatar, Box, Button, ButtonProps, Theme, useMediaQuery } from '@mui/material';
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent } from 'react';
 import { EVENTS } from '../../app/constants';
@@ -130,16 +130,20 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                 </Box>
                 <Box
                     sx={{
-                        backgroundImage: `url('${props.imageUrl}')`,
+                        backgroundImage: (props.imageUrl) ? `url('${props.imageUrl}')` : 'none',
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: 'contain',
                         minWidth: '100px',
                         minHeight: '100px',
-                        maxWidth: '100%',
-
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
                     }}
                 >
-                    <img src={props.imageUrl} style={{ display: 'block', visibility: 'hidden' }} alt="" />
+                    {props.imageUrl
+                        ? <img src={props.imageUrl} style={{ display: 'block', visibility: 'hidden' }} alt="" />
+                        : <Avatar variant="square" sx={{ width: '200px', height: '200px' }}></Avatar>
+                    }
                 </Box>
             </Box>
         </DialogEx >
