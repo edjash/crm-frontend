@@ -112,8 +112,8 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                     display: 'flex',
                     justifyContent: 'center',
                     gap: 4,
-                    mb: 1,
-                    order: 2
+                    m: 1,
+              
                 }}>
                     {props.imageUrl &&
                         <Button
