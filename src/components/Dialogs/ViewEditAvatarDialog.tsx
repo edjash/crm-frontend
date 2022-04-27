@@ -1,5 +1,5 @@
-import { Delete, Upload } from '@mui/icons-material/';
-import { Box, Button, Theme, useMediaQuery } from '@mui/material';
+import { AddBoxRounded, Delete, Upload } from '@mui/icons-material/';
+import { Box, Button, ButtonProps, Divider, Theme, useMediaQuery } from '@mui/material';
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent } from 'react';
 import { EVENTS } from '../../app/constants';
@@ -17,6 +17,7 @@ interface ViewEditAvatarDialogProps {
 interface FileUploadButtonProps {
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     acceptTypes: string[];
+    buttonProps?: ButtonProps;
 }
 
 const FileUploadButton = (props: FileUploadButtonProps) => {
@@ -30,10 +31,9 @@ const FileUploadButton = (props: FileUploadButtonProps) => {
                 onChange={props.onChange}
             />
             <Button
-                size='small'
-                variant='outlined'
                 startIcon={<Upload />}
                 component="span"
+                {...props.buttonProps}
             >
                 Upload
             </Button>
@@ -93,37 +93,55 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
             hideSaveButton={isMobile ? true : false}
             disableRestoreFocus={true}
             title={props.title}
+            titleProps={{
+                className: "customDialogTitle"
+            }}
             contentProps={{
                 dividers: true,
                 sx: {
-                    p: 5
+                    overflow: 'hidden',
+                    p: 0,
+                    pt: 1,
+                    display: 'block',
                 }
             }}
-            justifyActionButtons='space-between'
-            saveButtonComponent={
-                <FileUploadButton
-                    onChange={onFileInputChange}
-                    acceptTypes={acceptTypes}
-                />
-            }
-            cancelButtonText='Delete'
-            cancelButtonProps={{
-                variant: 'outlined',
-                size: 'small',
-                startIcon: <Delete />,
-                onClick: onDelete
-            }}
+            hideActionButtons={true}
         >
-            <Box
-                sx={{
-                    backgroundImage: `url('${props.imageUrl}')`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundSize: 'contain',
-                    backgroundPosition: 'center center',
-                    width: '100%',
-                    height: '100%',
-                }}
-            />
+            <Box display="flex" flexDirection="column" justifyContent="flex-start" gap={1}>
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: 1
+                }}>
+                    <Button
+                        onClick={onDelete}
+                        startIcon={<Delete />}
+                        size="small"
+                    >
+                        Delete
+                    </Button>
+                    <FileUploadButton
+                        onChange={onFileInputChange}
+                        acceptTypes={acceptTypes}
+                        buttonProps={{
+                            size: "small"
+                        }}
+                    />
+                </Box>
+                <Box
+                    sx={{
+                        backgroundImage: `url('${props.imageUrl}')`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: 'contain',
+                        minWidth: '100px',
+                        minHeight: '100px',
+                        maxWidth: '100%',
+
+                    }}
+                >
+                    <img src={props.imageUrl} style={{ display: 'block', visibility: 'hidden' }} alt="" />
+                </Box>
+            </Box>
         </DialogEx >
     );
 }

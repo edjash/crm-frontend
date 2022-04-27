@@ -2,7 +2,7 @@ import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/materi
 import { AxiosRequestConfig } from "axios";
 import { uniqueId } from 'lodash';
 import { useModal } from 'mui-modal-provider';
-import { ChangeEvent, MouseEvent, useState } from "react";
+import { MouseEvent, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { EVENTS, SERVER_URL } from '../../app/constants';
 import apiClient from '../apiClient';
@@ -30,7 +30,7 @@ interface ProfileAvatarState {
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     const { setValue, getValues } = useFormContext();
-    const acceptTypes = ['.jpg', '.jpeg', '.png', '.gif'];
+    //const acceptTypes = ['.jpg', '.jpeg', '.png', '.gif'];
     const avatarSize = props.size ?? 48;
 
     const { showModal } = useModal();
@@ -74,31 +74,31 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         }));
     }
 
-    const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const files: FileList | null = e.target.files;
-        if (!files || !files.length) {
-            return;
-        }
-        const file: File = files[0];
-        const ext = '.' + (file.name ?? '').toLowerCase().split('.').pop();
-        if (acceptTypes.indexOf(ext ?? '') < 0) {
-            PubSub.publish(EVENTS.TOAST, {
-                type: 'error',
-                autoHide: false,
-                message: 'Only images of the following type are allowed: ' +
-                    acceptTypes.join(', ')
-            });
-            return;
-        }
+    // const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    //     const files: FileList | null = e.target.files;
+    //     if (!files || !files.length) {
+    //         return;
+    //     }
+    //     const file: File = files[0];
+    //     const ext = '.' + (file.name ?? '').toLowerCase().split('.').pop();
+    //     if (acceptTypes.indexOf(ext ?? '') < 0) {
+    //         PubSub.publish(EVENTS.TOAST, {
+    //             type: 'error',
+    //             autoHide: false,
+    //             message: 'Only images of the following type are allowed: ' +
+    //                 acceptTypes.join(', ')
+    //         });
+    //         return;
+    //     }
 
-        setState((state) => ({
-            ...state,
-            progressPercent: 0,
-            fileObject: file,
-            uploading: true,
-        }));
+    //     setState((state) => ({
+    //         ...state,
+    //         progressPercent: 0,
+    //         fileObject: file,
+    //         uploading: true,
+    //     }));
 
-    }
+    // }
 
     const DeleteAvatar = () => {
         setValue(props.name, '');

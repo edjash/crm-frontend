@@ -163,21 +163,21 @@ export default function ContactDialog(props: ContactDialogProps) {
         return pvalues;
     }
 
-    const onAddCompany = (): Promise<Record<string, any>> => {
-        return new Promise((resolve, reject) => {
-            PubSub.publish(EVENTS.COMPANIES_NEW, {
-                onSave: (success: boolean, data: Record<string, any>) => {
-                    if (success) {
-                        resolve(data.company);
-                    } else {
-                        reject(data);
-                    }
-                },
-                noAnimation: true,
-                hideBackdrop: true,
-            })
-        });
-    }
+    // const onAddCompany = (): Promise<Record<string, any>> => {
+    //     return new Promise((resolve, reject) => {
+    //         PubSub.publish(EVENTS.COMPANIES_NEW, {
+    //             onSave: (success: boolean, data: Record<string, any>) => {
+    //                 if (success) {
+    //                     resolve(data.company);
+    //                 } else {
+    //                     reject(data);
+    //                 }
+    //             },
+    //             noAnimation: true,
+    //             hideBackdrop: true,
+    //         })
+    //     });
+    // }
 
     if (props.type === 'edit' && !state.ready) {
         return (<Overlay open={true} showProgress={true} />);

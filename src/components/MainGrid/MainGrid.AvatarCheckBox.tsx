@@ -4,6 +4,7 @@ import {
     GridColumnHeaderParams,
     GridRenderCellParams,
     GridRowId,
+    GridRowModel,
     GridSelectionModel,
     useGridApiContext
 } from '@mui/x-data-grid';
@@ -51,7 +52,7 @@ const GridCellCheckbox = (params: GridRenderCellParams) => {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const checked = e.target.checked;
         const selModel: GridSelectionModel = [];
-        params.api.getSelectedRows().forEach((row) => {
+        params.api.getSelectedRows().forEach((row: GridRowModel) => {
             if (row.id !== params.id) {
                 selModel.push(row.id);
             }

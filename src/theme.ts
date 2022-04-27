@@ -37,7 +37,8 @@ const theme = createTheme({
         body {
             overscroll-behavior-y: none;
         },
-        h2.MuiTypography-root {
+        .customDialogTitle h2.MuiTypography-root,
+        h2.customDialogTitle {
             padding:0px;
         }
         /* DataGrid */

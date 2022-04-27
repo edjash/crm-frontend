@@ -3,7 +3,7 @@ import { Box, ButtonProps, IconButton, Tab, Tabs } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent, { DialogContentProps } from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import DialogTitle, { DialogTitleProps } from '@mui/material/DialogTitle';
 import clsx from 'clsx';
 import { ReactNode, useEffect, useState } from 'react';
 import { EVENTS } from '../../app/constants';
@@ -24,8 +24,10 @@ export interface DialogExProps {
     onSave?: () => void;
     title?: string | JSX.Element;
     titleComponent?: JSX.Element;
+    titleProps?: DialogTitleProps;
     hideCancelButton?: boolean;
     hideSaveButton?: boolean;
+    hideActionButtons?: boolean;
     saveButtonText?: string;
     cancelButtonText?: string;
     displayMode?: 'mobile' | 'normal' | string;
@@ -155,7 +157,8 @@ export default function DialogEx(props: DialogExProps) {
                     alignItems: 'center'
                 }}>
                     {props.titleComponent
-                        ?? <DialogTitle>
+                        ? <div className="customDialogTitle">{props.titleComponent}</div>
+                        : <DialogTitle {...props.titleProps}>
                             {config.title}
                         </DialogTitle>
                     }
@@ -195,7 +198,8 @@ export default function DialogEx(props: DialogExProps) {
 
                     }
                     {props.titleComponent
-                        ?? <DialogTitle>
+                        ? <div className="customDialogTitle">{props.titleComponent}</div>
+                        : <DialogTitle {...props.titleProps}>
                             {config.title}
                         </DialogTitle>
                     }
@@ -224,7 +228,7 @@ export default function DialogEx(props: DialogExProps) {
                     </DialogContent>
             }
             {
-                mode === 'normal' &&
+                mode === 'normal' && !props.hideActionButtons &&
                 <DialogActions
                     sx={{
                         display: 'flex',
