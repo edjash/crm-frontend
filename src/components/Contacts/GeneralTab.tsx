@@ -10,7 +10,7 @@ import SocialIcon from "../SocialIcon";
 import TabPanel from "../TabPanel";
 
 interface GeneralTabProps {
-    index: number;
+    value: number;
     isActive: boolean;
     isDesktop?: boolean;
     data?: Record<string, any>;
@@ -19,7 +19,7 @@ interface GeneralTabProps {
 export default function GeneralTab(props: GeneralTabProps) {
     return (
         <TabPanel
-            value={props.index}
+            value={props.value}
             isActive={props.isActive}
             sx={{
                 display: 'grid',

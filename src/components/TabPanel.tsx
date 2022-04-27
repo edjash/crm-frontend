@@ -9,6 +9,7 @@ interface TabPanelProps {
     sx?: SxProps;
 }
 
+
 export default function TabPanel(props: TabPanelProps) {
     return (
         <Box
@@ -25,12 +26,13 @@ export default function TabPanel(props: TabPanelProps) {
     );
 }
 
-interface TabProps {
+export interface TabLabelProps {
     label: string;
     value: number;
+    disabled?: boolean;
 }
 
-export const TabLabel = (props: TabProps) => {
+export const TabLabel = (props: TabLabelProps) => {
     return (
         <Tab
             label={props.label}

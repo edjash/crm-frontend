@@ -1,14 +1,14 @@
 import TabPanel from "../TabPanel";
 
 interface NotesTabProps {
-    index: number;
+    value: number;
     isActive: boolean;
 }
 
 export default function NotesTab(props: NotesTabProps) {
     return (
         <TabPanel
-            value={props.index}
+            value={props.value}
             isActive={props.isActive}
         >
             NOTES AND STUFF

@@ -201,7 +201,10 @@ export default function ContactDialog(props: ContactDialogProps) {
                     form: formId.current
                 }}
                 tabProps={{
-                    tabs: ['General', 'Notes'],
+                    tabs: [
+                        { label: 'General', value: 0 },
+                        { label: 'Notes', value: 1, disabled: true }
+                    ],
                     activeTab: state.activeTab,
                     orientation: (isDesktop) ? 'vertical' : 'horizontal',
                     onChange: (tab: number) => {
@@ -213,13 +216,13 @@ export default function ContactDialog(props: ContactDialogProps) {
                 }}
             >
                 <GeneralTab
-                    index={0}
+                    value={0}
                     isActive={(state.activeTab === 0)}
                     isDesktop={isDesktop}
                     data={props.contactData}
                 />
                 <NotesTab
-                    index={1}
+                    value={1}
                     isActive={(state.activeTab === 1)}
                 />
             </DialogEx>

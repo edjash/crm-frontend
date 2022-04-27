@@ -9,9 +9,10 @@ import { ReactNode, useEffect, useState } from 'react';
 import { EVENTS } from '../../app/constants';
 import DialogButton from '../DialogButton';
 import { FormProps } from '../Form/Form';
+import { TabLabelProps } from '../TabPanel';
 
 interface DialogTabProps {
-    tabs: string[];
+    tabs: TabLabelProps[];
     activeTab: number;
     onChange: (tab: number) => void;
     orientation?: 'horizontal' | 'vertical';
@@ -70,8 +71,11 @@ const TabbedDialogContent = (props: TabbedDialogContentProps) => {
                     }
                 }}
             >
-                {props.tabProps?.tabs && props.tabProps.tabs.map((label: string, index: number) =>
-                    <Tab label={label} value={index} key={index} />
+                {props.tabProps?.tabs && props.tabProps.tabs.map((tab: TabLabelProps) =>
+                    <Tab
+                        {...tab}
+                        key={`tab${tab.value}`}
+                    />
                 )}
             </Tabs>
             <DialogContent

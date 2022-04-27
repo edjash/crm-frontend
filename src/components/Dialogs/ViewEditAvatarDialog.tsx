@@ -1,5 +1,5 @@
-import { AddBoxRounded, Delete, Upload } from '@mui/icons-material/';
-import { Box, Button, ButtonProps, Divider, Theme, useMediaQuery } from '@mui/material';
+import { Delete, Upload } from '@mui/icons-material/';
+import { Box, Button, ButtonProps, Theme, useMediaQuery } from '@mui/material';
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent } from 'react';
 import { EVENTS } from '../../app/constants';
