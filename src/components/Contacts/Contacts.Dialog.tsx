@@ -163,22 +163,6 @@ export default function ContactDialog(props: ContactDialogProps) {
         return pvalues;
     }
 
-    // const onAddCompany = (): Promise<Record<string, any>> => {
-    //     return new Promise((resolve, reject) => {
-    //         PubSub.publish(EVENTS.COMPANIES_NEW, {
-    //             onSave: (success: boolean, data: Record<string, any>) => {
-    //                 if (success) {
-    //                     resolve(data.company);
-    //                 } else {
-    //                     reject(data);
-    //                 }
-    //             },
-    //             noAnimation: true,
-    //             hideBackdrop: true,
-    //         })
-    //     });
-    // }
-
     if (props.type === 'edit' && !state.ready) {
         return (<Overlay open={true} showProgress={true} />);
     }
@@ -203,7 +187,10 @@ export default function ContactDialog(props: ContactDialogProps) {
                 tabProps={{
                     tabs: [
                         { label: 'General', value: 0 },
-                        { label: 'Notes', value: 1, disabled: true }
+                        { label: 'Notes', value: 1, disabled: true },
+                        { label: 'Lead Info', value: 1, disabled: true },
+                        { label: 'Relationships', value: 1, disabled: true },
+                        { label: 'Activity', value: 1, disabled: true },
                     ],
                     activeTab: state.activeTab,
                     orientation: (isDesktop) ? 'vertical' : 'horizontal',

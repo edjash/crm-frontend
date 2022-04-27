@@ -75,6 +75,10 @@ const TabbedDialogContent = (props: TabbedDialogContentProps) => {
                     <Tab
                         {...tab}
                         key={`tab${tab.value}`}
+                        sx={{
+                            textAlign: 'right',
+                            alignItems: 'flex-end'
+                        }}
                     />
                 )}
             </Tabs>

@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
+import { CompanySelect } from "../Form/CompanySelect";
 import CountrySelect from "../Form/CountrySelect";
 import Fieldset from "../Form/Fieldset";
 import MultiFieldset from "../Form/MultiFieldset";
 import ProfileAvatar from "../Form/ProfileAvatar";
 import RemoteSelect from "../Form/RemoteSelect";
-import SearchField from "../Form/SearchField";
 import TextFieldEx from "../Form/TextFieldEx";
 import SocialIcon from "../SocialIcon";
 import TabPanel from "../TabPanel";
@@ -17,6 +17,7 @@ interface GeneralTabProps {
 }
 
 export default function GeneralTab(props: GeneralTabProps) {
+
     return (
         <TabPanel
             value={props.value}
@@ -79,14 +80,9 @@ export default function GeneralTab(props: GeneralTabProps) {
                     </Box>
                 </Fieldset>
                 <Fieldset legend="Company">
-                    <SearchField
-                        url="/companies"
-                        labelField="name"
-                        valueField="id"
+                    <CompanySelect
                         name="company"
                         label="Company"
-                        remoteDataProperty="data"
-                    //onAddClick={onAddCompany}
                     />
                     <TextFieldEx
                         name="jobtitle"
