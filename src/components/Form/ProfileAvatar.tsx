@@ -164,6 +164,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                         }}
                         onMouseOver={onMouseOver}
                         onMouseLeave={onMouseLeave}
+                        showIndicator={true}
 
                     /> :
                     <Avatar

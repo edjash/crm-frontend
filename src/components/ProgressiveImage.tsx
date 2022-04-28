@@ -55,7 +55,7 @@ export default function ProgressiveImage(props: ProgressiveImageProps) {
                 display: (props?.showIndicator === true && state.loading) ? 'block' : 'none',
                 position: 'absolute'
             }}>
-                Loading Image...
+                Loading...
                 <LinearProgress />
             </div>
             <img
