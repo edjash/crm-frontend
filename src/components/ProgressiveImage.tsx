@@ -35,7 +35,6 @@ export default function ProgressiveImage(props: ProgressiveImageProps) {
         const imageToLoad = new Image();
         imageToLoad.src = src;
         imageToLoad.onload = () => {
-            console.log("d", arguments);
             setState({ currentSrc: src, loading: false });
         }
     }, [props.src]);

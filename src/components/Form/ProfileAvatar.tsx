@@ -1,6 +1,5 @@
 import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
-import { uniqueId } from 'lodash';
 import { useModal } from 'mui-modal-provider';
 import { MouseEvent, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -29,7 +28,6 @@ interface ProfileAvatarState {
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     const { setValue, getValues } = useFormContext();
-    //const acceptTypes = ['.jpg', '.jpeg', '.png', '.gif'];
     const avatarSize = props.size ?? 64;
 
     const { showModal } = useModal();
