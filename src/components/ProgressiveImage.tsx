@@ -1,12 +1,12 @@
-import { Box, SxProps } from "@mui/material";
+import { Box, SxProps, Typography } from "@mui/material";
 import { ImgHTMLAttributes, useEffect, useState } from "react";
 import LinearProgress from '@mui/material/LinearProgress';
 
 interface ProgressiveImageProps extends ImgHTMLAttributes<HTMLImageElement> {
     src: string;
     placeholderSrc: string;
-    width: string;
-    height: string
+    width: number;
+    height: number;
     showIndicator?: boolean;
     containerSx?: SxProps;
     style?: Record<string, any>;
@@ -42,8 +42,8 @@ export default function ProgressiveImage(props: ProgressiveImageProps) {
 
     return (
         <Box sx={{
-            width: width ?? 'auto',
-            height: height ?? 'auto',
+            width: `${width}px`,
+            height: `${height}px`,
             overflow: 'hidden',
             position: 'relative',
             display: 'flex',
@@ -53,9 +53,10 @@ export default function ProgressiveImage(props: ProgressiveImageProps) {
         }}>
             <div style={{
                 display: (props?.showIndicator === true && state.loading) ? 'block' : 'none',
-                position: 'absolute'
+                position: 'absolute',
+                fontSize: (width / 12 < 11) ? width / 12 : 10,
             }}>
-                Loading...
+                <Typography sx={{ fontSize: '2em' }}>Loading...</Typography>
                 <LinearProgress />
             </div>
             <img

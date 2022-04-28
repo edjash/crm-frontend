@@ -149,9 +149,9 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                             //If you are testing with cache disabled then this effect will be broken.
                             placeholderSrc={`${avatarsUrl}medium/${props.filename}`}
                             alt=""
-                            width="500px"
-                            height="500px"
-                            showIndicator={true}
+                            width={500}
+                            height={500}
+                            showIndicator={false}
                         />
                         : <Avatar variant="square" sx={{ width: '200px', height: '200px' }}></Avatar>
                     }

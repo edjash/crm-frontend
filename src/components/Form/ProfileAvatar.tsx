@@ -157,14 +157,14 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                         //The small image should already be cached as it is used in the contact list.
                         //If you are testing with cache disabled then this effect will be broken.
                         placeholderSrc={`${SERVER_URL}/storage/avatars/small/${state.filename}`}
-                        width={`${avatarSize}px`}
-                        height={`${avatarSize}px`}
+                        width={avatarSize}
+                        height={avatarSize}
                         containerSx={{
                             borderRadius: '10px'
                         }}
                         onMouseOver={onMouseOver}
                         onMouseLeave={onMouseLeave}
-                        showIndicator={true}
+                        showIndicator={false}
 
                     /> :
                     <Avatar
