@@ -8,6 +8,7 @@ import { EVENTS, SERVER_URL } from '../../app/constants';
 import apiClient from '../apiClient';
 import ViewEditAvatarDialog from '../Dialogs/ViewEditAvatarDialog';
 import Overlay from '../Overlay';
+import ProgressiveImage from "../ProgressiveImage";
 
 interface ProfileAvatarProps extends BoxProps {
     name: string;
@@ -22,9 +23,7 @@ interface ProfileAvatarState {
     showMask: boolean;
     progressPercent: number;
     uploading: boolean;
-    src: string | null;
     filename: string;
-    fieldId: string;
 }
 
 export default function ProfileAvatar(props: ProfileAvatarProps) {
@@ -36,19 +35,11 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
     const { showModal } = useModal();
     const [state, setState] = useState<ProfileAvatarState>(() => {
         let filename = getValues(props.name) ?? '';
-        let src = null;
-
-        if (filename) {
-            src = `${SERVER_URL}/storage/avatars/medium/${filename}`;
-        }
-
         return {
             showMask: false,
             progressPercent: 0,
-            uploading: true,
-            src: src,
+            uploading: false,
             filename: filename,
-            fieldId: uniqueId('avatarUlpoad_'),
         };
     });
 
@@ -160,17 +151,31 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                 width={avatarSize}
                 height={avatarSize}
             >
-                <Avatar
-                    alt={props.alt}
-                    src={state.src || undefined}
-                    sx={{ width: avatarSize, height: avatarSize, color: 'inherit' }}
-                    onMouseOver={onMouseOver}
-                    onMouseLeave={onMouseLeave}
-                />
+                {state.filename ?
+                    <ProgressiveImage
+                        src={`${SERVER_URL}/storage/avatars/medium/${state.filename}`}
+                        //The small image should already be cached as it is used in the contact list.
+                        //If you are testing with cache disabled then this effect will be broken.
+                        placeholderSrc={`${SERVER_URL}/storage/avatars/small/${state.filename}`}
+                        width={`${avatarSize}px`}
+                        height={`${avatarSize}px`}
+                        containerSx={{
+                            borderRadius: '10px'
+                        }}
+                        onMouseOver={onMouseOver}
+                        onMouseLeave={onMouseLeave}
+
+                    /> :
+                    <Avatar
+                        sx={{ borderRadius: '10px', width: avatarSize, height: avatarSize, color: 'inherit' }}
+                        onMouseOver={onMouseOver}
+                        onMouseLeave={onMouseLeave}
+                    />
+                }
                 <Overlay
                     open={state.showMask}
                     useAbsolute
-                    sx={{ borderRadius: "50%", textAlign: "center", cursor: 'pointer' }}
+                    sx={{ borderRadius: '10px', textAlign: "center", cursor: 'pointer' }}
                     backdropProps={{
                         open: state?.showMask,
                         onMouseOver: onMouseOver,
@@ -178,7 +183,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                         onClick: () => {
                             const dlg = showModal(ViewEditAvatarDialog, {
                                 title: 'Contact Photo',
-                                imageUrl: (state.filename) ? `${SERVER_URL}/storage/avatars/large/${state.filename}` : '',
+                                filename: state.filename,
                                 onFileAccepted: (file: File) => {
                                     dlg.destroy();
                                     UploadAvatar(file);

@@ -2,13 +2,15 @@ import { Delete, Upload } from '@mui/icons-material/';
 import { Avatar, Box, Button, ButtonProps, Theme, useMediaQuery } from '@mui/material';
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent } from 'react';
-import { EVENTS } from '../../app/constants';
+import { EVENTS, SERVER_URL } from '../../app/constants';
+import ProgressiveImage from '../ProgressiveImage';
 import ConfirmDialog from './ConfirmDialog';
 import DialogEx from './DialogEx';
 
+
 interface ViewEditAvatarDialogProps {
     title?: string;
-    imageUrl: string;
+    filename: string;
     open: boolean;
     onDelete: () => void;
     onFileAccepted: (file: File) => void;
@@ -46,6 +48,9 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
     const { showModal } = useModal();
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const acceptTypes = ['.jpg', '.jpeg', '.png', '.gif'];
+    const avatarsUrl = `${SERVER_URL}/storage/avatars/`;
+
+    // `${SERVER_URL}/storage/avatars/large/${state.filename}` : '',
 
     const onDelete = () => {
         const confirm = showModal(ConfirmDialog, {
@@ -113,9 +118,9 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                     justifyContent: 'center',
                     gap: 4,
                     m: 1,
-              
+
                 }}>
-                    {props.imageUrl &&
+                    {props.filename &&
                         <Button
                             onClick={onDelete}
                             startIcon={<Delete />}
@@ -135,20 +140,19 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                     />
                 </Box>
                 <Box
-                    sx={{
-                        backgroundImage: (props.imageUrl) ? `url('${props.imageUrl}')` : 'none',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundSize: 'contain',
-                        backgroundPosition: 'top center',
-                        minWidth: '100px',
-                        minHeight: '100px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}
+
                 >
-                    {props.imageUrl
-                        ? <img src={props.imageUrl} style={{ display: 'block', visibility: 'hidden' }} alt="" />
+                    {props.filename
+                        ? <ProgressiveImage
+                            src={`${avatarsUrl}large/${props.filename}`}
+                            //The medium image should already be cached as it is used in the parent dialog.
+                            //If you are testing with cache disabled then this effect will be broken.
+                            placeholderSrc={`${avatarsUrl}medium/${props.filename}`}
+                            alt=""
+                            width="500px"
+                            height="500px"
+                            showIndicator={true}
+                        />
                         : <Avatar variant="square" sx={{ width: '200px', height: '200px' }}></Avatar>
                     }
                 </Box>
