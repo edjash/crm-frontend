@@ -31,7 +31,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     const { setValue, getValues } = useFormContext();
     //const acceptTypes = ['.jpg', '.jpeg', '.png', '.gif'];
-    const avatarSize = props.size ?? 48;
+    const avatarSize = props.size ?? 64;
 
     const { showModal } = useModal();
     const [state, setState] = useState<ProfileAvatarState>(() => {
@@ -45,7 +45,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         return {
             showMask: false,
             progressPercent: 0,
-            uploading: false,
+            uploading: true,
             src: src,
             filename: filename,
             fieldId: uniqueId('avatarUlpoad_'),
@@ -74,32 +74,6 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
         }));
     }
 
-    // const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    //     const files: FileList | null = e.target.files;
-    //     if (!files || !files.length) {
-    //         return;
-    //     }
-    //     const file: File = files[0];
-    //     const ext = '.' + (file.name ?? '').toLowerCase().split('.').pop();
-    //     if (acceptTypes.indexOf(ext ?? '') < 0) {
-    //         PubSub.publish(EVENTS.TOAST, {
-    //             type: 'error',
-    //             autoHide: false,
-    //             message: 'Only images of the following type are allowed: ' +
-    //                 acceptTypes.join(', ')
-    //         });
-    //         return;
-    //     }
-
-    //     setState((state) => ({
-    //         ...state,
-    //         progressPercent: 0,
-    //         fileObject: file,
-    //         uploading: true,
-    //     }));
-
-    // }
-
     const DeleteAvatar = () => {
         setValue(props.name, '');
 
@@ -111,6 +85,14 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
     }
 
     const UploadAvatar = (fileObject: File) => {
+
+        setState((state) => ({
+            ...state,
+            progressPercent: 0,
+            fileObject: fileObject,
+            uploading: true,
+            showMask: true,
+        }))
 
         var formData = new FormData();
         formData.append(props.name, fileObject);
