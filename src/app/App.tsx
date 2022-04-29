@@ -12,6 +12,7 @@ import { Register } from '../routes/Register';
 import { useStoreSelector } from '../store/store';
 import theme from '../theme';
 import { APP_TITLE } from './constants';
+import './app.scss';
 
 export default function App() {
 

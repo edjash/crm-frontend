@@ -1,0 +1,92 @@
+/**
+ * Structural styles only, use theme.ts for colours and other theme-specific aesthetics
+ **/
+body {
+    overscroll-behavior-y: none;
+}
+
+.customDialogTitle h2.MuiTypography-root,
+h2.customDialogTitle {
+    padding: 0px;
+}
+
+/* DataGrid */
+.MuiDataGrid-columnHeader:focus,
+.MuiDataGrid-columnHeader:focus-within,
+.MuiDataGrid-cell:focus-within,
+.MuiDataGrid-cell:focus {
+    outline: none !important;
+}
+
+.allowWrap.MuiDataGrid-cell {
+    white-space: normal !important;
+}
+
+a.MuiLink-root {
+    font-size: 0.875rem;
+}
+
+.MuiDataGrid-iconSeparator:last-child {
+    display: none !important;
+}
+
+.formIconButton .MuiSvgIcon-root {
+    color: #9e9e9e;
+}
+
+.formIconButton:hover .MuiSvgIcon-root {
+    color: #ffffff;
+}
+
+fieldset {
+    border: 1px solid #484848;
+}
+
+.AvatarCheckBox .MuiCheckbox-root {
+    display: none;
+}
+
+.Mui-selected .AvatarCheckBox .MuiCheckbox-root,
+.AvatarCheckBox.checked .MuiCheckbox-root {
+    display: inline-flex;
+}
+
+.Mui-selected .AvatarCheckBox .MuiAvatar-root,
+.AvatarCheckBox.checked .MuiAvatar-root {
+    display: none;
+}
+
+.AvatarCheckBox:hover .MuiAvatar-root {
+    display: none;
+}
+
+.AvatarCheckBox:hover .MuiCheckbox-root {
+    display: inline-flex;
+}
+
+/* Skeletons */
+.skeletonEx {
+    position: relative;
+
+    .MuiSkeleton-root {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 1;
+        display: none !important;
+    }
+}
+
+.skeletons {
+    .skeletonEx {
+        .MuiSkeleton-root {
+            display: inline-block !important;
+        }
+
+        .skeleton-child {
+            visibility: hidden !important;
+        }
+    }
+}

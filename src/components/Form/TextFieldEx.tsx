@@ -1,6 +1,7 @@
 import { Skeleton } from "@mui/material";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import { Controller, useFormContext } from "react-hook-form";
+import SkeletonEx from "./SkeletonEx";
 
 type TextFieldExProps = TextFieldProps & {
     name?: string;
@@ -16,23 +17,7 @@ export default function TextFieldEx(props: TextFieldExProps) {
     return (
         <Controller
             render={({ field }) => (
-                <div style={{
-                    display: 'inline-block',
-                    position: 'relative',
-                    width: '100%'
-                }} >
-                    <Skeleton
-                        className="skeletonEx"
-                        sx={{
-                            display: 'none',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            bottom: 0,
-                            right: 0,
-                            opacity: 1
-                        }}
-                    />
+                <SkeletonEx>
                     <TextField
                         {...props}
                         {...field}
@@ -48,8 +33,7 @@ export default function TextFieldEx(props: TextFieldExProps) {
                             ...props.sx
                         }}
                     />
-
-                </div>
+                </SkeletonEx>
             )}
             control={control}
             name={props.name ?? ''}

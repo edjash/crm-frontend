@@ -1,14 +1,14 @@
 import { Add, KeyboardArrowLeft, KeyboardArrowRight, MoreVert } from '@mui/icons-material/';
-import { ButtonBase, IconButton, Menu, MenuItem, Tabs } from "@mui/material";
+import { ButtonBase, IconButton, Menu, MenuItem, Tabs, Skeleton } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from '@mui/material/Tab';
 import { useModal } from "mui-modal-provider";
 import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useEffect, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
-import useOnce from '../../hooks/useOnce';
 import ConfirmDialog from "../Dialogs/ConfirmDialog";
 import PromptDialog from "../Dialogs/PromptDialog";
 import Fieldset from './Fieldset';
+import SkeletonEx from './SkeletonEx';
 
 
 interface MultiFieldsetProps {
@@ -289,7 +289,11 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
                     }
                 >
                     {fields.map((item: Record<string, string>, index) => (
-                        <Tab label={getLabel(index, item.label)} value={index} key={item.key} />
+                        <Tab
+                            label={<SkeletonEx>{getLabel(index, item.label)}</SkeletonEx>}
+                            value={index} key={item.key}
+                            className='skeleton-box'
+                        />
                     ))}
                 </Tabs>
                 <Box

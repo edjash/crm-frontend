@@ -35,6 +35,7 @@
     "react-router-dom": "^5.2.1",
     "react-scripts": "5.0.0",
     "react-swipeable": "^6.2.0",
+    "sass": "^1.51.0",
     "typescript": "^4.6.2",
     "web-vitals": "^2.1.4",
     "yup": "^0.32.11"
