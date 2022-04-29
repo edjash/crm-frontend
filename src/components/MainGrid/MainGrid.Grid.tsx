@@ -83,6 +83,7 @@ export default function MainGrid(props: MainGridProps) {
                     loading={props.loading}
                     pagination
                     paginationMode="server"
+                    rowCount={0}
                     headerHeight={isMobile ? 0 : 42}
                     disableSelectionOnClick
                     disableColumnFilter
