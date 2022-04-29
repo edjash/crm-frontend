@@ -35,7 +35,7 @@ export default function GeneralTab(props: GeneralTabProps) {
                     {!props.isDesktop &&
                         <ProfileAvatar
                             name="avatar"
-                            src={props?.data?.avatar}
+                            filename={props?.data?.avatar}
                             sx={{ justifySelf: "left" }}
                             size={100}
                         />

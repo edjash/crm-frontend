@@ -1,4 +1,5 @@
 import { Box, DialogTitle, Theme, useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { EVENTS } from '../../app/constants';
@@ -34,6 +35,7 @@ interface ContactDialogProps extends DialogExProps {
 
 interface TitleProps extends ContactDialogProps {
     isDesktop: boolean;
+    avatar?: string;
 }
 
 const Title = (props: TitleProps) => {
@@ -49,7 +51,7 @@ const Title = (props: TitleProps) => {
             {isDesktop &&
                 <ProfileAvatar
                     name="avatar"
-                    src={props.contactData?.avatar}
+                    filename={props.avatar}
                     sx={{ justifySelf: "left" }}
                 />
             }
@@ -163,9 +165,7 @@ export default function ContactDialog(props: ContactDialogProps) {
         return pvalues;
     }
 
-    if (props.type === 'edit' && !state.ready) {
-        return (<Overlay open={true} showProgress={true} />);
-    }
+    const ready = ((props.type === 'edit' && state.ready) || props.type === 'new');
 
     return (
         <Form
@@ -178,11 +178,13 @@ export default function ContactDialog(props: ContactDialogProps) {
             <DialogEx
                 open={state.open}
                 onCancel={props.onCancel}
+                className={clsx({ skeletons: !ready })}
                 displayMode={isDesktop ? 'normal' : 'mobile'}
-                titleComponent={<Title {...props} isDesktop={isDesktop} />}
+                titleComponent={<Title {...props} isDesktop={isDesktop} avatar={props.contactData?.avatar} />}
                 saveButtonProps={{
                     type: 'submit',
-                    form: formId.current
+                    form: formId.current,
+                    disabled: !ready,
                 }}
                 tabProps={{
                     tabs: [

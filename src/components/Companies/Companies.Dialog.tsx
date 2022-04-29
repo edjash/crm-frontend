@@ -1,4 +1,5 @@
 import { Box, DialogTitle, Theme, useMediaQuery } from '@mui/material';
+import clsx from 'clsx';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { EVENTS } from '../../app/constants';
@@ -36,9 +37,9 @@ interface CompanyDialogState {
     open: boolean;
     defaultValues: Record<string, any>;
 }
-
 interface TitleProps extends CompanyDialogProps {
     isDesktop: boolean;
+    avatar?: string;
 }
 
 const Title = (props: TitleProps) => {
@@ -46,7 +47,7 @@ const Title = (props: TitleProps) => {
     const isDesktop = props.isDesktop;
     let title = props.data?.name ?? 'Unnamed';
     if (props.type === 'new') {
-        title = 'New Company';
+        title = 'New Contact';
     }
 
     return (
@@ -54,7 +55,7 @@ const Title = (props: TitleProps) => {
             {isDesktop &&
                 <ProfileAvatar
                     name="avatar"
-                    src={props.data?.avatar}
+                    filename={props.avatar}
                     sx={{ justifySelf: "left" }}
                 />
             }
@@ -170,10 +171,6 @@ export default function CompanyDialog(props: CompanyDialogProps) {
         return values;
     }
 
-    if (props.type === 'edit' && !state.ready) {
-        return (<Overlay open={true} showProgress={true} />);
-    }
-
     let extraProps: Record<string, any> = {};
     if (props.noAnimation) {
         extraProps['transitionDuration'] = 0;
@@ -181,6 +178,8 @@ export default function CompanyDialog(props: CompanyDialogProps) {
     if (props.hideBackdrop) {
         extraProps['hideBackdrop'] = true;
     }
+
+    const ready = ((props.type === 'edit' && state.ready) || props.type === 'new');
 
     return (
         <Form
@@ -193,13 +192,15 @@ export default function CompanyDialog(props: CompanyDialogProps) {
             <DialogEx
                 open={state.open}
                 onCancel={props.onCancel}
-                titleComponent={<Title {...props} isDesktop={isDesktop} />}
+                titleComponent={<Title {...props} isDesktop={isDesktop} avatar={props.data?.avatar} />}
                 displayMode={isDesktop ? 'normal' : 'mobile'}
                 saveButtonProps={{
                     type: 'submit',
-                    form: formId.current
+                    form: formId.current,
+                    disabled: !ready,
                 }}
                 {...extraProps}
+                className={clsx({ skeletons: !ready })}
             >
                 <Box
                     sx={{

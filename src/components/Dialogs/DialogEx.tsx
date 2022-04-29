@@ -46,6 +46,7 @@ export interface DialogExProps {
     saveButtonProps?: ButtonProps;
     cancelButtonProps?: ButtonProps;
     saveButtonComponent?: JSX.Element;
+    className?: string;
 };
 
 interface TabbedDialogContentProps {
@@ -154,7 +155,7 @@ export default function DialogEx(props: DialogExProps) {
             }}
             transitionDuration={props.transitionDuration}
             hideBackdrop={props.hideBackdrop}
-            className={clsx({ DialogEx: true, tabbedDialog: (props.tabProps) })}
+            className={clsx(props.className, { DialogEx: true, tabbedDialog: (props.tabProps) })}
         >
             {mode === 'normal' &&
                 <Box sx={{

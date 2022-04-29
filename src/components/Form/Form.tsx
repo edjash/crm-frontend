@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, BoxProps } from "@mui/material";
-import { ReactNode } from "react";
+import { BoxProps } from "@mui/material";
+import { ReactNode, useEffect } from "react";
 import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import { AnyObjectSchema } from "yup";
 
@@ -13,6 +13,7 @@ export interface FormProps {
     defaultValues?: Record<string, any>;
     boxProps?: BoxProps;
     setFormMethods?: (methods: UseFormReturn) => void;
+    className?: string;
 };
 
 export default function Form(props: FormProps) {
@@ -25,6 +26,13 @@ export default function Form(props: FormProps) {
     if (props.setFormMethods) {
         props.setFormMethods(formMethods);
     }
+
+    useEffect(() => {
+        if (Object.keys(props.defaultValues ?? {}).length !== 0) {
+            formMethods.reset(props.defaultValues);
+        }
+
+    }, [props.defaultValues, formMethods]);
 
     const onSubmit = (data: any) => {
         if (props.onSubmit) {
@@ -40,7 +48,11 @@ export default function Form(props: FormProps) {
 
     return (
         <FormProvider {...formMethods}>
-            <form onSubmit={formMethods.handleSubmit(onSubmit, onError)} id={props?.id}>
+            <form
+                onSubmit={formMethods.handleSubmit(onSubmit, onError)}
+                id={props?.id}
+                className={props.className}
+            >
                 {props.children}
             </form>
         </FormProvider>

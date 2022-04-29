@@ -1,7 +1,7 @@
 import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
 import { useModal } from 'mui-modal-provider';
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { EVENTS, SERVER_URL } from '../../app/constants';
 import apiClient from '../apiClient';
@@ -11,8 +11,8 @@ import ProgressiveImage from "../ProgressiveImage";
 
 interface ProfileAvatarProps extends BoxProps {
     name: string;
+    filename?: string;
     alt?: string;
-    src?: string;
     defaultValue?: string;
     onChange?: (event: any) => void;
     size?: number;
@@ -27,32 +27,38 @@ interface ProfileAvatarState {
 
 export default function ProfileAvatar(props: ProfileAvatarProps) {
 
-    const { setValue, getValues } = useFormContext();
+    const { setValue } = useFormContext();
     const avatarSize = props.size ?? 64;
 
     const { showModal } = useModal();
     const [state, setState] = useState<ProfileAvatarState>(() => {
-        let filename = getValues(props.name) ?? '';
         return {
             showMask: false,
             progressPercent: 0,
             uploading: false,
-            filename: filename,
+            filename: props.filename ?? '',
         };
     });
 
+    useEffect(() => {
+        setState(state => ({
+            ...state,
+            filename: props.filename ?? '',
+        }));
+    }, [props]);
+
     const onMouseOver = (e: MouseEvent<HTMLDivElement>) => {
-        setState({
+        setState(state => ({
             ...state,
             showMask: true,
-        })
+        }));
     }
 
     const onMouseLeave = (e: MouseEvent<HTMLDivElement>) => {
-        setState({
+        setState(state => ({
             ...state,
             showMask: false,
-        })
+        }));
     }
 
     const onUploadProgress = (pe: ProgressEvent) => {

@@ -37,6 +37,18 @@ const theme = createTheme({
         body {
             overscroll-behavior-y: none;
         },
+       .skeletonEx {
+            display: none;
+        }
+        .skeletonEx+.MuiFormControl-root {
+            visibility: visible;
+        }
+        .skeletons .skeletonEx {
+            display:block;
+        }
+       .skeletons .skeletonEx+.MuiFormControl-root {
+            visibility: hidden;
+        }
         .customDialogTitle h2.MuiTypography-root,
         h2.customDialogTitle {
             padding:0px;
