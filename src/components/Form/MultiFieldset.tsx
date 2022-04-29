@@ -3,7 +3,7 @@ import { ButtonBase, IconButton, Menu, MenuItem, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from '@mui/material/Tab';
 import { useModal } from "mui-modal-provider";
-import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useState } from "react";
+import React, { ChangeEvent, Children, cloneElement, isValidElement, ReactElement, ReactNode, useEffect, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import useOnce from '../../hooks/useOnce';
 import ConfirmDialog from "../Dialogs/ConfirmDialog";
@@ -75,7 +75,7 @@ export default function MultiFieldSet(props: MultiFieldsetProps) {
 const TabScrollButton = (props: any) => {
 
     const onClick = () => {
-       // props.onClick();
+        // props.onClick();
         props.onScrollClick(props.direction);
     }
 
@@ -103,6 +103,12 @@ const TabScrollButton = (props: any) => {
     );
 };
 
+const getLabel = (index: number, label?: string) => {
+    if (label) {
+        return label;
+    }
+    return (index > 0) ? 'Other' : 'Primary';
+}
 
 function MultiFieldsetBase(props: MultiFieldsetProps) {
 
@@ -118,7 +124,7 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
 
         fields.forEach((item: Record<string, string>, index) => {
             if (!item?.label) {
-                item.label = (index > 0) ? 'Other' : 'Primary';
+                item.label = getLabel(index);
                 update(index, item);
             }
             if (index === 0) {
@@ -135,11 +141,23 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
         };
     });
 
-    useOnce(() => {
+    useEffect(() => {
         if (fields.length === 0) {
-            append({ ...state.emptyField, label: 'Primary' });
+            append({ ...state.emptyField, label: getLabel(0) });
+        } else {
+            fields.forEach((item: Record<string, string>, index) => {
+                if (!item?.label) {
+                    item.label = getLabel(index);
+                    update(index, item);
+                }
+            });
         }
-    });
+    }, [
+        fields,
+        state.emptyField,
+        append,
+        update,
+    ]);
 
     const onMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setState((state) => ({
@@ -201,7 +219,7 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
     }
 
     const onAddClick = () => {
-        append({ ...state.emptyField, label: 'Other' });
+        append({ ...state.emptyField, label: getLabel(1) });
         setState((prevState) => ({
             ...prevState,
             activeTab: fields.length,
@@ -271,7 +289,7 @@ function MultiFieldsetBase(props: MultiFieldsetProps) {
                     }
                 >
                     {fields.map((item: Record<string, string>, index) => (
-                        <Tab label={item.label} value={index} key={item.key} />
+                        <Tab label={getLabel(index, item.label)} value={index} key={item.key} />
                     ))}
                 </Tabs>
                 <Box
