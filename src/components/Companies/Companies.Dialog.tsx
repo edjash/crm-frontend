@@ -78,6 +78,9 @@ export default function CompanyDialog(props: CompanyDialogProps) {
     useEffect(() => {
         if (props.type === 'edit' && !state.ready) {
             apiClient.get(`/companies/${props.data?.contactId}`).then((response) => {
+                if (!state.open) {
+                    return;
+                }
                 const values = prepareIncomingValues(response.data);
 
                 setState((state) => ({
@@ -90,7 +93,7 @@ export default function CompanyDialog(props: CompanyDialogProps) {
 
             });
         }
-    }, [props.type, state.ready, props.data?.contactId]);
+    }, [props.type, state.ready, state.open, props.data?.contactId]);
 
     const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 

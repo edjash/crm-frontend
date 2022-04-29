@@ -75,8 +75,10 @@ export default function ContactDialog(props: ContactDialogProps) {
     useEffect(() => {
         if (props.type === 'edit' && !state.ready) {
             apiClient.get(`/contacts/${props.contactData?.id}`).then((response) => {
+                if (!state.open) {
+                    return;
+                }
                 const values = prepareIncomingValues(response.data);
-
                 setState((state) => ({
                     ...state,
                     open: true,
@@ -87,7 +89,7 @@ export default function ContactDialog(props: ContactDialogProps) {
 
             });
         }
-    }, [state.ready, props.type, props.contactData?.id]);
+    }, [state.ready, state.open, props.type, props.contactData?.id]);
 
     const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
     const formId = useRef(uniqueId('contactForm'));
