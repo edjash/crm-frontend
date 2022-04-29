@@ -31,6 +31,7 @@ interface RemoteSelectState {
     loadCount: number;
     options: SelectOption[];
     selectedOption: SelectOption | null;
+    init: boolean;
 };
 
 export default function RemoteSelect(props: RemoteSelectProps) {
@@ -84,9 +85,6 @@ export function RemoteSelectBase(props: RemoteSelectProps) {
                 defaultValue = null;
             }
             selectedOption = defaultValue;
-            if (props.onChange) {
-                props.onChange(defaultValue?.[valueField] ?? null);
-            }
         }
 
         if (defaultValue !== null) {
@@ -121,15 +119,35 @@ export function RemoteSelectBase(props: RemoteSelectProps) {
             loadCount: 0,
             options: options,
             selectedOption: selectedOption,
+            init: false
         }
     });
 
+    /** Pass initial selected value to RHF **/
+    useEffect(() => {
+        if (!state.init) {
+            if (props.onChange) {
+                props.onChange(state?.selectedOption?.[valueField] ?? null);
+            }
+            setState(state => ({
+                ...state,
+                init: true,
+            }));
+        }
+    }, [
+        state.init,
+        props,
+        valueField,
+        state.selectedOption
+    ]);
+
+    /** Fetch remote data **/
     useEffect(() => {
         if (!state.loading) {
             return undefined;
         }
 
-        if (props.url) {
+        if (props?.url) {
             apiClient
                 .get(props.url, {})
                 .then((res) => {
@@ -168,6 +186,7 @@ export function RemoteSelectBase(props: RemoteSelectProps) {
     ]);
 
     const onChange = (event: React.SyntheticEvent, selValue: SelectOption | null) => {
+
         if (props.onChange) {
             props.onChange(selValue?.[valueField] ?? null);
         }
