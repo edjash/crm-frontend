@@ -54,7 +54,6 @@ export default function Companies() {
         const s1 = PubSub.subscribe(EVENTS.COMPANIES_REFRESH, (msg, callback?: () => void) => {
             const fn = () => { };
             onRefreshed.current = callback ?? fn;
-            console.log("Doint it...");
             setGridState((state) => ({
                 ...state,
                 loading: true,

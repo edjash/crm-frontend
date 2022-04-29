@@ -143,12 +143,18 @@ export default function CompanyDialog(props: CompanyDialogProps) {
         if (values.address) {
             values.address =
                 values.address.map((item: Record<string, any>) => {
-                    if (item.country && typeof item.country == 'object') {
+                    if (item.country && typeof item.country === 'object') {
                         item.country = item.country.code;
                     }
                     return item;
                 });
         }
+
+        values.industry_id = values?.industry?.id || null;
+        // values.industry_id = (typeof values.industry === 'object')
+        //     ? values.industry.id : values.industry;
+        // delete values.industry;
+
         return values;
     }
 

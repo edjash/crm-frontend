@@ -1,11 +1,13 @@
-import RemoteSelect, { RemoteSelectProps } from './RemoteSelect';
+import RemoteSelect from './RemoteSelect';
 
 type CountryOption = {
     code: string;
     name: string;
 };
 
-interface CountrySelectProps extends RemoteSelectProps {
+interface CountrySelectProps {
+    name: string;
+    label?: string;
     defaultValue?: CountryOption;
 };
 

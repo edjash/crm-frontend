@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import BasicSelect from "../Form/BasicSelect";
 import { CompanySelect } from "../Form/CompanySelect";
 import CountrySelect from "../Form/CountrySelect";
 import Fieldset from "../Form/Fieldset";
@@ -41,10 +42,9 @@ export default function GeneralTab(props: GeneralTabProps) {
                         />
                     }
                     <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1}>
-                        <RemoteSelect
+                        <BasicSelect
                             name="title"
                             label="Title"
-                            sx={{ m: 0 }}
                             options={[
                                 { value: 'Mr', label: 'Mr' },
                                 { value: 'Mrs', label: 'Mrs' },
@@ -53,7 +53,7 @@ export default function GeneralTab(props: GeneralTabProps) {
                                 { value: 'Mx', label: 'Mx' },
                             ]}
                         />
-                        <RemoteSelect
+                        <BasicSelect
                             label="Pronouns"
                             name="pronouns"
                             options={[

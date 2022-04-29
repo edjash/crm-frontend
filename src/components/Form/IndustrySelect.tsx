@@ -1,15 +1,17 @@
-import RemoteSelect, { RemoteSelectProps } from './RemoteSelect';
+import RemoteSelect from './RemoteSelect';
 
-type IndusrtyOption = {
+type IndustryOption = {
     id: number;
     name: string;
 };
 
-interface IndustrySelectProps extends RemoteSelectProps {
-    defaultValue?: IndusrtyOption;
+interface IndustrySelectProps {
+    name: string;
+    label?: string;
+    defaultValue?: IndustryOption;
 };
 
-export default function CountrySelect(props: IndustrySelectProps) {
+export default function IndustrySelect(props: IndustrySelectProps) {
 
     return (
         <RemoteSelect
