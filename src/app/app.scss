@@ -67,6 +67,7 @@ fieldset {
 /* Skeletons */
 .skeletonEx {
     position: relative;
+    display: inline-block;
 
     .MuiSkeleton-root {
         position: absolute;
