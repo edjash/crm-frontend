@@ -3,11 +3,10 @@ import { Ref, SyntheticEvent, useEffect, useState } from "react";
 import { Controller, FieldError } from "react-hook-form";
 import TextFieldEx from "./TextFieldEx";
 
-interface SelectOption {
+type SelectOption = {
     value: string;
     label: string;
-}
-
+};
 type DefaultValue = string | null;
 type ReturnValue = string | null;
 type SelectedOption = SelectOption | null;
@@ -27,7 +26,7 @@ interface BasicSelectProps {
 interface BasicSelectState {
     dropdownOpen: boolean;
     options: SelectOption[];
-    selectedOption: SelectOption | null;
+    selectedOption: SelectedOption;
 };
 
 export default function BasicSelect(props: BasicSelectProps) {
