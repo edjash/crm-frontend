@@ -1,7 +1,6 @@
 import { Typography, useTheme } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 
-
 interface BoxProgressProps {
     percent: number;
     size: number;

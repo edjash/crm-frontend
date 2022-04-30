@@ -91,7 +91,7 @@ export function BasicSelectBase(props: BasicSelectProps) {
 
     }, [props.name, props.defaultValue, state.options]);
 
-    const onChange = (event: React.SyntheticEvent, value: SelectedOption, reason?: string) => {
+    const onChange = (event: SyntheticEvent, value: SelectedOption, reason?: string) => {
         console.log("onChange", "Reason: " + reason, "Value: " + value);
         if (props.onChange) {
 
