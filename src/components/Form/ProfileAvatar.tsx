@@ -16,6 +16,7 @@ interface ProfileAvatarProps extends BoxProps {
     defaultValue?: string;
     onChange?: (event: any) => void;
     size?: number;
+    variant?: string;
 }
 
 interface ProfileAvatarState {
@@ -29,6 +30,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
     const { setValue } = useFormContext();
     const avatarSize = props.size ?? 64;
+    const borderRadius = (props.variant === 'squircle') ? '10px' : '50%';
 
     const { showModal } = useModal();
     const [state, setState] = useState<ProfileAvatarState>(() => {
@@ -164,7 +166,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                         width={avatarSize}
                         height={avatarSize}
                         containerSx={{
-                            borderRadius: '10px'
+                            borderRadius: borderRadius
                         }}
                         onMouseOver={onMouseOver}
                         onMouseLeave={onMouseLeave}
@@ -172,7 +174,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
                     /> :
                     <Avatar
-                        sx={{ borderRadius: '10px', width: avatarSize, height: avatarSize, color: 'inherit' }}
+                        sx={{ borderRadius: borderRadius, width: avatarSize, height: avatarSize, color: 'inherit' }}
                         onMouseOver={onMouseOver}
                         onMouseLeave={onMouseLeave}
                     />
@@ -180,7 +182,7 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                 <Overlay
                     open={state.showMask}
                     useAbsolute
-                    sx={{ borderRadius: '10px', textAlign: "center", cursor: 'pointer' }}
+                    sx={{ borderRadius: borderRadius, textAlign: "center", cursor: 'pointer' }}
                     backdropProps={{
                         open: state?.showMask,
                         onMouseOver: onMouseOver,

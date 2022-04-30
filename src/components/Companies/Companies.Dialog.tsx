@@ -47,7 +47,7 @@ const Title = (props: TitleProps) => {
     const isDesktop = props.isDesktop;
     let title = props.data?.name ?? 'Unnamed';
     if (props.type === 'new') {
-        title = 'New Contact';
+        title = 'New Company';
     }
 
     return (
@@ -57,6 +57,7 @@ const Title = (props: TitleProps) => {
                     name="avatar"
                     filename={props.avatar}
                     sx={{ justifySelf: "left" }}
+                    variant="squircle"
                 />
             }
             <DialogTitle>
