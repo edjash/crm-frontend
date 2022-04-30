@@ -91,14 +91,17 @@ export function BasicSelectBase(props: BasicSelectProps) {
 
     }, [props.name, props.defaultValue, state.options]);
 
-    const onChange = (event: SyntheticEvent, selOption: SelectedOption) => {
+    const onChange = (event: React.SyntheticEvent, value: SelectedOption, reason?: string) => {
+        console.log("onChange", "Reason: " + reason, "Value: " + value);
         if (props.onChange) {
-            props.onChange(selOption?.value);
+
+            //console.log(selOption);
+            //props.onChange(selOption?.value);
         }
 
         setState(state => ({
             ...state,
-            selectedOption: selOption,
+            selectedOption: value,
         }));
     }
 
@@ -112,6 +115,7 @@ export function BasicSelectBase(props: BasicSelectProps) {
     return (
         <Autocomplete
             className="basicSelect"
+            clearOnBlur={false}
             disableClearable={props?.disableClearable}
             open={state.dropdownOpen}
             onOpen={() => setDropdownOpen(true)}

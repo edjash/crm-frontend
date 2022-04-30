@@ -1,10 +1,11 @@
-import { Avatar, Box, BoxProps, CircularProgress, Typography } from "@mui/material";
+import { Avatar, Box, BoxProps } from "@mui/material";
 import { AxiosRequestConfig } from "axios";
 import { useModal } from 'mui-modal-provider';
 import { MouseEvent, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { EVENTS, SERVER_URL } from '../../app/constants';
 import apiClient from '../apiClient';
+import BoxProgress from "../BoxProgress";
 import ViewEditAvatarDialog from '../Dialogs/ViewEditAvatarDialog';
 import Overlay from '../Overlay';
 import ProgressiveImage from "../ProgressiveImage";
@@ -204,31 +205,12 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                     }}
                 >
                     {state.uploading &&
-                        <Box sx={{ position: 'relative', display: 'inline-flex' }} >
-                            <CircularProgress
-                                variant="determinate"
-                                value={state.progressPercent}
-                                size={avatarSize}
-                            />
-                            <Box sx={{
-                                top: 0,
-                                left: 0,
-                                bottom: 0,
-                                right: 0,
-                                position: 'absolute',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}>
-                                <Typography
-                                    variant="h6"
-                                    component="div"
-                                    color="text.secondary"
-                                >
-                                    {`${state.progressPercent}%`}
-                                </Typography>
-                            </Box>
-                        </Box>
+                        <BoxProgress
+                            percent={state.progressPercent}
+                            size={avatarSize}
+                            borderRadius={borderRadius}
+                            delaySeconds={2}
+                        />
                     }
                 </Overlay >
             </Box>
