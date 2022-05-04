@@ -40,6 +40,7 @@ interface TitleProps extends ContactDialogProps {
 
 const Title = (props: TitleProps) => {
 
+    const [avatar, setAvatar] = useState(props.avatar);
     const isDesktop = props.isDesktop;
     let title = props.contactData?.fullname ?? 'Unnamed';
     if (props.type === 'new') {
@@ -51,8 +52,11 @@ const Title = (props: TitleProps) => {
             {isDesktop &&
                 <ProfileAvatar
                     name="avatar"
-                    filename={props.avatar}
+                    filename={avatar}
                     sx={{ justifySelf: "left" }}
+                    onChange={(avatar: string) => {
+                        setAvatar(avatar);
+                    }}
                 />
             }
             <DialogTitle>

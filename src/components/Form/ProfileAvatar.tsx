@@ -80,6 +80,10 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
             src: null,
             filename: '',
         }));
+
+        if (props.onChange) {
+            props.onChange('');
+        }
     }
 
     const UploadAvatar = (fileObject: File) => {
@@ -118,6 +122,9 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
                 }));
 
                 setValue(props.name, response.data.filename);
+                if (props.onChange) {
+                    props.onChange(response.data.filename ?? '');
+                }
             }
         }).catch((error) => {
             if (error?.data?.errors?.avatar) {
