@@ -93,7 +93,7 @@ export function BasicSelectBase(props: BasicSelectProps) {
     }, [props.name, props.defaultValue, state.options]);
 
     const onChange = (event: SyntheticEvent, selValue: SelectOption | OptionValue, reason?: string) => {
-        console.log(reason, selValue);
+
         let value: OptionValue = null;
 
         if (selValue) {
