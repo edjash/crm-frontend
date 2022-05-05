@@ -3,8 +3,9 @@ import { Ref, SyntheticEvent, useEffect, useState } from "react";
 import { Controller, FieldError } from "react-hook-form";
 import TextFieldEx from "./TextFieldEx";
 
+type OptionValue = string | null;
 type SelectOption = {
-    value: string;
+    value: OptionValue;
     label: string;
 };
 type DefaultValue = string | null;
@@ -26,7 +27,7 @@ interface BasicSelectProps {
 interface BasicSelectState {
     dropdownOpen: boolean;
     options: SelectOption[];
-    selectedOption: SelectedOption;
+    selectedValue: OptionValue;
 };
 
 export default function BasicSelect(props: BasicSelectProps) {
@@ -69,7 +70,7 @@ export function BasicSelectBase(props: BasicSelectProps) {
     const [state, setState] = useState<BasicSelectState>({
         dropdownOpen: false,
         options: props.options ?? [],
-        selectedOption: null,
+        selectedValue: null,
     });
 
     useEffect(() => {
@@ -86,22 +87,31 @@ export function BasicSelectBase(props: BasicSelectProps) {
         setState(state => ({
             ...state,
             options: options,
-            selectedOption: selectedOption,
+            selectedValue: selectedOption?.value ?? ''
         }));
 
     }, [props.name, props.defaultValue, state.options]);
 
-    const onChange = (event: SyntheticEvent, value: SelectedOption, reason?: string) => {
-        console.log("onChange", "Reason: " + reason, "Value: " + value);
-        if (props.onChange) {
+    const onChange = (event: SyntheticEvent, selValue: SelectOption | OptionValue, reason?: string) => {
+        console.log(reason, selValue);
+        let value: OptionValue = null;
 
-            //console.log(selOption);
-            //props.onChange(selOption?.value);
+        if (selValue) {
+            if (typeof (selValue) === 'object') {
+                value = selValue.value;
+            }
+            if (typeof (selValue) === 'string') {
+                value = selValue;
+            }
+        }
+
+        if (props.onChange) {
+            props.onChange(value);
         }
 
         setState(state => ({
             ...state,
-            selectedOption: value,
+            selectedValue: value,
         }));
     }
 
@@ -115,18 +125,21 @@ export function BasicSelectBase(props: BasicSelectProps) {
     return (
         <Autocomplete
             className="basicSelect"
-            clearOnBlur={false}
+            freeSolo={true}
+
+            forcePopupIcon={true}
             disableClearable={props?.disableClearable}
             open={state.dropdownOpen}
             onOpen={() => setDropdownOpen(true)}
             onClose={() => setDropdownOpen(false)}
             onChange={onChange}
-            getOptionLabel={(option) => option.label ?? ''}
+
+            //getOptionLabel={(option) => option.label ?? ''}
             isOptionEqualToValue={(option, value) => {
                 return option.value === value.value;
             }}
             options={state.options}
-            value={state.selectedOption}
+            value={state.selectedValue}
             ref={props.inputRef}
             renderInput={(params) => (
                 <TextFieldEx
@@ -136,9 +149,13 @@ export function BasicSelectBase(props: BasicSelectProps) {
                     error={!!props?.errors ?? false}
                     InputProps={{
                         ...params.InputProps,
+                        onBlur: (e) => {
+                            onChange(e, e.target.value);
+                        }
                     }}
                 />
-            )}
+            )
+            }
         />
     );
 }
