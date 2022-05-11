@@ -53,7 +53,10 @@ export default function Login() {
                     return;
                 }
 
-                dispatch(login(response.data.userInfo));
+                dispatch(login({
+                    userInfo: response.data.userInfo,
+                    serverCfg: response.data.serverCfg
+                }));
                 history.push('/');
             })
             .catch((response) => {

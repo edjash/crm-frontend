@@ -3,6 +3,7 @@ import { Avatar, Box, Button, ButtonProps, Theme, useMediaQuery } from '@mui/mat
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent } from 'react';
 import { EVENTS, SERVER_URL } from '../../app/constants';
+import { useStoreSelector } from '../../store/store';
 import ProgressiveImage from '../ProgressiveImage';
 import ConfirmDialog from './ConfirmDialog';
 import DialogEx from './DialogEx';
@@ -47,10 +48,10 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
 
     const { showModal } = useModal();
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
-    const acceptTypes = ['.jpg', '.jpeg', '.png', '.gif'];
+    const store = useStoreSelector(state => state.auth);
+    const acceptTypes: string[] = store?.serverCfg?.avatarFiles?.types ?? [];
+    const maxBytes: number = store?.serverCfg?.avatarFiles?.maxBytes ?? 0;
     const avatarsUrl = `${SERVER_URL}/storage/avatars/`;
-
-    // `${SERVER_URL}/storage/avatars/large/${state.filename}` : '',
 
     const onDelete = () => {
         const confirm = showModal(ConfirmDialog, {
@@ -74,14 +75,26 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
         if (!files || !files.length) {
             return;
         }
+
         const file: File = files[0];
-        const ext = '.' + (file.name ?? '').toLowerCase().split('.').pop();
+        const ext = (file.name ?? '').toLowerCase().split('.').pop();
         if (acceptTypes.indexOf(ext ?? '') < 0) {
             PubSub.publish(EVENTS.TOAST, {
                 type: 'error',
                 autoHide: false,
                 message: 'Only images of the following type are allowed: ' +
                     acceptTypes.join(', ')
+            });
+            return;
+        }
+
+        if (!maxBytes || file.size > maxBytes) {
+            const mb = (maxBytes / (1000 * 1000)).toFixed(2);
+            PubSub.publish(EVENTS.TOAST, {
+                type: 'error',
+                autoHide: false,
+                message: `The image exceeds the maximum allowed file size of ${mb}mb.
+                Please try a smaller image.`
             });
             return;
         }
