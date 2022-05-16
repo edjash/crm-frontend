@@ -66,6 +66,8 @@ const TabbedDialogContent = (props: TabbedDialogContentProps) => {
             <Tabs
                 orientation={orientation}
                 value={props.tabProps.activeTab}
+                variant="scrollable"
+                scrollButtons="auto"
                 onChange={(e, n) => {
                     if (props.tabProps?.onChange) {
                         props.tabProps.onChange(n);
