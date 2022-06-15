@@ -1,7 +1,7 @@
 import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {
-    Box, Container, Divider, List, Theme, useMediaQuery
+    Box, Divider, List, Theme, useMediaQuery
 } from '@mui/material';
 import { SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
@@ -10,7 +10,6 @@ import { useDispatch } from 'react-redux';
 import Companies from '../../components/Companies/Companies';
 import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
-import Footer from '../../components/Footer';
 import TopBar from '../../components/TopBar';
 import { logout } from '../../store/reducers/auth/authSlice';
 import NavDrawer, { NavbarSpacer, NavItem } from './Nav';
@@ -75,62 +74,60 @@ export default function Home() {
     }
 
     return (
-        <Container maxWidth="xl">
-            <Box sx={{ display: 'flex', height: '100vh' }}>
-                {/* <NavDrawer isMobile={isMobile}>
-                    {!isMobile &&
-                        <NavbarSpacer />
-                    }
-                    <List>
-                        <NavItem
-                            id="contacts"
-                            label="Contacts"
-                            selected={selected === 'contacts'}
-                            icon={<ContactsIcon />}
-                            onClick={() => onNavClick('contacts')}
-                        />
-                        <NavItem
-                            id="companies"
-                            label="Companies"
-                            selected={selected === 'companies'}
-                            icon={<CompaniesIcon />}
-                            onClick={() => onNavClick('companies')}
-                        />
-                        <Divider sx={{ mt: 5, mb: 2 }} hidden={!isMobile} />
-                        {isMobile &&
-                            <NavItem
-                                id="logout"
-                                label="Logout"
-                                icon={<LogoutIcon />}
-                                onClick={() => onNavClick('logout')}
-                            />
-                        }
-                    </List>
-                </NavDrawer> */}
-                <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                    <TopBar />
+        <Box sx={{ display: 'flex', height: '100vh' }}>
+            <NavDrawer isMobile={isMobile}>
+                {!isMobile &&
                     <NavbarSpacer />
-                    <Box
-                        component="main"
-                        sx={{
-                            flexGrow: 1,
-                            position: 'relative',
-                            marginLeft: margin,
-                            marginRight: 0,
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <TabPanel value={selected} ident="contacts">
-                            <Contacts />
-                        </TabPanel>
-                        <TabPanel value={selected} ident="companies">
-                            <Companies />
-                        </TabPanel>
-                    </Box>
+                }
+                <List>
+                    <NavItem
+                        id="contacts"
+                        label="Contacts"
+                        selected={selected === 'contacts'}
+                        icon={<ContactsIcon />}
+                        onClick={() => onNavClick('contacts')}
+                    />
+                    <NavItem
+                        id="companies"
+                        label="Companies"
+                        selected={selected === 'companies'}
+                        icon={<CompaniesIcon />}
+                        onClick={() => onNavClick('companies')}
+                    />
+                    <Divider sx={{ mt: 5, mb: 2 }} hidden={!isMobile} />
+                    {isMobile &&
+                        <NavItem
+                            id="logout"
+                            label="Logout"
+                            icon={<LogoutIcon />}
+                            onClick={() => onNavClick('logout')}
+                        />
+                    }
+                </List>
+            </NavDrawer>
+            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <TopBar />
+                <NavbarSpacer />
+                <Box
+                    component="main"
+                    sx={{
+                        flexGrow: 1,
+                        position: 'relative',
+                        marginLeft: margin,
+                        marginRight: 0,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <TabPanel value={selected} ident="contacts">
+                        <Contacts />
+                    </TabPanel>
+                    <TabPanel value={selected} ident="companies">
+                        <Companies />
+                    </TabPanel>
                 </Box>
-                <SessionExpiredDialog />
             </Box>
-        </Container>
+            <SessionExpiredDialog />
+        </Box>
     );
 }
