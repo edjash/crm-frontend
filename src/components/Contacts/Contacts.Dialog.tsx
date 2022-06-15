@@ -195,10 +195,10 @@ export default function ContactDialog(props: ContactDialogProps) {
                 tabProps={{
                     tabs: [
                         { label: 'General', value: 0 },
-                        { label: 'Notes', value: 1, disabled: true },
-                        { label: 'Lead Info', value: 2, disabled: true },
-                        { label: 'Relationships', value: 3, disabled: true },
-                        { label: 'Activity', value: 4, disabled: true },
+                        // { label: 'Notes', value: 1, disabled: false },
+                        // { label: 'Lead Info', value: 2, disabled: true },
+                        // { label: 'Relationships', value: 3, disabled: true },
+                        // { label: 'Activity', value: 4, disabled: true },
                     ],
                     activeTab: state.activeTab,
                     orientation: (isDesktop) ? 'vertical' : 'horizontal',
