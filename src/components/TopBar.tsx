@@ -1,6 +1,8 @@
 import LogoutIcon from '@mui/icons-material/Logout';
+import LightModeIcon from '@mui/icons-material/Brightness4';
+import DarkModeIcon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Button, SxProps, Theme, useMediaQuery } from '@mui/material';
+import { Button, SxProps, Theme, useMediaQuery, useTheme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
@@ -17,6 +19,7 @@ interface TopBarProps {
 export default function TopBar(props: TopBarProps) {
 
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+    const theme = useTheme();
     const dispatch = useStoreDispatch();
 
     const handleLogout = () => {
@@ -42,6 +45,18 @@ export default function TopBar(props: TopBarProps) {
                 </Typography>
                 <span className="spacer" />
                 <div>
+                    <IconButton
+                        onClick={() => {
+                            PubSub.publishSync(EVENTS.THEME_TOGGLE);
+                        }}
+                    >
+                        {theme.palette.mode === 'dark'
+                            ?
+                            <DarkModeIcon />
+                            :
+                            <LightModeIcon />
+                        }
+                    </IconButton>
                     {!isMobile &&
                         <Button
                             variant="outlined"

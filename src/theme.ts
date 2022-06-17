@@ -7,36 +7,38 @@ declare module "@mui/material/styles/createPalette" {
         };
     }
 }
-const theme = createTheme({
+const theme = (mode: 'dark' | 'light') => {
 
-    palette: {
-        mode: 'dark',
-        info: {
-            main: '#CCCCCC',
-        },
-        custom: {
-            disabledIcon: '#263238'
-        },
-    },
-    components: {
-        MuiUseMediaQuery: {
-            defaultProps: {
-                noSsr: true,
+    return createTheme({
+        palette: {
+            mode: mode,
+            info: {
+                main: '#CCCCCC',
+            },
+            custom: {
+                disabledIcon: '#263238'
             },
         },
-        MuiTextField: {
-            defaultProps: {
-                variant: "filled",
-                margin: "dense",
-                fullWidth: true,
+        components: {
+            MuiUseMediaQuery: {
+                defaultProps: {
+                    noSsr: true,
+                },
+            },
+            MuiTextField: {
+                defaultProps: {
+                    variant: "filled",
+                    margin: "dense",
+                    fullWidth: true,
+                },
             },
         },
-    },
-    typography: {
-        button: {
-            textTransform: 'none',
+        typography: {
+            button: {
+                textTransform: 'none',
+            },
         },
-    },
-});
+    });
+}
 
 export default theme;

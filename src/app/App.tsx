@@ -1,6 +1,5 @@
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from '@mui/material/styles';
 import ModalProvider from 'mui-modal-provider';
+import ThemeProvider from '../components/ThemeProvider';
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Toaster from '../components/Toaster';
@@ -10,7 +9,6 @@ import { Login } from '../routes/Login';
 import PrivateRoute from '../routes/PrivateRoute';
 import { Register } from '../routes/Register';
 import { useStoreSelector } from '../store/store';
-import theme from '../theme';
 import { APP_TITLE } from './constants';
 import './app.scss';
 
@@ -23,8 +21,7 @@ export default function App() {
     }, []);
 
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline enableColorScheme={true} />
+        <ThemeProvider>
             <ModalProvider beta={true}>
                 <Router>
                     <Switch>
