@@ -95,16 +95,15 @@ export default function NavDrawer(props: NavDrawerProps) {
                 <Typography
                     variant="subtitle2"
                     sx={{
-                        textAlign: 'center',
+                        textAlign: 'left',
                         padding: 3,
                         overflow: 'hidden',
                         mb: 1
                     }}
                 >
-                    <i>CRMdemo</i>
+                    CRMdemo
                 </Typography>
                 <div style={{ width: '80vw' }}>
-                    <NavbarSpacer />
                     {props.children}
                 </div>
             </SwipeableDrawer>
