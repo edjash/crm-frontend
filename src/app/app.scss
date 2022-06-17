@@ -30,16 +30,8 @@ a.MuiLink-root {
     display: none !important;
 }
 
-.formIconButton .MuiSvgIcon-root {
-    color: #9e9e9e;
-}
-
-.formIconButton:hover .MuiSvgIcon-root {
-    color: #ffffff;
-}
-
 fieldset {
-    border: 1px solid #484848;
+    border: 1px solid;
 }
 
 .AvatarCheckBox .MuiCheckbox-root {
