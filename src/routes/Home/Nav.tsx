@@ -114,7 +114,7 @@ export default function NavDrawer(props: NavDrawerProps) {
             anchor="left"
             open={open}
             PaperProps={{ elevation: 1 }}
-            sx={{ zIndex: 1 }}
+            sx={{ zIndex: 1, display: 'flex', flexDirection: 'column', background:'rose' }}
             variant="permanent"
             ModalProps={{
                 keepMounted: true,

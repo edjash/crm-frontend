@@ -1,7 +1,7 @@
 import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {
-    Box, Divider, List, Theme, useMediaQuery
+    Box, Divider, List, ListItem, Theme, useMediaQuery
 } from '@mui/material';
 import { SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
@@ -79,7 +79,7 @@ export default function Home() {
                 {!isMobile &&
                     <NavbarSpacer />
                 }
-                <List>
+                <List sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
                     <NavItem
                         id="contacts"
                         label="Contacts"
@@ -95,14 +95,16 @@ export default function Home() {
                         onClick={() => onNavClick('companies')}
                     />
                     <Divider sx={{ mt: 5, mb: 2 }} hidden={!isMobile} />
-                    {isMobile &&
-                        <NavItem
-                            id="logout"
-                            label="Logout"
-                            icon={<LogoutIcon />}
-                            onClick={() => onNavClick('logout')}
-                        />
-                    }
+                    <ListItem
+                        sx={{ flexGrow: 1 }}
+                    />
+                    <NavItem
+                        id="logout"
+                        label="Logout"
+                        icon={<LogoutIcon />}
+                        onClick={() => onNavClick('logout')}
+                    />
+
                 </List>
             </NavDrawer>
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>

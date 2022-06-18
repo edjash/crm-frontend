@@ -66,11 +66,6 @@ export default function TopBar(props: TopBarProps) {
                             <LightModeIcon />
                         }
                     </IconButton>
-                    {!isMobile &&
-                        <IconButton onClick={handleLogout}>
-                            <LogoutIcon />
-                        </IconButton>
-                    }
                 </div>
             </Toolbar>
         </AppBar>

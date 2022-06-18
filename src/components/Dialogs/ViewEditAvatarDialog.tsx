@@ -153,9 +153,7 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                         }}
                     />
                 </Box>
-                <Box
-
-                >
+                <Box>
                     {props.filename
                         ? <ProgressiveImage
                             src={`${avatarsUrl}large/${props.filename}`}
