@@ -1,6 +1,5 @@
 import { SxProps } from '@mui/material';
 import MuiAvatar from '@mui/material/Avatar';
-import { StringNullableChain } from 'lodash';
 import { MouseEventHandler } from 'react';
 import { SERVER_URL } from '../app/constants';
 
@@ -25,8 +24,11 @@ export default function Avatar(props: AvatarProps) {
     });
 
     let src = '';
+    let bgColor = 'custom.appBarBackground';
+
     if (props.avatar) {
         src = `${SERVER_URL}/${props.avatar}`;
+        bgColor = 'transparent';
     } else {
         const method = props.brokenImageMethod ?? 'text';
         if (method !== 'text') {
@@ -41,7 +43,7 @@ export default function Avatar(props: AvatarProps) {
             src={src}
             sx={{
                 color: 'custom.appBarText',
-                backgroundColor: 'custom.appBarBackground',
+                backgroundColor: bgColor,
                 fontSize: '95%',
                 ...props.sx,
             }}
