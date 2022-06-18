@@ -1,4 +1,4 @@
-import { Box, SxProps } from "@mui/material";
+import { Box, styled, SxProps, useTheme } from "@mui/material";
 
 type FieldsetProps = {
     children: React.ReactNode;
@@ -9,10 +9,13 @@ type FieldsetProps = {
 
 export default function Fieldset(props: FieldsetProps) {
 
+    const theme = useTheme();
+
     return (
         <fieldset style={{
             position: 'relative',
             borderRadius: '6px',
+            borderColor: theme.palette.divider,
             ...props.styles
         }}>
             <legend><span>{props.legend}</span></legend>

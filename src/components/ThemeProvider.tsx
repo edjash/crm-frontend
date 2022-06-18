@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { ReactNode, useEffect, useState } from 'react';
@@ -9,14 +10,25 @@ interface ThemeProviderProps {
     children: ReactNode;
 }
 
+type displayMode = 'dark' | 'light';
+
 export default function ThemeProvider(props: ThemeProviderProps) {
 
-    const [mode, setMode] = useState<'dark' | 'light'>('dark');
+    const defaultMode = useMediaQuery('(prefers-color-scheme: dark)') ? 'dark' : 'light';
+
+    const [mode, setMode] = useState<displayMode>(() => {
+        //Retrieve from local storage
+        let m = localStorage.getItem('themeMode') ?? defaultMode;
+        return (m === 'dark') ? 'dark' : 'light';
+    });
 
     useEffect(() => {
         const s1 = PubSub.subscribe(EVENTS.THEME_TOGGLE, () => {
             setMode((mode) => {
-                return (mode === 'dark') ? 'light' : 'dark';
+                //Save to local storage
+                const newMode = (mode === 'dark') ? 'light' : 'dark';
+                localStorage.setItem('themeMode', newMode);
+                return newMode;
             });
         });
 

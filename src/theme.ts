@@ -1,23 +1,39 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, PaletteOptions } from '@mui/material/styles';
 
 declare module "@mui/material/styles/createPalette" {
     export interface PaletteOptions {
-        custom: {
+        custom?: {
             disabledIcon: string;
         };
     }
 }
+
+const lightPalette: PaletteOptions = {
+    primary: {
+        main: '#FF5733'
+    },
+    custom: {
+        disabledIcon: '#263238',
+    },
+};
+
+const darkPalette: PaletteOptions = {
+    info: {
+        main: '#CCCCCC',
+    },
+    custom: {
+        disabledIcon: '#263238',
+    },
+};
+
 const theme = (mode: 'dark' | 'light') => {
+
+    const modePalette = (mode === 'dark') ? darkPalette : lightPalette;
 
     return createTheme({
         palette: {
+            ...modePalette,
             mode: mode,
-            info: {
-                main: '#CCCCCC',
-            },
-            custom: {
-                disabledIcon: '#263238'
-            },
         },
         components: {
             MuiUseMediaQuery: {
