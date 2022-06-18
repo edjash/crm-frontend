@@ -4,7 +4,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Container } from '@mui/material';
+import { Container, IconButton, useTheme } from '@mui/material';
+import LightModeIcon from '@mui/icons-material/Brightness4';
+import DarkModeIcon from '@mui/icons-material/Brightness7';
+import { EVENTS } from '../app/constants';
 
 interface AuthPageProps {
     title: string;
@@ -14,9 +17,18 @@ interface AuthPageProps {
 }
 
 export default function AuthPage(props: AuthPageProps) {
+    const theme = useTheme();
+
     return (
-        <Container sx={{ display: 'flex', height: '100vh', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-            <Box sx={{ mt: -20, width: 500 }}>
+        <Container sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
+            width: '100%',
+            justifyContent: 'space-around',
+            alignItems: 'center'
+        }}>
+            <Box width="100%" maxWidth={500}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mb: 3 }}>
                     <Avatar onClick={props.onIconClick}>
                         <LockOutlinedIcon />
@@ -27,6 +39,20 @@ export default function AuthPage(props: AuthPageProps) {
                 </Box>
                 {props.children}
             </Box>
+            <div>
+                <IconButton
+                    onClick={() => {
+                        PubSub.publishSync(EVENTS.THEME_TOGGLE);
+                    }}
+                >
+                    {theme.palette.mode === 'dark'
+                        ?
+                        <DarkModeIcon />
+                        :
+                        <LightModeIcon />
+                    }
+                </IconButton>
+            </div>
             <Backdrop className="backdrop" open={props.isLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
