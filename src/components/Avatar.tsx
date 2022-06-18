@@ -1,14 +1,23 @@
+import { SxProps } from '@mui/material';
 import MuiAvatar from '@mui/material/Avatar';
+import { StringNullableChain } from 'lodash';
+import { MouseEventHandler } from 'react';
 import { SERVER_URL } from '../app/constants';
 
 interface AvatarProps {
-    name: string;
-    avatar: string | null;
+    name?: string;
+    avatar?: string | null;
+    sx?: SxProps;
+    brokenImageMethod?: 'image' | 'text',
+    onMouseOver?: MouseEventHandler;
+    onMouseLeave?: MouseEventHandler;
+    variant?: 'circular' | 'rounded' | 'square';
 };
 
 export default function Avatar(props: AvatarProps) {
-    const nameA = (props.name) ? props.name.split(' ') : ['?'];
-    let str = '';
+    const name = props.name ?? '';
+    const nameA = (name) ? name.split(' ') : ['?'];
+    let str: string | null = '';
     nameA.forEach((s, index) => {
         if (index < 2) {
             str += s[0];
@@ -18,13 +27,27 @@ export default function Avatar(props: AvatarProps) {
     let src = '';
     if (props.avatar) {
         src = `${SERVER_URL}/${props.avatar}`;
+    } else {
+        const method = props.brokenImageMethod ?? 'text';
+        if (method !== 'text') {
+            str = null;
+        }
     }
+
 
     return (
         <MuiAvatar
             alt={props.name}
             src={src}
-            sx={{ color: '#666666', background: '#2c2c2c', fontSize: '95%', }}
+            sx={{
+                color: 'custom.appBarText',
+                backgroundColor: 'custom.appBarBackground',
+                fontSize: '95%',
+                ...props.sx,
+            }}
+            onMouseOver={props.onMouseOver}
+            onMouseLeave={props.onMouseLeave}
+            variant={props.variant}
         >
             {str}
         </MuiAvatar>

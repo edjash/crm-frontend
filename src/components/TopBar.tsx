@@ -27,7 +27,16 @@ export default function TopBar(props: TopBarProps) {
     };
 
     return (
-        <AppBar position="fixed" elevation={1} sx={{ ...props.sx }}>
+        <AppBar
+            position="fixed"
+            enableColorOnDark={true}
+            elevation={1}
+            sx={{
+                backgroundColor: 'custom.appBarBackground',
+                color: 'custom.appBarText',
+                ...props.sx
+            }}
+        >
             <Toolbar disableGutters sx={{ ml: 2, mr: 2 }}>
                 <IconButton
                     color="inherit"
@@ -58,12 +67,9 @@ export default function TopBar(props: TopBarProps) {
                         }
                     </IconButton>
                     {!isMobile &&
-                        <Button
-                            variant="outlined"
-                            onClick={handleLogout}
-                            startIcon={<LogoutIcon />}>
-                            Logout
-                        </Button>
+                        <IconButton onClick={handleLogout}>
+                            <LogoutIcon />
+                        </IconButton>
                     }
                 </div>
             </Toolbar>

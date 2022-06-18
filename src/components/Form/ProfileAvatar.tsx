@@ -1,4 +1,5 @@
-import { Avatar, Box, BoxProps } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
+import Avatar from '../../components/Avatar';
 import { AxiosRequestConfig } from "axios";
 import { useModal } from 'mui-modal-provider';
 import { MouseEvent, useEffect, useState } from "react";
@@ -182,7 +183,8 @@ export default function ProfileAvatar(props: ProfileAvatarProps) {
 
                     /> :
                     <Avatar
-                        sx={{ borderRadius: borderRadius, width: avatarSize, height: avatarSize, color: 'inherit' }}
+                        brokenImageMethod="image"
+                        sx={{ borderRadius: borderRadius, width: avatarSize, height: avatarSize }}
                         onMouseOver={onMouseOver}
                         onMouseLeave={onMouseLeave}
                     />

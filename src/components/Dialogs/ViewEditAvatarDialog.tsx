@@ -1,5 +1,6 @@
 import { Delete, Upload } from '@mui/icons-material/';
-import { Avatar, Box, Button, ButtonProps, Theme, useMediaQuery } from '@mui/material';
+import { Box, Button, ButtonProps, Theme, useMediaQuery } from '@mui/material';
+import Avatar from '../../components/Avatar';
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent } from 'react';
 import { EVENTS, SERVER_URL } from '../../app/constants';
@@ -166,7 +167,12 @@ export default function ViewEditAvatarDialog(props: ViewEditAvatarDialogProps) {
                             height={500}
                             showIndicator={false}
                         />
-                        : <Avatar variant="square" sx={{ width: '200px', height: '200px' }}></Avatar>
+                        :
+                        <Avatar
+                            variant="square"
+                            sx={{ width: '200px', height: '200px' }}
+                            brokenImageMethod="image"
+                        />
                     }
                 </Box>
             </Box>

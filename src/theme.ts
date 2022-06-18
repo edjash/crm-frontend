@@ -4,6 +4,8 @@ declare module "@mui/material/styles/createPalette" {
     export interface PaletteOptions {
         custom?: {
             disabledIcon: string;
+            appBarBackground: string;
+            appBarText: string;
         };
     }
 }
@@ -14,6 +16,8 @@ const lightPalette: PaletteOptions = {
     },
     custom: {
         disabledIcon: '#263238',
+        appBarBackground: '#ff7256',
+        appBarText: '#FFFFFF',
     },
 };
 
@@ -23,6 +27,8 @@ const darkPalette: PaletteOptions = {
     },
     custom: {
         disabledIcon: '#263238',
+        appBarBackground: '#141414',
+        appBarText: '#FFFFFF',
     },
 };
 
