@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent, { DialogContentProps } from '@mui/material/DialogContent';
 import DialogTitle, { DialogTitleProps } from '@mui/material/DialogTitle';
 import clsx from 'clsx';
-import { ReactNode, RefObject, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { EVENTS } from '../../app/constants';
 import DialogButton from '../DialogButton';
 import { FormProps } from '../Form/Form';
@@ -154,8 +154,6 @@ export default function DialogEx(props: DialogExProps) {
         }
 
     }, [state.open, props.suppressGlobalCount]);
-
-    const ref = useRef<HTMLDivElement>(null);
 
     return (
         <Dialog

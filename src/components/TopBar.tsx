@@ -1,15 +1,12 @@
-import LogoutIcon from '@mui/icons-material/Logout';
 import LightModeIcon from '@mui/icons-material/Brightness4';
 import DarkModeIcon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Button, SxProps, Theme, useMediaQuery, useTheme } from '@mui/material';
+import { SxProps, useTheme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { EVENTS } from '../app/constants';
-import { logout } from '../store/reducers/auth/authSlice';
-import { useStoreDispatch } from '../store/store';
 
 interface TopBarProps {
     sx?: SxProps,
@@ -17,14 +14,7 @@ interface TopBarProps {
 }
 
 export default function TopBar(props: TopBarProps) {
-
-    const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const theme = useTheme();
-    const dispatch = useStoreDispatch();
-
-    const handleLogout = () => {
-        dispatch(logout());
-    };
 
     return (
         <AppBar

@@ -1,5 +1,5 @@
 import { Add, KeyboardArrowLeft, KeyboardArrowRight, MoreVert } from '@mui/icons-material/';
-import { ButtonBase, IconButton, Menu, MenuItem, Tabs, Skeleton } from "@mui/material";
+import { ButtonBase, IconButton, Menu, MenuItem, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from '@mui/material/Tab';
 import { useModal } from "mui-modal-provider";

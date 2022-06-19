@@ -1,4 +1,3 @@
-import { Tooltip } from '@mui/material';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import clsx from 'clsx';
@@ -26,7 +25,7 @@ export default function WindowTabs() {
 
     useEffect(() => {
         const newCount = windowIds.length;
-        if (newCount != state.prevCount) {
+        if (newCount !== state.prevCount) {
             setState(state => ({
                 ...state,
                 prevCount: newCount,
@@ -55,7 +54,7 @@ export default function WindowTabs() {
                         avatar={(win.image) ? `/storage/avatars/small/${win.image}` : null}
                         name={win.text}
                         className={clsx({ windowListIcon: true, activeWindow: isActive })}
-                        variant={type == 'company' ? 'rounded' : 'circular'}
+                        variant={type === 'company' ? 'rounded' : 'circular'}
                         tooltipProps={{
                             title: win.text ?? '',
                             placement: 'right'

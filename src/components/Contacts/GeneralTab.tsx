@@ -5,7 +5,6 @@ import CountrySelect from "../Form/CountrySelect";
 import Fieldset from "../Form/Fieldset";
 import MultiFieldset from "../Form/MultiFieldset";
 import ProfileAvatar from "../Form/ProfileAvatar";
-import RemoteSelect from "../Form/RemoteSelect";
 import TextFieldEx from "../Form/TextFieldEx";
 import SocialIcon from "../SocialIcon";
 import TabPanel from "../TabPanel";

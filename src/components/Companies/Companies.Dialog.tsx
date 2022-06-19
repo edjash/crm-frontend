@@ -115,7 +115,7 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                 minimise: false,
             }));
         }
-    }, [activeWindow]);
+    }, [activeWindow, state.windowId]);
 
     useEffect(() => {
         if (!state.ready) {
@@ -137,7 +137,13 @@ export default function CompanyDialog(props: CompanyDialogProps) {
             windowId: state.windowId,
         }));
 
-    }, [state.ready]);
+    }, [
+        state.ready,
+        dispatch,
+        props.data?.avatar,
+        props.data?.name,
+        state.windowId
+    ]);
 
     const onSubmit = (data: any) => {
 

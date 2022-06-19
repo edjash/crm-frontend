@@ -1,4 +1,4 @@
-import { Box, styled, SxProps, useTheme } from "@mui/material";
+import { Box, SxProps, useTheme } from "@mui/material";
 
 type FieldsetProps = {
     children: React.ReactNode;

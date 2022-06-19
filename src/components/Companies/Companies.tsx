@@ -4,7 +4,7 @@ import { Box, Fab, Link, Theme, useMediaQuery } from '@mui/material';
 import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { EVENTS } from '../../app/constants';
 import { windowActivated, windowClosed } from '../../store/reducers/windowSlice';
@@ -189,7 +189,7 @@ export default function Companies() {
         PubSub.publish(EVENTS.COMPANIES_REFRESH, fn);
     };
 
-    const showCompanyDialog = (props: CompanyDialogProps) => {
+    const showCompanyDialog = useCallback((props: CompanyDialogProps) => {
         const windowId = `company_${props?.data?.id}`;
         if (windowId in windows.list) {
             dispatch(windowActivated(windowId));
@@ -213,7 +213,11 @@ export default function Companies() {
                 }
             }
         });
-    };
+    }, [
+        dispatch,
+        showModal,
+        windows.list
+    ]);
 
     useEffect(() => {
         const s2 = PubSub.subscribe(EVENTS.COMPANIES_NEW, (msg, props: CompanyDialogProps) => {

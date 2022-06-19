@@ -156,7 +156,10 @@ export default function ContactDialog(props: ContactDialogProps) {
                 minimise: false,
             }));
         }
-    }, [activeWindow]);
+    }, [
+        activeWindow,
+        state.windowId
+    ]);
 
     useEffect(() => {
         if (!state.ready) {
@@ -178,7 +181,13 @@ export default function ContactDialog(props: ContactDialogProps) {
             windowId: state.windowId,
         }));
 
-    }, [state.ready]);
+    }, [
+        state.ready,
+        state.windowId,
+        props.contactData?.avatar,
+        props.contactData?.fullname,
+        dispatch
+    ]);
 
     const onSubmit = (data: any) => {
 
