@@ -48,11 +48,13 @@ export default function WindowTabs() {
             {windowIds.map((windowId, index) => {
                 const win = windows.list[windowId];
                 const isActive = (windowId === windows.active);
+                const type = (windowId.indexOf('company_') > -1) ? 'company' : 'contact';
                 const icon = (
                     <Avatar
                         avatar={(win.image) ? `/storage/avatars/small/${win.image}` : null}
                         name={win.text}
                         className={clsx({ windowListIcon: true, activeWindow: isActive })}
+                        variant={type == 'company' ? 'rounded' : 'circular'}
                     />
                 );
                 return (
