@@ -20,7 +20,7 @@ import Overlay from '../Overlay';
 import SocialIcon from '../SocialIcon';
 
 export interface CompanyDialogData {
-    contactId: number;
+    id: number;
     name: string;
     avatar?: string;
 };
@@ -80,7 +80,7 @@ export default function CompanyDialog(props: CompanyDialogProps) {
         open: true,
         minimise: false,
         defaultValues: {},
-        windowId: 'company_' + props.data?.contactId,
+        windowId: 'company_' + props.data?.id,
     });
 
     const dispatch = useDispatch();
@@ -90,7 +90,7 @@ export default function CompanyDialog(props: CompanyDialogProps) {
 
     useEffect(() => {
         if (props.type === 'edit' && !state.ready) {
-            apiClient.get(`/companies/${props.data?.contactId}`).then((response) => {
+            apiClient.get(`/companies/${props.data?.id}`).then((response) => {
                 if (!state.open) {
                     return;
                 }
@@ -106,7 +106,7 @@ export default function CompanyDialog(props: CompanyDialogProps) {
 
             });
         }
-    }, [props.type, state.ready, state.open, props.data?.contactId]);
+    }, [props.type, state.ready, state.open, props.data?.id]);
 
     useEffect(() => {
         if (activeWindow && activeWindow === state.windowId) {
@@ -146,8 +146,8 @@ export default function CompanyDialog(props: CompanyDialogProps) {
         data = prepareOutgoingValues(data);
 
         let url = '/companies';
-        if (props.type === 'edit' && props.data?.contactId) {
-            url = `${url}/${props.data.contactId}`;
+        if (props.type === 'edit' && props.data?.id) {
+            url = `${url}/${props.data.id}`;
         }
 
         apiClient.post(url, data)

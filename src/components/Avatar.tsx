@@ -1,4 +1,4 @@
-import { SxProps } from '@mui/material';
+import { SxProps, Tooltip } from '@mui/material';
 import MuiAvatar from '@mui/material/Avatar';
 import { MouseEventHandler } from 'react';
 import { SERVER_URL } from '../app/constants';
@@ -12,6 +12,13 @@ interface AvatarProps {
     onMouseLeave?: MouseEventHandler;
     variant?: 'circular' | 'rounded' | 'square';
     className?: string;
+    tooltipProps?: {
+        title: string;
+        placement?: "bottom" | "left" | "right" | "top"
+        | "bottom-end" | "bottom-start" | "left-end"
+        | "left-start" | "right-end" | "right-start"
+        | "top-end" | "top-start"
+    }
 };
 
 export default function Avatar(props: AvatarProps) {
@@ -37,8 +44,7 @@ export default function Avatar(props: AvatarProps) {
         }
     }
 
-
-    return (
+    const avatar = (
         <MuiAvatar
             alt={props.name}
             src={src}
@@ -52,8 +58,19 @@ export default function Avatar(props: AvatarProps) {
             onMouseLeave={props.onMouseLeave}
             variant={props.variant}
             className={props.className}
+            {...props}
         >
             {str}
         </MuiAvatar>
     );
+
+    if (props.tooltipProps) {
+        return (
+            <Tooltip {...props.tooltipProps}>
+                {avatar}
+            </Tooltip>
+        );
+    }
+
+    return avatar;
 }
