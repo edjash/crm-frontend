@@ -234,7 +234,7 @@ export default function Contacts() {
     };
 
     const basic_columns = [
-        AvatarCheckBox,
+        AvatarCheckBox({}),
         {
             field: 'fullname',
             headerName: 'Name',

@@ -1,10 +1,10 @@
 import { Mail, PhoneEnabled as Phone } from '@mui/icons-material/';
 import AddIcon from '@mui/icons-material/Add';
-import { avatarGroupClasses, Box, Fab, Link, Theme, useMediaQuery } from '@mui/material';
+import { Box, Fab, Link, Theme, useMediaQuery } from '@mui/material';
 import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/x-data-grid';
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { EVENTS } from '../../app/constants';
 import { windowActivated, windowClosed } from '../../store/reducers/windowSlice';
@@ -243,9 +243,10 @@ export default function Companies() {
         });
     };
 
-
     let columns: GridColDef[] = [
-        AvatarCheckBox,
+        AvatarCheckBox({
+            avatarProps: { variant: 'rounded' }
+        }),
         {
             field: 'name',
             headerName: 'Name',

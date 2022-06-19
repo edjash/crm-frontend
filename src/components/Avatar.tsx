@@ -3,7 +3,7 @@ import MuiAvatar from '@mui/material/Avatar';
 import { MouseEventHandler } from 'react';
 import { SERVER_URL } from '../app/constants';
 
-interface AvatarProps {
+export interface AvatarProps {
     name?: string;
     avatar?: string | null;
     sx?: SxProps;
@@ -58,7 +58,6 @@ export default function Avatar(props: AvatarProps) {
             onMouseLeave={props.onMouseLeave}
             variant={props.variant}
             className={props.className}
-            {...props}
         >
             {str}
         </MuiAvatar>

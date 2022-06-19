@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { ChangeEvent, useState } from 'react';
 import { EVENTS } from '../../app/constants';
 import useOnce from '../../hooks/useOnce';
-import Avatar from '../Avatar';
+import Avatar, { AvatarProps } from '../Avatar';
 
 //potentially memoise these functions
 export const GridHeaderCheckbox = (props: GridColumnHeaderParams) => {
@@ -46,7 +46,13 @@ export const GridHeaderCheckbox = (props: GridColumnHeaderParams) => {
     );
 }
 
-const GridCellCheckbox = (params: GridRenderCellParams) => {
+interface GridCellCheckboxProps {
+    renderCellParams: GridRenderCellParams;
+    avatarProps?: AvatarProps;
+}
+
+const GridCellCheckbox = (props: GridCellCheckboxProps) => {
+    const params = props.renderCellParams;
     const selected = params.api.isRowSelected(params.id);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -69,23 +75,29 @@ const GridCellCheckbox = (params: GridRenderCellParams) => {
     return (
         <div className={clsx({ 'AvatarCheckBox': true, 'checked': selected })}>
             <Checkbox onChange={handleChange} checked={selected} />
-            <Avatar name={params.row?.fullname ?? params.row.name} avatar={avatar} />
+            <Avatar name={params.row?.fullname ?? params.row.name} avatar={avatar} {...props.avatarProps} />
         </div>
     );
 };
 
-const AvatarCheckBox: GridColDef = {
-    field: 'id',
-    sortable: false,
-    align: 'center',
-    headerAlign: 'center',
-    width: 60,
-    renderHeader: (params: GridColumnHeaderParams) => {
-        return <GridHeaderCheckbox {...params} />;
-    },
-    renderCell: (params: GridRenderCellParams) => {
-        return <GridCellCheckbox {...params} />;
-    },
+interface AvatarCheckBoxProps {
+    avatarProps?: AvatarProps;
+}
+
+const AvatarCheckBox = (props: AvatarCheckBoxProps): GridColDef => {
+    return {
+        field: 'id',
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+        width: 60,
+        renderHeader: (params: GridColumnHeaderParams) => {
+            return <GridHeaderCheckbox {...params} />;
+        },
+        renderCell: (params: GridRenderCellParams) => {
+            return <GridCellCheckbox renderCellParams={params} avatarProps={props.avatarProps} />;
+        },
+    };
 };
 
 export default AvatarCheckBox;
