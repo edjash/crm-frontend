@@ -86,32 +86,36 @@ export default function Login() {
     return (
         <AuthPage title="Sign In" isLoading={state.isLoading} onIconClick={showError}>
             <Form onSubmit={onSubmit} validationSchema={loginSchema}>
-                <Box display="grid" sx={{ rowGap: 1 }}>
-                    <TextFieldEx
-                        name="email"
-                        label="Email Address"
-                        required
-                        autoComplete="username"
-                    />
-                    <TextFieldEx
-                        name="password"
-                        label="Password"
-                        type="password"
-                        required
-                        autoComplete="current-password"
-                    />
-                    <Button type="submit" fullWidth variant="contained" color="primary" size="large" sx={{ mt: 1, mb: 2 }}>
-                        Sign In
-                    </Button>
-                    <Box display="grid" justifyContent="space-between" gap={1}>
-                        <Link to="/forgot-password">
-                            Forgot password?
-                        </Link>
-                        <Link to="/register">
-                            Don't have an account? Sign Up!
-                        </Link>
-                    </Box>
-                </Box>
+                <Card sx={{ mt: 5 }}>
+                    <CardContent>
+                        <Box display="grid" sx={{ rowGap: 1 }}>
+                            <TextFieldEx
+                                name="email"
+                                label="Email Address"
+                                required
+                                autoComplete="username"
+                            />
+                            <TextFieldEx
+                                name="password"
+                                label="Password"
+                                type="password"
+                                required
+                                autoComplete="current-password"
+                            />
+                            <Button type="submit" fullWidth variant="contained" color="primary" size="large" sx={{ mt: 1, mb: 2 }}>
+                                Sign In
+                            </Button>
+                            <Box display="grid" justifyContent="space-between" gap={1}>
+                                <Link to="/forgot-password">
+                                    Forgot password?
+                                </Link>
+                                <Link to="/register">
+                                    Don't have an account? Sign Up!
+                                </Link>
+                            </Box>
+                        </Box>
+                    </CardContent>
+                </Card>
                 <Card sx={{ mt: 5 }}>
                     <CardContent>
                         <Typography variant="h6" gutterBottom mb={2}>

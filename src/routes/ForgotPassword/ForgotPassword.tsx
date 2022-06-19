@@ -19,6 +19,7 @@ import ForgotPasswordStep3, {
 } from './ForgotPassword.Step3';
 import { Box } from '@mui/system';
 import { APP_MODE, EVENTS } from '../../app/constants';
+import { Card, CardContent } from '@mui/material';
 
 export default function ForgotPassword() {
     const history = useHistory();
@@ -135,9 +136,13 @@ export default function ForgotPassword() {
             {state.disabled &&
                 <h2>Password reset is disabled for this demo</h2>
             }
-            <Box sx={{ display: 'grid', rowGap: 1 }}>
-                {form}
-            </Box>
+            <Card>
+                <CardContent>
+                    <Box sx={{ display: 'grid', rowGap: 1 }}>
+                        {form}
+                    </Box>
+                </CardContent>
+            </Card>
         </AuthPage>
     );
 }

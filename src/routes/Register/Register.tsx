@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Card, CardContent } from '@mui/material';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient from '../../components/apiClient';
@@ -45,32 +45,36 @@ export default function Register() {
                 {state.disabled &&
                     <h2>Registration is disabled for this demo</h2>
                 }
-                <Box sx={{ display: 'grid', rowGap: 1 }}>
-                    <TextFieldEx
-                        label="Email Address"
-                        name="email"
-                        required
-                        autoComplete="username"
-                    />
-                    <TextFieldEx
-                        label="Password"
-                        name="password"
-                        required
-                        autoComplete="new-password"
-                    />
-                    <TextFieldEx
-                        label="Confirm Password"
-                        name="confirmPassword"
-                        required
-                        autoComplete="new-password"
-                    />
-                    <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled} sx={{ mt: 1 }}>
-                        Register
-                    </Button>
-                    <Link to="/login">
-                        Already have an account? Sign in
-                    </Link>
-                </Box>
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'grid', rowGap: 1 }}>
+                            <TextFieldEx
+                                label="Email Address"
+                                name="email"
+                                required
+                                autoComplete="username"
+                            />
+                            <TextFieldEx
+                                label="Password"
+                                name="password"
+                                required
+                                autoComplete="new-password"
+                            />
+                            <TextFieldEx
+                                label="Confirm Password"
+                                name="confirmPassword"
+                                required
+                                autoComplete="new-password"
+                            />
+                            <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled} sx={{ mt: 1, mb: 2 }}>
+                                Register
+                            </Button>
+                            <Link to="/login">
+                                Already have an account? Sign in
+                            </Link>
+                        </Box>
+                    </CardContent>
+                </Card>
             </Form>
         </AuthPage>
     );
