@@ -11,6 +11,7 @@ interface AvatarProps {
     onMouseOver?: MouseEventHandler;
     onMouseLeave?: MouseEventHandler;
     variant?: 'circular' | 'rounded' | 'square';
+    className?: string;
 };
 
 export default function Avatar(props: AvatarProps) {
@@ -50,6 +51,7 @@ export default function Avatar(props: AvatarProps) {
             onMouseOver={props.onMouseOver}
             onMouseLeave={props.onMouseLeave}
             variant={props.variant}
+            className={props.className}
         >
             {str}
         </MuiAvatar>

@@ -56,6 +56,46 @@ fieldset {
     display: inline-flex;
 }
 
+.windowMinimise {
+    display: none;
+}
+
+.windowList {
+    .MuiTabs-indicator {
+        left: 0;
+    }
+
+    .MuiTabs-flexContainer {
+        gap: 2px !important;
+    }
+
+    &.MuiTabs-root {
+        padding: 5px !important;
+    }
+
+    .MuiButtonBase-root {
+        min-width: auto !important;
+        padding: 10px !important;
+        align-items: center;
+        justify-content: center;
+        border-radius: 2px;
+    }
+
+    .Mui-selected,
+    .MuiButtonBase-root:hover {
+        backdrop-filter: invert(10%);
+    }
+
+    .windowListIcon {
+        filter: grayscale(1);
+
+        &.activeWindow {
+            filter: none;
+        }
+    }
+}
+
+
 /* Skeletons */
 .skeletonEx {
     position: relative;

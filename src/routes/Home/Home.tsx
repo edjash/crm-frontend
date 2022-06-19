@@ -11,6 +11,7 @@ import Companies from '../../components/Companies/Companies';
 import { Contacts } from '../../components/Contacts';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import TopBar from '../../components/TopBar';
+import WindowTabs from '../../components/WindowTabs';
 import { logout } from '../../store/reducers/auth/authSlice';
 import NavDrawer, { NavbarSpacer, NavItem } from './Nav';
 
@@ -95,6 +96,7 @@ export default function Home() {
                         onClick={() => onNavClick('companies')}
                     />
                     <Divider sx={{ mt: 5, mb: 2 }} hidden={!isMobile} />
+                    <WindowTabs />
                     <ListItem
                         sx={{ flexGrow: 1 }}
                     />

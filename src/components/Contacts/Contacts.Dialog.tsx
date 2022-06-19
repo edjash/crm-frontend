@@ -2,6 +2,7 @@ import { Box, DialogTitle, Theme, useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { EVENTS } from '../../app/constants';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
@@ -11,6 +12,8 @@ import ProfileAvatar from '../Form/ProfileAvatar';
 import Overlay from '../Overlay';
 import GeneralTab from './GeneralTab';
 import NotesTab from './NotesTab';
+import { windowClosed, windowMinimized, windowOpened } from '../../store/reducers/windowSlice';
+import { useStoreSelector } from '../../store/store';
 
 export interface ContactDialogData {
     id: number;
@@ -22,8 +25,10 @@ interface ContactDialogState {
     loading: boolean;
     ready: boolean;
     open: boolean;
+    minimise: boolean;
     defaultValues: Record<string, any>;
     activeTab: number;
+    windowId: string;
 }
 
 interface ContactDialogProps extends DialogExProps {
@@ -66,15 +71,61 @@ const Title = (props: TitleProps) => {
     );
 }
 
+const prepareOutgoingValues = (values: Record<string, any>) => {
+    const pvalues = { ...values };
+    if (pvalues.address) {
+        pvalues.address =
+            pvalues.address.map((item: Record<string, any>) => {
+                if (item.country && typeof item.country === 'object') {
+                    item.country = item.country.code;
+                }
+                return item;
+            });
+    }
+    if (pvalues.company && typeof pvalues.company === 'object') {
+        pvalues.company = pvalues.company.id;
+    }
+    return pvalues;
+}
+
+const prepareIncomingValues = (values: Record<string, any>) => {
+    const pvalues = { ...values };
+    pvalues.social_media_url.forEach((item: Record<string, string>) => {
+        pvalues[`socialmedia.${item.ident}`] = item.url;
+    });
+    delete pvalues['social_media_url'];
+
+    pvalues.address =
+        pvalues.address.map((addr: Record<string, any>) => {
+            if (addr?.country_code && addr?.country_name) {
+                addr.country = {
+                    code: addr?.country_code,
+                    name: addr?.country_name,
+                };
+            } else {
+                addr.country = null;
+            }
+            return addr;
+        });
+
+    return pvalues;
+}
 export default function ContactDialog(props: ContactDialogProps) {
 
     const [state, setState] = useState<ContactDialogState>({
         loading: false,
         ready: (props.type === 'new'),
         open: true,
+        minimise: false,
         defaultValues: {},
-        activeTab: 0
+        activeTab: 0,
+        windowId: 'contact_' + props.contactData?.id,
     });
+
+    const dispatch = useDispatch();
+    const activeWindow = useStoreSelector(state => state.windows.active);
+    const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
+    const formId = useRef(uniqueId('contactForm'));
 
     useEffect(() => {
         if (props.type === 'edit' && !state.ready) {
@@ -89,14 +140,45 @@ export default function ContactDialog(props: ContactDialogProps) {
                     defaultValues: values,
                     ready: true,
                 }));
-            }).catch((error) => {
-
             });
         }
-    }, [state.ready, state.open, props.type, props.contactData?.id]);
+    }, [
+        state.ready,
+        state.open,
+        props.type,
+        props.contactData?.id,
+    ]);
 
-    const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
-    const formId = useRef(uniqueId('contactForm'));
+    useEffect(() => {
+        if (activeWindow && activeWindow === state.windowId) {
+            setState(state => ({
+                ...state,
+                minimise: false,
+            }));
+        }
+    }, [activeWindow]);
+
+    useEffect(() => {
+        if (!state.ready) {
+            return;
+        }
+
+        PubSub.subscribe(EVENTS.WINDOW_RESTORE, (e, data: string) => {
+            if (data === state.windowId) {
+                setState(state => ({
+                    ...state,
+                    minimise: false,
+                }));
+            }
+        });
+
+        dispatch(windowOpened({
+            image: props.contactData?.avatar,
+            text: props.contactData?.fullname,
+            windowId: state.windowId,
+        }));
+
+    }, [state.ready]);
 
     const onSubmit = (data: any) => {
 
@@ -131,44 +213,12 @@ export default function ContactDialog(props: ContactDialogProps) {
         console.log("Validation Error", data);
     };
 
-    const prepareOutgoingValues = (values: Record<string, any>) => {
-        const pvalues = { ...values };
-        if (pvalues.address) {
-            pvalues.address =
-                pvalues.address.map((item: Record<string, any>) => {
-                    if (item.country && typeof item.country === 'object') {
-                        item.country = item.country.code;
-                    }
-                    return item;
-                });
-        }
-        if (pvalues.company && typeof pvalues.company === 'object') {
-            pvalues.company = pvalues.company.id;
-        }
-        return pvalues;
-    }
-
-    const prepareIncomingValues = (values: Record<string, any>) => {
-        const pvalues = { ...values };
-        pvalues.social_media_url.forEach((item: Record<string, string>) => {
-            pvalues[`socialmedia.${item.ident}`] = item.url;
-        });
-        delete pvalues['social_media_url'];
-
-        pvalues.address =
-            pvalues.address.map((addr: Record<string, any>) => {
-                if (addr?.country_code && addr?.country_name) {
-                    addr.country = {
-                        code: addr?.country_code,
-                        name: addr?.country_name,
-                    };
-                } else {
-                    addr.country = null;
-                }
-                return addr;
-            });
-
-        return pvalues;
+    const onMinimise = () => {
+        setState(state => ({
+            ...state,
+            minimise: true
+        }));
+        dispatch(windowMinimized(state.windowId));
     }
 
     const ready = ((props.type === 'edit' && state.ready) || props.type === 'new');
@@ -182,9 +232,12 @@ export default function ContactDialog(props: ContactDialogProps) {
             id={formId.current}
         >
             <DialogEx
+                id={state.windowId}
                 open={state.open}
+                hideBackdrop={true}
                 onCancel={props.onCancel}
-                className={clsx({ skeletons: !ready })}
+                onMinimise={onMinimise}
+                className={clsx({ skeletons: !ready, windowMinimise: state.minimise })}
                 displayMode={isDesktop ? 'normal' : 'mobile'}
                 titleComponent={<Title {...props} isDesktop={isDesktop} avatar={props.contactData?.avatar} />}
                 saveButtonProps={{
@@ -192,7 +245,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                     form: formId.current,
                     disabled: !ready,
                 }}
-                tabProps={{
+                tabProps={state.minimise ? undefined : {
                     tabs: [
                         { label: 'General', value: 0 },
                         // { label: 'Notes', value: 1, disabled: false },
@@ -200,7 +253,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                         // { label: 'Relationships', value: 3, disabled: true },
                         // { label: 'Activity', value: 4, disabled: true },
                     ],
-                    activeTab: state.activeTab,
+                    activeTab: (state.minimise) ? undefined : state.activeTab,
                     orientation: (isDesktop) ? 'vertical' : 'horizontal',
                     onChange: (tab: number) => {
                         setState(state => ({
@@ -210,16 +263,20 @@ export default function ContactDialog(props: ContactDialogProps) {
                     }
                 }}
             >
-                <GeneralTab
-                    value={0}
-                    isActive={(state.activeTab === 0)}
-                    isDesktop={isDesktop}
-                    data={props.contactData}
-                />
-                <NotesTab
-                    value={1}
-                    isActive={(state.activeTab === 1)}
-                />
+                {!state.minimise &&
+                    <>
+                        <GeneralTab
+                            value={0}
+                            isActive={(state.activeTab === 0)}
+                            isDesktop={isDesktop}
+                            data={props.contactData}
+                        />
+                        <NotesTab
+                            value={1}
+                            isActive={(state.activeTab === 1)}
+                        />
+                    </>
+                }
             </DialogEx>
             <Overlay open={state.loading} />
         </Form>

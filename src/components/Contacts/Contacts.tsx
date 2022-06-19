@@ -5,7 +5,10 @@ import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
 import { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { EVENTS } from '../../app/constants';
+import { windowActivated, windowClosed } from '../../store/reducers/windowSlice';
+import { useStoreSelector } from '../../store/store';
 import { HTTPVerb, request } from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
@@ -21,6 +24,8 @@ export default function Contacts() {
     const scrollRef = useRef<HTMLElement>();
     const onRefreshed = useRef<() => void>(() => { });
     const columns = useRef<GridColDef[]>([]);
+    const windows = useStoreSelector(state => state.windows);
+    const dispatch = useDispatch();
 
     const [gridState, setGridState] = useState({
         title: 'Contact',
@@ -195,15 +200,22 @@ export default function Contacts() {
 
     const showContactDialog = (props?: ContactDialogData) => {
         const type = (!props?.id) ? 'new' : 'edit';
+        const windowId = `contact_${props?.id}`;
+        if (windowId in windows.list) {
+            dispatch(windowActivated(windowId));
+            return;
+        }
 
         const dlg = showModal(ContactDialog, {
             type: type,
             contactData: props,
             onCancel: () => {
                 dlg.destroy();
+                dispatch(windowClosed(windowId));
             },
             onSave: () => {
                 dlg.destroy();
+                dispatch(windowClosed(windowId));
             },
         });
     };
