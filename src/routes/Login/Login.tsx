@@ -123,7 +123,7 @@ export default function Login() {
                                 password: 'demo123',
                             });
                         }}>
-                            Login as Demo user
+                            Login as Demo User
                         </Button>
                     </CardContent>
                 </Card>
