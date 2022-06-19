@@ -4,6 +4,8 @@ import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { EVENTS } from '../../app/constants';
+import { windowMinimized, windowOpened } from '../../store/reducers/windowSlice';
+import { useStoreSelector } from '../../store/store';
 import contactSchema from '../../validation/contactSchema';
 import apiClient from '../apiClient';
 import DialogEx, { DialogExProps } from '../Dialogs/DialogEx';
@@ -12,8 +14,6 @@ import ProfileAvatar from '../Form/ProfileAvatar';
 import Overlay from '../Overlay';
 import GeneralTab from './GeneralTab';
 import NotesTab from './NotesTab';
-import { windowClosed, windowMinimized, windowOpened } from '../../store/reducers/windowSlice';
-import { useStoreSelector } from '../../store/store';
 
 export interface ContactDialogData {
     id: number;
@@ -205,7 +205,6 @@ export default function ContactDialog(props: ContactDialogProps) {
 
         }).catch((response) => {
             setState({ ...state, loading: false });
-            // apiClient.showErrors(response, formMethods.setError);
         });
     }
 
