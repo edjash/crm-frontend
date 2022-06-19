@@ -31,6 +31,7 @@ export interface DialogExProps {
     hideCancelButton?: boolean;
     hideSaveButton?: boolean;
     hideActionButtons?: boolean;
+    showMinimize?: boolean;
     saveButtonText?: string;
     cancelButtonText?: string;
     displayMode?: 'mobile' | 'normal' | string;
@@ -187,16 +188,18 @@ export default function DialogEx(props: DialogExProps) {
                         </DialogTitle>
                     }
                     <Box flexGrow={1} display="flex" justifyContent="right" alignItems="baseline">
-                        <IconButton
-                            aria-label="minimise"
-                            onClick={props.onMinimise}
-                            sx={{
-                                //alignSelf: 'flex-start',
-                                m: 0
-                            }}
-                        >
-                            <MinimiseIcon />
-                        </IconButton>
+                        {props.showMinimize &&
+                            <IconButton
+                                aria-label="minimise"
+                                onClick={props.onMinimise}
+                                sx={{
+                                    //alignSelf: 'flex-start',
+                                    m: 0
+                                }}
+                            >
+                                <MinimiseIcon />
+                            </IconButton>
+                        }
                         {!props.hideCancelButton &&
                             <IconButton
                                 aria-label="close"

@@ -2,7 +2,10 @@ import { Box, DialogTitle, Theme, useMediaQuery } from '@mui/material';
 import clsx from 'clsx';
 import { uniqueId } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { EVENTS } from '../../app/constants';
+import { windowMinimized, windowOpened } from '../../store/reducers/windowSlice';
+import { useStoreSelector } from '../../store/store';
 import companySchema from '../../validation/companySchema';
 import apiClient from '../apiClient';
 import DialogEx from '../Dialogs/DialogEx';
@@ -35,7 +38,9 @@ interface CompanyDialogState {
     loading: boolean;
     ready: boolean;
     open: boolean;
+    minimise: boolean;
     defaultValues: Record<string, any>;
+    windowId: string;
 }
 interface TitleProps extends CompanyDialogProps {
     isDesktop: boolean;
@@ -73,8 +78,15 @@ export default function CompanyDialog(props: CompanyDialogProps) {
         loading: false,
         ready: (props.type === 'new'),
         open: true,
+        minimise: false,
         defaultValues: {},
+        windowId: 'company_' + props.data?.contactId,
     });
+
+    const dispatch = useDispatch();
+    const activeWindow = useStoreSelector(state => state.windows.active);
+    const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
+    const formId = useRef(uniqueId('companyForm'));
 
     useEffect(() => {
         if (props.type === 'edit' && !state.ready) {
@@ -96,9 +108,36 @@ export default function CompanyDialog(props: CompanyDialogProps) {
         }
     }, [props.type, state.ready, state.open, props.data?.contactId]);
 
-    const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
+    useEffect(() => {
+        if (activeWindow && activeWindow === state.windowId) {
+            setState(state => ({
+                ...state,
+                minimise: false,
+            }));
+        }
+    }, [activeWindow]);
 
-    const formId = useRef(uniqueId('companyForm'));
+    useEffect(() => {
+        if (!state.ready) {
+            return;
+        }
+
+        PubSub.subscribe(EVENTS.WINDOW_RESTORE, (e, data: string) => {
+            if (data === state.windowId) {
+                setState(state => ({
+                    ...state,
+                    minimise: false,
+                }));
+            }
+        });
+
+        dispatch(windowOpened({
+            image: props.data?.avatar,
+            text: props.data?.name,
+            windowId: state.windowId,
+        }));
+
+    }, [state.ready]);
 
     const onSubmit = (data: any) => {
 
@@ -139,6 +178,14 @@ export default function CompanyDialog(props: CompanyDialogProps) {
     const onError = (data: any) => {
         console.log("Validation Error", data);
     };
+
+    const onMinimise = () => {
+        setState(state => ({
+            ...state,
+            minimise: true
+        }));
+        dispatch(windowMinimized(state.windowId));
+    }
 
     const prepareOutgoingValues = (values: Record<string, any>) => {
         if (values.address) {
@@ -204,13 +251,15 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                 onCancel={props.onCancel}
                 titleComponent={<Title {...props} isDesktop={isDesktop} avatar={props.data?.avatar} />}
                 displayMode={isDesktop ? 'normal' : 'mobile'}
+                showMinimize={true}
+                onMinimise={onMinimise}
                 saveButtonProps={{
                     type: 'submit',
                     form: formId.current,
                     disabled: !ready,
                 }}
                 {...extraProps}
-                className={clsx({ skeletons: !ready })}
+                className={clsx({ skeletons: !ready, windowMinimise: state.minimise })}
             >
                 <Box
                     sx={{
@@ -220,75 +269,79 @@ export default function CompanyDialog(props: CompanyDialogProps) {
                         gap: 1,
                     }}
                 >
-                    <Box display="grid" gap={1}>
-                        <Fieldset legend="Identity">
-                            {!isDesktop &&
-                                <ProfileAvatar
-                                    name="avatar"
-                                    sx={{ justifySelf: "center" }}
-                                    size={100}
-                                />
-                            }
-                            <TextFieldEx
-                                name="name"
-                                label="Name"
-                                required
-                            />
-                            <IndustrySelect
-                                label="Industry"
-                                name="industry"
-                            />
-                            <TextFieldEx
-                                name="description"
-                                label="Description"
-                                multiline
-                                rows={3}
-                            />
-                        </Fieldset>
-                        <MultiFieldset
-                            legend="Phone Number"
-                            baseName="phone_number"
-                        >
-                            <TextFieldEx name="number" label="Phone Number" />
-                        </MultiFieldset>
-                        <MultiFieldset
-                            legend="Email Address"
-                            baseName="email_address"
-                        >
-                            <TextFieldEx
-                                name="address"
-                                label="Email Address"
-                            />
-                        </MultiFieldset>
-                    </Box>
-                    <Box display="grid" gap={1}>
-                        <MultiFieldset
-                            baseName="address"
-                            legend="Address"
-                        >
-                            <TextFieldEx name="street" label="Street" />
-                            <TextFieldEx name="town" label="Town / City" />
-                            <TextFieldEx name="county" label="County / State" />
-                            <TextFieldEx name="postcode" label="Zip / Postal Code" />
-                            <CountrySelect
-                                label="Country"
-                                name="country"
-                            />
-                        </MultiFieldset>
-                    </Box>
-                    <Box display="grid" gap={1}>
-                        <Fieldset legend="Social Media">
-                            {['LinkedIn', 'Twitter', 'Facebook', 'Instagram', 'Teams', 'Skype'].map((network, index) => (
-                                <Box display="flex" alignItems="center" gap={1} key={network}>
-                                    <SocialIcon network={network} />
-                                    < TextFieldEx
-                                        name={`socialmedia.${network.toLowerCase()}`}
-                                        label={network}
+                    {!state.minimise &&
+                        <>
+                            <Box display="grid" gap={1}>
+                                <Fieldset legend="Identity">
+                                    {!isDesktop &&
+                                        <ProfileAvatar
+                                            name="avatar"
+                                            sx={{ justifySelf: "center" }}
+                                            size={100}
+                                        />
+                                    }
+                                    <TextFieldEx
+                                        name="name"
+                                        label="Name"
+                                        required
                                     />
-                                </Box>
-                            ))}
-                        </Fieldset>
-                    </Box>
+                                    <IndustrySelect
+                                        label="Industry"
+                                        name="industry"
+                                    />
+                                    <TextFieldEx
+                                        name="description"
+                                        label="Description"
+                                        multiline
+                                        rows={3}
+                                    />
+                                </Fieldset>
+                                <MultiFieldset
+                                    legend="Phone Number"
+                                    baseName="phone_number"
+                                >
+                                    <TextFieldEx name="number" label="Phone Number" />
+                                </MultiFieldset>
+                                <MultiFieldset
+                                    legend="Email Address"
+                                    baseName="email_address"
+                                >
+                                    <TextFieldEx
+                                        name="address"
+                                        label="Email Address"
+                                    />
+                                </MultiFieldset>
+                            </Box>
+                            <Box display="grid" gap={1}>
+                                <MultiFieldset
+                                    baseName="address"
+                                    legend="Address"
+                                >
+                                    <TextFieldEx name="street" label="Street" />
+                                    <TextFieldEx name="town" label="Town / City" />
+                                    <TextFieldEx name="county" label="County / State" />
+                                    <TextFieldEx name="postcode" label="Zip / Postal Code" />
+                                    <CountrySelect
+                                        label="Country"
+                                        name="country"
+                                    />
+                                </MultiFieldset>
+                            </Box>
+                            <Box display="grid" gap={1}>
+                                <Fieldset legend="Social Media">
+                                    {['LinkedIn', 'Twitter', 'Facebook', 'Instagram', 'Teams', 'Skype'].map((network, index) => (
+                                        <Box display="flex" alignItems="center" gap={1} key={network}>
+                                            <SocialIcon network={network} />
+                                            < TextFieldEx
+                                                name={`socialmedia.${network.toLowerCase()}`}
+                                                label={network}
+                                            />
+                                        </Box>
+                                    ))}
+                                </Fieldset>
+                            </Box>
+                        </>
+                    }
                 </Box>
             </DialogEx>
             <Overlay open={state.loading} />

@@ -5,7 +5,10 @@ import { GridColDef, GridRenderCellParams, GridRowId, GridRowModel } from '@mui/
 import { useModal } from 'mui-modal-provider';
 import PubSub from 'pubsub-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { EVENTS } from '../../app/constants';
+import { windowActivated, windowClosed } from '../../store/reducers/windowSlice';
+import { useStoreSelector } from '../../store/store';
 import { HTTPVerb, request } from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import AvatarCheckBox from '../MainGrid/MainGrid.AvatarCheckBox';
@@ -20,6 +23,8 @@ export default function Companies() {
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const scrollRef = useRef<HTMLElement>();
     const onRefreshed = useRef<() => void>(() => { });
+    const windows = useStoreSelector(state => state.windows);
+    const dispatch = useDispatch();
 
     const [gridState, setGridState] = useState({
         title: 'Company',
@@ -185,16 +190,24 @@ export default function Companies() {
     };
 
     const showCompanyDialog = useCallback((props: CompanyDialogProps) => {
+        const windowId = `company_${props?.data?.contactId}`;
+        if (windowId in windows.list) {
+            dispatch(windowActivated(windowId));
+            return;
+        }
+
         const dlg = showModal(CompanyDialog, {
             ...props,
             onCancel: () => {
                 dlg.destroy();
+                dispatch(windowClosed(windowId));
                 if (props.onCancel) {
                     props.onCancel();
                 }
             },
             onSave: (success: boolean, data: Record<string, any>) => {
                 dlg.destroy();
+                dispatch(windowClosed(windowId));
                 if (props.onSave) {
                     props.onSave(success, data);
                 }

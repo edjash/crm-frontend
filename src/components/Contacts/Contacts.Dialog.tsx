@@ -233,8 +233,9 @@ export default function ContactDialog(props: ContactDialogProps) {
             <DialogEx
                 id={state.windowId}
                 open={state.open}
-                hideBackdrop={true}
+                hideBackdrop={false}
                 onCancel={props.onCancel}
+                showMinimize={true}
                 onMinimise={onMinimise}
                 className={clsx({ skeletons: !ready, windowMinimise: state.minimise })}
                 displayMode={isDesktop ? 'normal' : 'mobile'}
