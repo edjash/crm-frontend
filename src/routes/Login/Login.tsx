@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, Typography } from '@mui/material';
 import { useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import apiClient, { csrfCookieExists, clearSession } from '../../components/apiClient';
@@ -112,6 +112,21 @@ export default function Login() {
                         </Link>
                     </Box>
                 </Box>
+                <Card sx={{ mt: 5 }}>
+                    <CardContent>
+                        <Typography variant="h6" gutterBottom mb={2}>
+                            Alternative Login
+                        </Typography>
+                        <Button variant="contained" fullWidth onClick={() => {
+                            onSubmit({
+                                email: 'demo@crmdemo.co.uk',
+                                password: 'demo123',
+                            });
+                        }}>
+                            Login as Demo user
+                        </Button>
+                    </CardContent>
+                </Card>
             </Form>
         </AuthPage>
     );
