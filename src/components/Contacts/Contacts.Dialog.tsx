@@ -126,6 +126,7 @@ export default function ContactDialog(props: ContactDialogProps) {
     const activeWindow = useStoreSelector(state => state.windows.active);
     const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
     const formId = useRef(uniqueId('contactForm'));
+    const closeWindow = props.onCancel;
 
     useEffect(() => {
         if (props.type === 'edit' && !state.ready) {
@@ -166,12 +167,18 @@ export default function ContactDialog(props: ContactDialogProps) {
             return;
         }
 
-        PubSub.subscribe(EVENTS.WINDOW_RESTORE, (e, data: string) => {
+        const s1 = PubSub.subscribe(EVENTS.WINDOW_RESTORE, (e, data: string) => {
             if (data === state.windowId) {
                 setState(state => ({
                     ...state,
                     minimise: false,
                 }));
+            }
+        });
+
+        const s2 = PubSub.subscribe(EVENTS.WINDOW_CLOSE, (e, windowId: string) => {
+            if (windowId === state.windowId && state.windowId) {
+                closeWindow();
             }
         });
 
@@ -181,11 +188,17 @@ export default function ContactDialog(props: ContactDialogProps) {
             windowId: state.windowId,
         }));
 
+        return () => {
+            PubSub.unsubscribe(s1);
+            PubSub.unsubscribe(s2);
+        }
+
     }, [
         state.ready,
         state.windowId,
         props.contactData?.avatar,
         props.contactData?.fullname,
+        closeWindow,
         dispatch
     ]);
 
