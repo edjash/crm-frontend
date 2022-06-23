@@ -1,4 +1,4 @@
-import { Menu, MenuItem, MenuProps } from "@mui/material";
+import { ClickAwayListener, Menu, MenuItem, MenuProps } from "@mui/material";
 import { useState } from "react";
 
 type ContextMenuPosition = {
@@ -43,6 +43,7 @@ export const useContextMenuHandler = (): ContextMenuHandler => {
         setState(state => ({
             ...state,
             position: null,
+            data: null,
         }));
     }
 
@@ -90,20 +91,24 @@ interface ContextMenuProps {
 export default function ContextMenu(props: ContextMenuProps) {
 
     return (
-        <Menu
-            {...bindMenu(props.contextMenuHandler)}
-        >
-            {props.items.map((item, index) => (
-                <MenuItem
-                    key={item.key}
-                    onClick={() => {
-                        props.contextMenuHandler.close();
-                        props.onItemClick(item, props.contextMenuHandler.state.data);
-                    }}
-                >
-                    {item.label}
-                </MenuItem>
-            ))}
-        </Menu >
+        <ClickAwayListener onClickAway={() => {
+            props.contextMenuHandler.close();
+        }}>
+            <Menu
+                {...bindMenu(props.contextMenuHandler)}
+            >
+                {props.items.map((item, index) => (
+                    <MenuItem
+                        key={item.key}
+                        onClick={() => {
+                            props.contextMenuHandler.close();
+                            props.onItemClick(item, props.contextMenuHandler.state.data);
+                        }}
+                    >
+                        {item.label}
+                    </MenuItem>
+                ))}
+            </Menu>
+        </ClickAwayListener>
     );
 }
