@@ -67,11 +67,6 @@ export default function Home() {
     const contextMenuHandler = useContextMenuHandler();
     const windows = useStoreSelector(state => state.windows);
     const [selected, setSelected] = useState<string>('contacts');
-    const [windowCount, setWindowCount] = useState<number>(0);
-
-    useEffect(() => {
-        setWindowCount(Object.keys(windows.list).length);
-    }, [windows.list, setWindowCount]);
 
     const onNavClick = (ident: string) => {
         if (ident === 'logout') {
@@ -108,7 +103,9 @@ export default function Home() {
                         onClick={() => onNavClick('companies')}
                     />
                     <Divider sx={{ mt: 5, mb: 2 }} hidden={!isMobile} />
-                    <WindowTabs />
+                    {!isMobile &&
+                        <WindowTabs />
+                    }
                     <ListItem
                         sx={{ flexGrow: 1 }}
                     />
