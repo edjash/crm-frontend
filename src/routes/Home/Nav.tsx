@@ -9,7 +9,7 @@ import {
     Theme,
     Typography
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EVENTS } from "../../app/constants";
 
 const drawerWidth = 240;
@@ -114,7 +114,7 @@ export default function NavDrawer(props: NavDrawerProps) {
             anchor="left"
             open={open}
             PaperProps={{ elevation: 1 }}
-            sx={{ zIndex: 1, display: 'flex', flexDirection: 'column', background:'rose' }}
+            sx={{ zIndex: 1, display: 'flex', flexDirection: 'column', background: 'rose' }}
             variant="permanent"
             ModalProps={{
                 keepMounted: true,
@@ -131,6 +131,7 @@ interface NavItemProps {
     selected?: boolean;
     icon: JSX.Element;
     onClick: () => void;
+    onContextMenu?: (e: React.MouseEvent) => void;
 }
 
 export const NavItem = (props: NavItemProps) => {
@@ -139,6 +140,12 @@ export const NavItem = (props: NavItemProps) => {
             button
             key={props.id}
             onClick={props.onClick}
+            onContextMenu={(e: React.MouseEvent) => {
+                e.preventDefault();
+                if (props.onContextMenu) {
+                    props.onContextMenu(e);
+                }
+            }}
             selected={props.selected}
         >
             <ListItemIcon>{props.icon}</ListItemIcon>
