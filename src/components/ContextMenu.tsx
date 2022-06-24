@@ -17,11 +17,13 @@ interface ContextMenuHandler {
     close: () => void;
 }
 
-export const bindContextMenu = (contextMenu: ContextMenuHandler, data: any) => {
+export const bindContextMenu = (contextMenu: ContextMenuHandler, data?: any) => {
 
     return {
         onContextMenu: (event: React.MouseEvent) => {
             event.preventDefault();
+            event.stopPropagation();
+
             contextMenu.update({
                 position: {
                     x: event.clientX,
@@ -80,6 +82,7 @@ export const bindMenu = (contextMenu: ContextMenuHandler): MenuProps => {
 interface ContextMenuItem {
     label: string;
     key: string;
+    disabled?: boolean;
 }
 
 interface ContextMenuProps {
@@ -104,6 +107,7 @@ export default function ContextMenu(props: ContextMenuProps) {
                             props.contextMenuHandler.close();
                             props.onItemClick(item, props.contextMenuHandler.state.data);
                         }}
+                        disabled={item.disabled}
                     >
                         {item.label}
                     </MenuItem>

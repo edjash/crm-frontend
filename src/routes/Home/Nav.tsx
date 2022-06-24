@@ -142,6 +142,7 @@ export const NavItem = (props: NavItemProps) => {
             onClick={props.onClick}
             onContextMenu={(e: React.MouseEvent) => {
                 e.preventDefault();
+                e.stopPropagation();
                 if (props.onContextMenu) {
                     props.onContextMenu(e);
                 }

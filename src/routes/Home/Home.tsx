@@ -1,18 +1,21 @@
-import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
+import { AccountBox as ContactsIcon, Business as CompaniesIcon, Label } from '@mui/icons-material/';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {
     Box, Divider, List, ListItem, Theme, useMediaQuery
 } from '@mui/material';
 import { SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { EVENTS } from '../../app/constants';
 import Companies from '../../components/Companies/Companies';
 import { Contacts } from '../../components/Contacts';
+import ContextMenu, { bindContextMenu, useContextMenuHandler } from '../../components/ContextMenu';
 import SessionExpiredDialog from '../../components/Dialogs/SessionExpiredDialog';
 import TopBar from '../../components/TopBar';
 import WindowTabs from '../../components/WindowTabs';
 import { logout } from '../../store/reducers/auth/authSlice';
+import { useStoreSelector } from '../../store/store';
 import NavDrawer, { NavbarSpacer, NavItem } from './Nav';
 
 interface TabPanelProps {
@@ -61,8 +64,14 @@ export default function Home() {
     const dispatch = useDispatch();
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const margin = (isMobile) ? 0 : 1;
+    const contextMenuHandler = useContextMenuHandler();
+    const windows = useStoreSelector(state => state.windows);
+    const [selected, setSelected] = useState<string>('contacts');
+    const [windowCount, setWindowCount] = useState<number>(0);
 
-    const [selected, setSelected] = useState('contacts');
+    useEffect(() => {
+        setWindowCount(Object.keys(windows.list).length);
+    }, [windows.list, setWindowCount]);
 
     const onNavClick = (ident: string) => {
         if (ident === 'logout') {
@@ -80,7 +89,10 @@ export default function Home() {
                 {!isMobile &&
                     <NavbarSpacer />
                 }
-                <List sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+                <List
+                    sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+                    {...bindContextMenu(contextMenuHandler)}
+                >
                     <NavItem
                         id="contacts"
                         label="Contacts"
@@ -106,7 +118,21 @@ export default function Home() {
                         icon={<LogoutIcon />}
                         onClick={() => onNavClick('logout')}
                     />
-
+                    <ContextMenu
+                        contextMenuHandler={contextMenuHandler}
+                        onItemClick={() => {
+                            for (const windowId in windows.list) {
+                                PubSub.publish(EVENTS.WINDOW_CLOSE, windowId);
+                            }
+                        }}
+                        items={[
+                            {
+                                label: "Close all Windows",
+                                key: 'closeall',
+                                disabled: !(Object.keys(windows.list).length)
+                            }
+                        ]}
+                    />
                 </List>
             </NavDrawer>
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
