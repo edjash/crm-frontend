@@ -1,11 +1,11 @@
-import { AccountBox as ContactsIcon, Business as CompaniesIcon, Label } from '@mui/icons-material/';
+import { AccountBox as ContactsIcon, Business as CompaniesIcon } from '@mui/icons-material/';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {
     Box, Divider, List, ListItem, Theme, useMediaQuery
 } from '@mui/material';
 import { SystemProps } from '@mui/system';
 import PubSub from 'pubsub-js';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { EVENTS } from '../../app/constants';
 import Companies from '../../components/Companies/Companies';
