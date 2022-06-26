@@ -29,6 +29,7 @@ export default function GeneralTab(props: GeneralTabProps) {
                 p: 1,
                 gap: 1
             }}
+            
         >
             <Box display="grid" gap={1}>
                 <Fieldset legend="Personal">

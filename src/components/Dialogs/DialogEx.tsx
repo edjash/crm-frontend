@@ -31,6 +31,8 @@ export interface DialogExProps {
     hideCancelButton?: boolean;
     hideSaveButton?: boolean;
     hideActionButtons?: boolean;
+    disableCancelButton?: boolean;
+    disableSaveButton?: boolean;
     showMinimize?: boolean;
     saveButtonText?: string;
     cancelButtonText?: string;
@@ -207,6 +209,7 @@ export default function DialogEx(props: DialogExProps) {
                                     alignSelf: 'flex-start',
                                     m: 0
                                 }}
+                                disabled={props.disableCancelButton}
                             >
                                 <CloseIcon />
                             </IconButton>
@@ -230,6 +233,7 @@ export default function DialogEx(props: DialogExProps) {
                                 //alignSelf: 'flex-start',
                                 m: 0
                             }}
+                            disabled={props.disableCancelButton}
                         >
                             <CloseIcon />
                         </IconButton>
@@ -243,7 +247,11 @@ export default function DialogEx(props: DialogExProps) {
                     }
                     <Box sx={{ pr: 1 }}>
                         {!props.hideSaveButton &&
-                            <DialogButton onClick={onSave} {...props.saveButtonProps}>
+                            <DialogButton
+                                onClick={onSave}
+                                {...props.saveButtonProps}
+                                disabled={props.disableSaveButton}
+                            >
                                 Save
                             </DialogButton>
                         }
@@ -274,12 +282,12 @@ export default function DialogEx(props: DialogExProps) {
                         gap: props.actionButtonGap ?? 0,
                     }}
                 >
-                    <DialogButton onClick={onCancel} {...props.cancelButtonProps}>
+                    <DialogButton onClick={onCancel} {...props.cancelButtonProps} disabled={props.disableCancelButton}>
                         {props.cancelButtonText ?? 'Cancel'}
                     </DialogButton>
                     {props.saveButtonComponent
                         ? props.saveButtonComponent
-                        : <DialogButton onClick={onSave} {...props.saveButtonProps}>
+                        : <DialogButton onClick={onSave} {...props.saveButtonProps} disabled={props.disableSaveButton}>
                             {props.saveButtonText ?? 'Save'}
                         </DialogButton>
                     }

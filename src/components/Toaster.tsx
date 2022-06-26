@@ -33,8 +33,11 @@ export default function Toast() {
 
     useEffect(() => {
         const s1 = PubSub.subscribe(EVENTS.TOAST, (msg, data) => {
-            data.show = true;
-            setState(state => ({ ...state, ...data }));
+            if (typeof (data) === 'string') {
+                data = { message: data };
+            }
+
+            setState(state => ({ ...state, ...data, show: true }));
         });
 
         return () => {

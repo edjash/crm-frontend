@@ -270,7 +270,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                 tabProps={state.minimise ? undefined : {
                     tabs: [
                         { label: 'General', value: 0 },
-                        // { label: 'Notes', value: 1, disabled: false },
+                        { label: 'Notes', value: 1, disabled: false },
                         // { label: 'Lead Info', value: 2, disabled: true },
                         // { label: 'Relationships', value: 3, disabled: true },
                         // { label: 'Activity', value: 4, disabled: true },
@@ -293,10 +293,14 @@ export default function ContactDialog(props: ContactDialogProps) {
                             isDesktop={isDesktop}
                             data={props.contactData}
                         />
-                        <NotesTab
-                            value={1}
-                            isActive={(state.activeTab === 1)}
-                        />
+                        {props.type === 'edit' &&
+                            <NotesTab
+                                value={1}
+                                contactId={props?.contactData?.id}
+                                contactType="contact"
+                                isActive={(state.activeTab === 1)}
+                            />
+                        }
                     </>
                 }
             </DialogEx>

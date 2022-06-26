@@ -96,6 +96,20 @@ fieldset {
 }
 
 
+
+.notesGrid {
+    & .MuiDataGrid-row {
+        cursor: pointer;
+    }
+
+    & .grid-note-preview {
+        overflow: auto !important;
+        overflow-wrap: normal;
+        justify-content: flex-start !important;
+        white-space: normal !important;
+    }
+}
+
 /* Skeletons */
 .skeletonEx {
     position: relative;

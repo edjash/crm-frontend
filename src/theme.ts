@@ -2,6 +2,10 @@ import { createTheme, PaletteOptions } from '@mui/material/styles';
 
 declare module "@mui/material/styles/createPalette" {
     export interface PaletteOptions {
+        toolbar?: {
+            backgroundColor?: string;
+            buttonTextColor?: string;
+        },
         custom?: {
             disabledIcon: string;
             appBarBackground: string;
@@ -14,6 +18,9 @@ const lightPalette: PaletteOptions = {
     primary: {
         main: '#FF5733'
     },
+    toolbar: {
+        backgroundColor: 'red'
+    },
     custom: {
         disabledIcon: '#263238',
         appBarBackground: '#ff7256',
@@ -21,9 +28,23 @@ const lightPalette: PaletteOptions = {
     },
 };
 
+const lightStyles = `
+.dialogGrid {
+    background: #f7f7f7;
+}
+.dialogGrid .MuiDataGrid-columnHeaders {
+    background: #ff5733 !important;
+    color: #FFFFFF;
+}
+`;
+
 const darkPalette: PaletteOptions = {
     info: {
         main: '#CCCCCC',
+    },
+    toolbar: {
+        backgroundColor: '#424242',
+        buttonTextColor: '#eeeeee',
     },
     custom: {
         disabledIcon: '#263238',
@@ -31,6 +52,20 @@ const darkPalette: PaletteOptions = {
         appBarText: '#FFFFFF',
     },
 };
+
+const darkStyles = `
+.dialogGrid,
+.dialogPaper
+{
+    background-color: #424242 !important;
+}
+.dialogGrid .MuiDataGrid-columnHeaders {
+    background: #262626 !important;
+}
+.dialogGrid .MuiDataGrid-row {
+   border-bottom: 1px solid #787878;
+}
+`;
 
 const theme = (mode: 'dark' | 'light') => {
 
@@ -54,6 +89,9 @@ const theme = (mode: 'dark' | 'light') => {
                     fullWidth: true,
                 },
             },
+            MuiCssBaseline: {
+                styleOverrides: (mode === 'dark') ? darkStyles : lightStyles,
+            }
         },
         typography: {
             button: {

@@ -7,6 +7,7 @@ interface TabPanelProps {
     value?: number;
     isActive?: boolean;
     sx?: SxProps;
+    className?: string;
 }
 
 
@@ -20,6 +21,7 @@ export default function TabPanel(props: TabPanelProps) {
                 overflow: 'auto',
                 minHeight: '100%'
             }}
+            className={props.className}
         >
             {props.children}
         </Box>
