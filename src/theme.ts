@@ -1,4 +1,5 @@
 import { createTheme, PaletteOptions } from '@mui/material/styles';
+import type { } from '@mui/x-data-grid/themeAugmentation';
 
 declare module "@mui/material/styles/createPalette" {
     export interface PaletteOptions {
@@ -43,7 +44,7 @@ const darkPalette: PaletteOptions = {
         main: '#CCCCCC',
     },
     toolbar: {
-        backgroundColor: '#424242',
+        backgroundColor: '#212121',
         buttonTextColor: '#eeeeee',
     },
     custom: {
@@ -57,7 +58,7 @@ const darkStyles = `
 .dialogGrid,
 .dialogPaper
 {
-    background-color: #424242 !important;
+    background-color: #2e2e2e !important;
 }
 .dialogGrid .MuiDataGrid-columnHeaders {
     background: #262626 !important;
@@ -77,6 +78,18 @@ const theme = (mode: 'dark' | 'light') => {
             mode: mode,
         },
         components: {
+            MuiDialog: {
+                styleOverrides: {
+                    root: {
+                        '& .dialogGrid .MuiDataGrid-columnHeader': {
+                            background: modePalette.toolbar?.backgroundColor,
+                        },
+                        '& .dialogGrid .MuiDataGrid-row:not(:hover):nth-of-type(even)': {
+                            backgroundColor: '#606060'
+                        }
+                    }
+                }
+            },
             MuiUseMediaQuery: {
                 defaultProps: {
                     noSsr: true,

@@ -2,19 +2,17 @@ import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, Paper, TablePagination } from "@mui/material";
 import {
     DataGrid,
-    GridCallbackDetails,
-    GridCellParams,
-    GridColumns,
+    GridCallbackDetails, GridColumns,
     GridRenderCellParams,
     GridRowData,
     GridRowParams
 } from "@mui/x-data-grid";
+import dateFormat from "dateformat";
 import { useEffect, useState } from "react";
+import { EVENTS } from '../../app/constants';
 import apiClient from "../apiClient";
 import TabPanel from "../TabPanel";
-import dateFormat from "dateformat";
 import Note from './Note';
-import { EVENTS } from '../../app/constants';
 
 function truncateLine(line: string, maxLen: number): string {
     if (line.length < maxLen) {
@@ -101,7 +99,7 @@ const GridFooter = (props: GridFooterProps) => {
 interface NotesTabProps {
     value: number;
     isActive: boolean;
-    contactId?: number;
+    contactId: number;
     contactType: 'contact' | 'company';
 }
 
@@ -155,15 +153,17 @@ export default function NotesTab(props: NotesTabProps) {
     const onNoteClick = (id: number, content: string) => {
         setState(state => ({
             ...state,
-            showNote: true,
             noteContent: content,
             noteId: id,
+            showNote: true,
         }));
     }
 
     const onAddClick = () => {
         setState(state => ({
             ...state,
+            noteId: undefined,
+            noteContent: 'test',
             showNote: true
         }));
     }
@@ -178,6 +178,16 @@ export default function NotesTab(props: NotesTabProps) {
     const onNoteSaved = (noteData: {}) => {
 
         PubSub.publish(EVENTS.TOAST, "Note Saved");
+
+        setState(state => ({
+            ...state,
+            showNote: false,
+            loadGrid: true,
+        }));
+    }
+
+    const onNoteDeleted = () => {
+        PubSub.publish(EVENTS.TOAST, "Note Deleted");
 
         setState(state => ({
             ...state,
@@ -203,7 +213,7 @@ export default function NotesTab(props: NotesTabProps) {
                     display: 'flex'
                 }}>
                 <DataGrid
-                    className="notesGrid"
+                    className="dialogGrid notesGrid"
                     columns={ColDef}
                     rows={state.rowData}
                     pagination
@@ -219,10 +229,15 @@ export default function NotesTab(props: NotesTabProps) {
                         params: GridRowParams,
                         event: React.MouseEvent,
                         details: GridCallbackDetails) => {
-                        onNoteClick(params.row.id, params.row.content);
+                        onNoteClick(params.row.id, params.row.content ?? '');
                     }}
                     components={{
                         Footer: GridFooter,
+                        NoRowsOverlay: () => (
+                            <Box display="flex" height="100%" alignItems="center" justifyContent="center">
+                                No notes
+                            </Box>
+                        )
                     }}
                     componentsProps={{
                         footer: {
@@ -246,21 +261,24 @@ export default function NotesTab(props: NotesTabProps) {
                     }}
                 />
             </Paper>
-            <Note
-                open={state.showNote}
-                contactType={props.contactType}
-                content={state.noteContent}
-                noteId={state.noteId}
-                onClose={onCloseClick}
-                onNoteSaved={onNoteSaved}
-                sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    bottom: 0,
-                    right: 0
-                }}
-            />
+            {state.showNote &&
+                <Note
+                    contactType={props.contactType}
+                    contactId={props.contactId}
+                    content={state.noteContent}
+                    noteId={state.noteId}
+                    onClose={onCloseClick}
+                    onNoteSaved={onNoteSaved}
+                    onNoteDeleted={onNoteDeleted}
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        right: 0
+                    }}
+                />
+            }
         </TabPanel >
     );
 }

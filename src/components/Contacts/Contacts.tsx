@@ -199,7 +199,7 @@ export default function Contacts() {
     };
 
     const showContactDialog = (props?: ContactDialogData) => {
-        const type = (!props?.id) ? 'new' : 'edit';
+        const mode = (!props?.id) ? 'new' : 'edit';
         const windowId = `contact_${props?.id}`;
         if (windowId in windows.list) {
             dispatch(windowActivated(windowId));
@@ -207,7 +207,7 @@ export default function Contacts() {
         }
 
         const dlg = showModal(ContactDialog, {
-            type: type,
+            mode: mode,
             contactData: props,
             onCancel: () => {
                 dlg.destroy();

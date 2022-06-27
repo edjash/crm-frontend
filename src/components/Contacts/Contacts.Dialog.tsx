@@ -25,6 +25,8 @@ interface ContactDialogState {
     loading: boolean;
     ready: boolean;
     open: boolean;
+    mode: 'new' | 'edit',
+    contactId?: number,
     minimise: boolean;
     defaultValues: Record<string, any>;
     activeTab: number;
@@ -32,7 +34,7 @@ interface ContactDialogState {
 }
 
 interface ContactDialogProps extends DialogExProps {
-    type: 'new' | 'edit',
+    mode: 'new' | 'edit',
     contactData?: ContactDialogData,
     onCancel: () => void;
     onSave: () => void;
@@ -48,7 +50,7 @@ const Title = (props: TitleProps) => {
     const [avatar, setAvatar] = useState(props.avatar);
     const isDesktop = props.isDesktop;
     let title = props.contactData?.fullname ?? 'Unnamed';
-    if (props.type === 'new') {
+    if (props.mode === 'new') {
         title = 'New Contact';
     }
 
@@ -85,6 +87,9 @@ const prepareOutgoingValues = (values: Record<string, any>) => {
     if (pvalues.company && typeof pvalues.company === 'object') {
         pvalues.company = pvalues.company.id;
     }
+
+    console.log(pvalues);
+
     return pvalues;
 }
 
@@ -114,11 +119,13 @@ export default function ContactDialog(props: ContactDialogProps) {
 
     const [state, setState] = useState<ContactDialogState>({
         loading: false,
-        ready: (props.type === 'new'),
+        ready: (props.mode === 'new'),
         open: true,
+        mode: props.mode,
         minimise: false,
         defaultValues: {},
         activeTab: 0,
+        contactId: props.contactData?.id,
         windowId: 'contact_' + props.contactData?.id,
     });
 
@@ -129,7 +136,7 @@ export default function ContactDialog(props: ContactDialogProps) {
     const closeWindow = props.onCancel;
 
     useEffect(() => {
-        if (props.type === 'edit' && !state.ready) {
+        if (props.mode === 'edit' && !state.ready) {
             apiClient.get(`/contacts/${props.contactData?.id}`).then((response) => {
                 if (!state.open) {
                     return;
@@ -146,7 +153,7 @@ export default function ContactDialog(props: ContactDialogProps) {
     }, [
         state.ready,
         state.open,
-        props.type,
+        props.mode,
         props.contactData?.id,
     ]);
 
@@ -208,14 +215,14 @@ export default function ContactDialog(props: ContactDialogProps) {
         const postData = prepareOutgoingValues(data);
 
         let url = '/contacts';
-        if (props.type === 'edit' && props.contactData?.id) {
+        if (props.mode === 'edit' && props.contactData?.id) {
             url = `${url}/${props.contactData.id}`;
         }
 
         apiClient.post(url, postData).then((response) => {
             setState({ ...state, loading: false });
             props.onSave();
-            if (props.type === 'edit') {
+            if (props.mode === 'edit') {
                 PubSub.publish(EVENTS.CONTACTS_REFRESH);
             } else {
                 PubSub.publish(EVENTS.TOAST, {
@@ -242,7 +249,7 @@ export default function ContactDialog(props: ContactDialogProps) {
         dispatch(windowMinimized(state.windowId));
     }
 
-    const ready = ((props.type === 'edit' && state.ready) || props.type === 'new');
+    const ready = ((props.mode === 'edit' && state.ready) || props.mode === 'new');
 
     return (
         <Form
@@ -267,7 +274,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                     form: formId.current,
                     disabled: !ready,
                 }}
-                tabProps={state.minimise ? undefined : {
+                tabProps={{
                     tabs: [
                         { label: 'General', value: 0 },
                         { label: 'Notes', value: 1, disabled: false },
@@ -275,7 +282,7 @@ export default function ContactDialog(props: ContactDialogProps) {
                         // { label: 'Relationships', value: 3, disabled: true },
                         // { label: 'Activity', value: 4, disabled: true },
                     ],
-                    activeTab: (state.minimise) ? undefined : state.activeTab,
+                    activeTab: state.activeTab,
                     orientation: (isDesktop) ? 'vertical' : 'horizontal',
                     onChange: (tab: number) => {
                         setState(state => ({
@@ -285,23 +292,19 @@ export default function ContactDialog(props: ContactDialogProps) {
                     }
                 }}
             >
-                {!state.minimise &&
-                    <>
-                        <GeneralTab
-                            value={0}
-                            isActive={(state.activeTab === 0)}
-                            isDesktop={isDesktop}
-                            data={props.contactData}
-                        />
-                        {props.type === 'edit' &&
-                            <NotesTab
-                                value={1}
-                                contactId={props?.contactData?.id}
-                                contactType="contact"
-                                isActive={(state.activeTab === 1)}
-                            />
-                        }
-                    </>
+                <GeneralTab
+                    value={0}
+                    isActive={(state.activeTab === 0)}
+                    isDesktop={isDesktop}
+                    data={props.contactData}
+                />
+                {state.mode === 'edit' && state.contactId &&
+                    <NotesTab
+                        value={1}
+                        contactId={state.contactId}
+                        contactType="contact"
+                        isActive={(state.activeTab === 1)}
+                    />
                 }
             </DialogEx>
             <Overlay open={state.loading} />

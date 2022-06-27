@@ -1,3 +1,4 @@
+import { FileDownloadDone } from "@mui/icons-material";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import { Controller, useFormContext } from "react-hook-form";
 import SkeletonEx from "./SkeletonEx";
@@ -6,6 +7,7 @@ type TextFieldExProps = TextFieldProps & {
     name?: string;
     hidden?: boolean;
     skeleton?: boolean;
+    multiline?: boolean;
 }
 
 export default function TextFieldEx(props: TextFieldExProps) {
@@ -19,7 +21,17 @@ export default function TextFieldEx(props: TextFieldExProps) {
                 <SkeletonEx>
                     <TextField
                         {...props}
-                        {...field}
+                        ref={field.ref}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            if (props.onChange) {
+                                props.onChange(event);
+                            }
+                            if (field.onChange) {
+                                field.onChange(event);
+                            }
+                        }}
+                        onBlur={field.onBlur}
+                        name={field.name}
                         value={field.value ?? ''}
                         error={!!props?.error || !!errorMsg}
                         helperText={errorMsg || props?.helperText}
