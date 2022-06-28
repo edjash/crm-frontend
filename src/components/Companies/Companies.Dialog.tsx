@@ -9,16 +9,10 @@ import { useStoreSelector } from '../../store/store';
 import companySchema from '../../validation/companySchema';
 import apiClient from '../apiClient';
 import DialogEx from '../Dialogs/DialogEx';
-import CountrySelect from '../Form/CountrySelect';
-import Fieldset from '../Form/Fieldset';
 import Form from '../Form/Form';
-import IndustrySelect from '../Form/IndustrySelect';
-import MultiFieldset from '../Form/MultiFieldset';
 import ProfileAvatar from '../Form/ProfileAvatar';
-import TextFieldEx from '../Form/TextFieldEx';
 import NotesTab from '../NotesTab';
 import Overlay from '../Overlay';
-import SocialIcon from '../SocialIcon';
 import GeneralTab from './GeneralTab';
 
 export interface CompanyDialogData {
