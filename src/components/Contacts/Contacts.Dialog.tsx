@@ -11,14 +11,21 @@ import apiClient from '../apiClient';
 import DialogEx, { DialogExProps } from '../Dialogs/DialogEx';
 import Form from '../Form/Form';
 import ProfileAvatar from '../Form/ProfileAvatar';
+import NotesTab from '../NotesTab';
 import Overlay from '../Overlay';
 import GeneralTab from './GeneralTab';
-import NotesTab from './NotesTab';
 
 export interface ContactDialogData {
     id: number;
     fullname: string;
     avatar?: string;
+};
+
+export interface ContactDialogProps extends DialogExProps {
+    mode: 'new' | 'edit',
+    contactData?: ContactDialogData,
+    onCancel: () => void;
+    onSave: () => void;
 };
 
 interface ContactDialogState {
@@ -32,13 +39,6 @@ interface ContactDialogState {
     activeTab: number;
     windowId: string;
 }
-
-interface ContactDialogProps extends DialogExProps {
-    mode: 'new' | 'edit',
-    contactData?: ContactDialogData,
-    onCancel: () => void;
-    onSave: () => void;
-};
 
 interface TitleProps extends ContactDialogProps {
     isDesktop: boolean;
@@ -112,6 +112,7 @@ const prepareIncomingValues = (values: Record<string, any>) => {
 
     return pvalues;
 }
+
 export default function ContactDialog(props: ContactDialogProps) {
 
     const [state, setState] = useState<ContactDialogState>({
@@ -259,7 +260,6 @@ export default function ContactDialog(props: ContactDialogProps) {
             <DialogEx
                 id={state.windowId}
                 open={state.open}
-                hideBackdrop={false}
                 onCancel={props.onCancel}
                 showMinimize={true}
                 onMinimise={onMinimise}

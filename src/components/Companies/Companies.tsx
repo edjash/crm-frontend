@@ -223,7 +223,7 @@ export default function Companies() {
         const s2 = PubSub.subscribe(EVENTS.COMPANIES_NEW, (msg, props: CompanyDialogProps) => {
             showCompanyDialog({
                 ...props,
-                type: 'new',
+                mode: 'new',
             });
         });
         return () => {
@@ -232,13 +232,13 @@ export default function Companies() {
     }, [showCompanyDialog]);
 
     const onNewClick = () => {
-        showCompanyDialog({ type: 'new' });
+        showCompanyDialog({ mode: 'new' });
     }
 
     const onClickContact = (e: React.MouseEvent, rowData: GridRowModel) => {
         e.preventDefault();
         showCompanyDialog({
-            type: 'edit',
+            mode: 'edit',
             data: {
                 id: rowData.id,
                 name: rowData.name,

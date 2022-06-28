@@ -10,9 +10,9 @@ import {
 import dateFormat from "dateformat";
 import { useEffect, useState } from "react";
 import { useFormContext } from 'react-hook-form';
-import { EVENTS } from '../../app/constants';
-import apiClient from "../apiClient";
-import TabPanel from "../TabPanel";
+import { EVENTS } from '../app/constants';
+import apiClient from "./apiClient";
+import TabPanel from "./TabPanel";
 import Note from './Note';
 
 function truncateLine(line: string, maxLen: number): string {
@@ -130,7 +130,7 @@ export default function NotesTab(props: NotesTabProps) {
 
     useEffect(() => {
         if (state.loadGrid) {
-            apiClient.get(`/notes/contact/${props.contactId}`, {
+            apiClient.get(`/notes/${props.contactType}/${props.contactId}`, {
                 sortBy: 'id',
                 sortDirection: 'desc',
                 limit: rowsPerPage,
@@ -148,7 +148,8 @@ export default function NotesTab(props: NotesTabProps) {
     }, [
         state.loadGrid,
         state.page,
-        props.contactId
+        props.contactId,
+        props.contactType
     ]);
 
     const onNoteClick = (id: number, content: string) => {

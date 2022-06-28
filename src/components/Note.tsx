@@ -1,4 +1,3 @@
-import { ConstructionTwoTone } from '@mui/icons-material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
@@ -6,11 +5,10 @@ import { Box, Button, CircularProgress, Paper, SxProps } from "@mui/material";
 import clsx from "clsx";
 import { useModal } from 'mui-modal-provider';
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { useFormContext } from 'react-hook-form';
-import apiClient from '../apiClient';
-import ConfirmDialog from '../Dialogs/ConfirmDialog';
-import HiddenField from '../Form/HiddenField';
-import TextFieldEx from '../Form/TextFieldEx';
+import apiClient from './apiClient';
+import ConfirmDialog from './Dialogs/ConfirmDialog';
+import HiddenField from './Form/HiddenField';
+import TextFieldEx from './Form/TextFieldEx';
 
 interface NoteProps {
     contactType: 'contact' | 'company';
