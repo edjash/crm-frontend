@@ -1,10 +1,12 @@
+import { ConstructionTwoTone } from '@mui/icons-material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import { Box, Button, CircularProgress, Paper, SxProps } from "@mui/material";
 import clsx from "clsx";
 import { useModal } from 'mui-modal-provider';
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useFormContext } from 'react-hook-form';
 import apiClient from '../apiClient';
 import ConfirmDialog from '../Dialogs/ConfirmDialog';
 import HiddenField from '../Form/HiddenField';
@@ -32,14 +34,12 @@ interface NoteState {
 
 export default function Note(props: NoteProps) {
 
-    console.log("INIT", props.noteId);
-
     const [state, setState] = useState<NoteState>({
         noteId: props.noteId,
         unsaved: false,
         saving: false,
         deleting: false,
-        noteContent: '',
+        noteContent: props.content,
     });
 
     const { showModal } = useModal();
@@ -47,37 +47,19 @@ export default function Note(props: NoteProps) {
 
     useEffect(() => {
         if (state.noteId !== props.noteId) {
-            setState(state => ({
-                ...state,
+            setState({
                 noteId: props.noteId,
                 noteContent: props.content,
-            }));
+                unsaved: false,
+                deleting: false,
+                saving: false,
+            });
         }
     }, [
         state.noteId,
         props.noteId,
         props.content,
     ]);
-
-    // useEffect(() => {
-    //     console.log("NOTEID", props.noteId);
-    //     if (!props.open) {
-    //         setState(state => ({
-    //             ...state,
-    //             unsaved: false,
-    //             noteId: props.noteId,
-    //         }));
-    //     } else {
-    //         setState(state => ({
-    //             ...state,
-    //             noteId: props.noteId
-    //         }));
-    //     }
-
-    // }, [
-    //     props.open,
-    //     props.noteId,
-    // ]);
 
     const focusInputField = (input: HTMLInputElement | null) => {
         if (input) {
@@ -232,16 +214,23 @@ export default function Note(props: NoteProps) {
                     </Box>
                 </div>
             }
-            <HiddenField name="noteUnsaved" value={state.unsaved} />
             <HiddenField name="noteId" value={props.noteId} />
             <Box
                 className="noteInputContainer"
             >
                 <TextFieldEx
+                    name="note"
                     multiline
                     sx={{ height: '100%' }}
                     inputRef={focusInputField}
-                    onChange={() => {
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        if (!state.noteId && e.target.value.trim().length < 1) {
+                            setState(state => ({
+                                ...state,
+                                unsaved: false,
+                            }));
+                            return;
+                        }
                         if (!state.unsaved) {
                             setState(state => ({
                                 ...state,

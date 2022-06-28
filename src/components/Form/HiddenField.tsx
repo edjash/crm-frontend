@@ -15,6 +15,7 @@ export default function HiddenField(props: HiddenFieldProps) {
                     type="hidden"
                     {...props}
                     {...field}
+                    value={props.value}
                 />
             )}
             control={control}

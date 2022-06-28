@@ -9,6 +9,7 @@ import {
 } from "@mui/x-data-grid";
 import dateFormat from "dateformat";
 import { useEffect, useState } from "react";
+import { useFormContext } from 'react-hook-form';
 import { EVENTS } from '../../app/constants';
 import apiClient from "../apiClient";
 import TabPanel from "../TabPanel";
@@ -116,7 +117,7 @@ interface NotesTabState {
 export default function NotesTab(props: NotesTabProps) {
 
     const rowsPerPage = 20;
-
+    const { control } = useFormContext();
     const [state, setState] = useState<NotesTabState>({
         loadGrid: true,
         rowData: [],
@@ -151,6 +152,8 @@ export default function NotesTab(props: NotesTabProps) {
     ]);
 
     const onNoteClick = (id: number, content: string) => {
+        control.unregister(['noteId', 'note']);
+
         setState(state => ({
             ...state,
             noteContent: content,
@@ -160,10 +163,12 @@ export default function NotesTab(props: NotesTabProps) {
     }
 
     const onAddClick = () => {
+        control.unregister(['noteId', 'note']);
+
         setState(state => ({
             ...state,
             noteId: undefined,
-            noteContent: 'test',
+            noteContent: '',
             showNote: true
         }));
     }

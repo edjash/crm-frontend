@@ -87,9 +87,6 @@ const prepareOutgoingValues = (values: Record<string, any>) => {
     if (pvalues.company && typeof pvalues.company === 'object') {
         pvalues.company = pvalues.company.id;
     }
-
-    console.log(pvalues);
-
     return pvalues;
 }
 
