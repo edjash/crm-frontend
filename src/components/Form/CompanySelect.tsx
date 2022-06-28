@@ -19,7 +19,6 @@ export function CompanySelect(props: CompanySelectProps) {
                     }
                 },
                 noAnimation: true,
-                hideBackdrop: true,
             })
         });
     }
