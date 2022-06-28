@@ -85,7 +85,7 @@ const theme = (mode: 'dark' | 'light') => {
                             background: modePalette.toolbar?.backgroundColor,
                         },
                         '& .dialogGrid .MuiDataGrid-row:not(:hover):nth-of-type(even)': {
-                            backgroundColor: '#606060'
+                            backgroundColor: '#383838'
                         }
                     }
                 }
