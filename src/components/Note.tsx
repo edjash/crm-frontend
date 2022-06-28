@@ -162,13 +162,16 @@ export default function Note(props: NoteProps) {
                         display="flex"
                         gap={1}
                         alignItems="center"
-                        sx={{ backgroundColor: 'toolbar.backgroundColor' }}
+                        sx={{
+                            backgroundColor: 'toolbar.backgroundColor',
+                            color: 'toolbar.textColor'
+                        }}
                     >
                         <Button
                             variant="text"
                             onClick={props.onClose}
                             size="small"
-                            sx={{ color: "toolbar.buttonTextColor" }}
+                            sx={{ color: "toolbar.textColor" }}
                             startIcon={<ArrowBackIcon fontSize="small" />}
                             disabled={state.saving || state.deleting}
                         >
@@ -180,7 +183,7 @@ export default function Note(props: NoteProps) {
                                 variant="text"
                                 startIcon={<SaveIcon fontSize="small" />}
                                 disabled={!state.unsaved}
-                                sx={{ color: "toolbar.buttonTextColor" }}
+                                sx={{ color: "toolbar.textColor" }}
                                 onClick={onSave}
                             >
                                 Save
@@ -197,7 +200,7 @@ export default function Note(props: NoteProps) {
                                 size="small"
                                 variant="text"
                                 onClick={onDeleteClick}
-                                sx={{ color: "toolbar.buttonTextColor" }}
+                                sx={{ color: "toolbar.textColor" }}
                                 startIcon={<DeleteIcon fontSize="small" />}
                                 disabled={state.saving || !state.noteId}
                             >
