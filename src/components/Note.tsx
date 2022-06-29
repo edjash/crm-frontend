@@ -15,7 +15,7 @@ interface NoteProps {
     contactId: number;
     content: string;
     noteId?: number;
-    onClose?: () => void;
+    onClose?: (discard?: boolean) => void;
     onNoteSaved: (noteData: {}) => void;
     onNoteDeleted: () => void;
     embed?: boolean;
@@ -140,6 +140,37 @@ export default function Note(props: NoteProps) {
         });
     }
 
+    const onBackClick = () => {
+        if (!state.unsaved) {
+            if (props.onClose) {
+                props.onClose();
+            }
+            return;
+        }
+
+        const confirm = showModal(ConfirmDialog, {
+            title: 'Save note?',
+            content: "Your changes to this note will be lost. Would you like to save them?",
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+            onCancel: () => {
+                confirm.hide();
+                setState(state => ({
+                    ...state,
+                    unsaved: false,
+                    saving: false,
+                }));
+                if (props.onClose) {
+                    props.onClose(true);
+                }
+            },
+            onConfirm: () => {
+                confirm.hide();
+                onSave();
+            },
+        });
+    }
+
     return (
         <Paper
             variant="outlined"
@@ -166,7 +197,7 @@ export default function Note(props: NoteProps) {
                     >
                         <Button
                             variant="text"
-                            onClick={props.onClose}
+                            onClick={onBackClick}
                             size="small"
                             sx={{ color: "toolbar.buttonTextColor" }}
                             startIcon={<ArrowBackIcon fontSize="small" />}

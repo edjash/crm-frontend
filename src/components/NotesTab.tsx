@@ -174,7 +174,11 @@ export default function NotesTab(props: NotesTabProps) {
         }));
     }
 
-    const onCloseClick = () => {
+    const onCloseNote = (discard?: boolean) => {
+        if (discard === true) {
+            control.unregister(['noteId', 'note']);
+        }
+
         setState(state => ({
             ...state,
             showNote: false
@@ -273,7 +277,7 @@ export default function NotesTab(props: NotesTabProps) {
                     contactId={props.contactId}
                     content={state.noteContent}
                     noteId={state.noteId}
-                    onClose={onCloseClick}
+                    onClose={onCloseNote}
                     onNoteSaved={onNoteSaved}
                     onNoteDeleted={onNoteDeleted}
                     sx={{
