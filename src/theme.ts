@@ -5,13 +5,16 @@ declare module "@mui/material/styles/createPalette" {
     export interface PaletteOptions {
         toolbar?: {
             backgroundColor?: string;
-            buttonTextColor?: string;
+            textColor?: string;
         },
         custom?: {
             disabledIcon: string;
             appBarBackground: string;
             appBarText: string;
         };
+        dialog?: {
+            gridRowAltBackground: string;
+        }
     }
 }
 
@@ -20,13 +23,17 @@ const lightPalette: PaletteOptions = {
         main: '#FF5733'
     },
     toolbar: {
-        backgroundColor: 'red'
+        backgroundColor: '#FF5733',
+        textColor: 'white',
     },
     custom: {
         disabledIcon: '#263238',
         appBarBackground: '#ff7256',
         appBarText: '#FFFFFF',
     },
+    dialog: {
+        gridRowAltBackground: '#FFFFFF',
+    }
 };
 
 const lightStyles = `
@@ -45,13 +52,16 @@ const darkPalette: PaletteOptions = {
     },
     toolbar: {
         backgroundColor: '#212121',
-        buttonTextColor: '#eeeeee',
+        textColor: '#eeeeee',
     },
     custom: {
         disabledIcon: '#263238',
         appBarBackground: '#141414',
         appBarText: '#FFFFFF',
     },
+    dialog: {
+        gridRowAltBackground: '#383838',
+    }
 };
 
 const darkStyles = `
@@ -83,9 +93,10 @@ const theme = (mode: 'dark' | 'light') => {
                     root: {
                         '& .dialogGrid .MuiDataGrid-columnHeader': {
                             background: modePalette.toolbar?.backgroundColor,
+                            color: modePalette.toolbar?.textColor
                         },
                         '& .dialogGrid .MuiDataGrid-row:not(:hover):nth-of-type(even)': {
-                            backgroundColor: '#383838'
+                            backgroundColor: modePalette.dialog?.gridRowAltBackground,
                         }
                     }
                 }
